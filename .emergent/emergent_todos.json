@@ -1,30 +1,26 @@
 [
   {
-    "content": "Backend: SiteVisit model + endpoints, email (SMTP) notifications, stats update",
+    "content": "Backend: file upload endpoint (images + PDF) + static serving under /api/uploads",
     "status": "completed"
   },
   {
-    "content": "Frontend: Floating WhatsApp button",
+    "content": "Frontend: reusable ImageUpload/FileUpload widget wired into Admin Projects & Team",
     "status": "completed"
   },
   {
-    "content": "Frontend: Book a Site Visit page (calendar + time slots) + route + nav",
+    "content": "Backend: Blog/News/Media Post model + public & admin endpoints + seed starter posts",
     "status": "completed"
   },
   {
-    "content": "Frontend: Admin Site Visits inbox + nav + dashboard stat",
+    "content": "Frontend: public Insights page (Blog/News/Media tabs) + post detail + nav/footer links",
     "status": "completed"
   },
   {
-    "content": "Apply official Homeland wordmark logo to header/footer/admin",
+    "content": "Frontend: Admin Blog manager (CRUD)",
     "status": "completed"
   },
   {
-    "content": "Apply Regalia logo to its card & detail hero",
-    "status": "completed"
-  },
-  {
-    "content": "Test new features end-to-end (backend 38/38 + booking flow verified)",
-    "status": "completed"
+    "content": "Test new features end-to-end via testing agent",
+    "status": "in_progress"
   }
 ]

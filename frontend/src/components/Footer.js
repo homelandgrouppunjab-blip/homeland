@@ -39,7 +39,7 @@ export const Footer = () => {
           <div>
             <h4 className="text-sm font-semibold text-ivory uppercase tracking-wider mb-4">Resources</h4>
             <ul className="space-y-2.5 text-sm">
-              {[["Brochure Center", "/brochures"], ["RERA & FAQ", "/rera"], ["Locations", "/locations"], ["Benchmark", "/benchmark"], ["Enquiry", "/contact"]].map(([l, to]) => (
+              {[["Brochure Center", "/brochures"], ["RERA & FAQ", "/rera"], ["Insights", "/insights"], ["Locations", "/locations"], ["Enquiry", "/contact"]].map(([l, to]) => (
                 <li key={to}><Link to={to} className="text-[color:var(--lux-ivory)]/65 hover:text-gold transition-colors">{l}</Link></li>
               ))}
             </ul>

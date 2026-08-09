@@ -6,11 +6,12 @@ import StatusBadge from "@/components/StatusBadge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import FileUpload from "@/components/FileUpload";
 
 const EMPTY = {
   name: "", tagline: "", status: "UPCOMING", possession: "", location: "", full_address: "", city: "",
   type: "Residential", unit_types: [], key_units: "", price_range: "", rera_numbers: [], rera_registered_date: "",
-  rera_certificate_url: "", amenities: [], description: "", highlights: [], hero_image: "", gallery: [], video_url: "",
+  rera_certificate_url: "", amenities: [], description: "", highlights: [], hero_image: "", logo_image: "", gallery: [], video_url: "",
   brochure_url: "", map_lat: "", map_lng: "", landmarks: [], featured: false, hot_selling: false, order: 99,
 };
 
@@ -119,9 +120,14 @@ export default function AdminProjects() {
             <div className="sm:col-span-2"><label className={lbl}>Description</label><textarea rows={4} className={cls} value={form.description} onChange={(e) => set("description", e.target.value)} /></div>
             <div><label className={lbl}>Highlights (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.highlights)} onChange={(e) => set("highlights", toArr(e.target.value))} /></div>
             <div><label className={lbl}>Amenities (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.amenities)} onChange={(e) => set("amenities", toArr(e.target.value))} /></div>
-            <div className="sm:col-span-2"><label className={lbl}>Hero Image URL</label><input className={cls} value={form.hero_image} onChange={(e) => set("hero_image", e.target.value)} /></div>
-            <div className="sm:col-span-2"><label className={lbl}>Gallery Image URLs (one per line)</label><textarea rows={3} className={cls} value={fromArr(form.gallery)} onChange={(e) => set("gallery", toArr(e.target.value))} /></div>
-            <div><label className={lbl}>Brochure URL</label><input className={cls} value={form.brochure_url} onChange={(e) => set("brochure_url", e.target.value)} /></div>
+            <div className="sm:col-span-2"><FileUpload label="Hero Image (upload or URL)" value={form.hero_image} onChange={(v) => set("hero_image", v)} testid="admin-project-hero" /></div>
+            <div className="sm:col-span-2"><FileUpload label="Logo Image (optional)" value={form.logo_image} onChange={(v) => set("logo_image", v)} testid="admin-project-logo" /></div>
+            <div className="sm:col-span-2">
+              <label className={lbl}>Gallery Image URLs (one per line)</label>
+              <textarea rows={3} className={cls} value={fromArr(form.gallery)} onChange={(e) => set("gallery", toArr(e.target.value))} />
+              <div className="mt-2"><FileUpload label="" value="" onChange={(v) => v && set("gallery", [...(form.gallery || []), v])} testid="admin-project-gallery" /></div>
+            </div>
+            <div className="sm:col-span-2"><FileUpload label="Brochure (PDF upload or URL)" value={form.brochure_url} onChange={(v) => set("brochure_url", v)} accept="application/pdf" isImage={false} testid="admin-project-brochure" /></div>
             <div><label className={lbl}>Landmarks (one per line)</label><textarea rows={3} className={cls} value={fromArr(form.landmarks)} onChange={(e) => set("landmarks", toArr(e.target.value))} /></div>
             <div><label className={lbl}>Map Latitude</label><input className={cls} value={form.map_lat} onChange={(e) => set("map_lat", e.target.value)} placeholder="30.6788" /></div>
             <div><label className={lbl}>Map Longitude</label><input className={cls} value={form.map_lng} onChange={(e) => set("map_lng", e.target.value)} placeholder="76.7369" /></div>

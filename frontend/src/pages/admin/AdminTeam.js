@@ -3,6 +3,7 @@ import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { getTeam, adminCreateTeam, adminUpdateTeam, adminDeleteTeam } from "@/lib/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import FileUpload from "@/components/FileUpload";
 
 const EMPTY = { name: "", role: "", expertise: "", bio: "", image: "", order: 99 };
 const cls = "w-full rounded-lg bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)] px-3 py-2.5 text-sm text-ivory focus:outline-none focus:ring-2 focus:ring-[rgba(212,175,55,0.35)]";
@@ -65,7 +66,7 @@ export default function AdminTeam() {
             <div><label className={lbl}>Role</label><input className={cls} value={form.role} onChange={(e) => set("role", e.target.value)} /></div>
             <div><label className={lbl}>Expertise (1-line)</label><input className={cls} value={form.expertise} onChange={(e) => set("expertise", e.target.value)} /></div>
             <div><label className={lbl}>Bio</label><textarea rows={4} className={cls} value={form.bio} onChange={(e) => set("bio", e.target.value)} /></div>
-            <div><label className={lbl}>Image URL</label><input className={cls} value={form.image} onChange={(e) => set("image", e.target.value)} /></div>
+            <div><FileUpload label="Photo (upload or URL)" value={form.image} onChange={(v) => set("image", v)} testid="admin-team-image" /></div>
             <div><label className={lbl}>Order</label><input type="number" className={cls} value={form.order} onChange={(e) => set("order", e.target.value)} /></div>
           </div>
           <div className="flex justify-end gap-3 mt-6">

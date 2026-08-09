@@ -17,6 +17,8 @@ import Rera from "@/pages/Rera";
 import Contact from "@/pages/Contact";
 import Locations from "@/pages/Locations";
 import BookVisit from "@/pages/BookVisit";
+import Insights from "@/pages/Insights";
+import PostDetail from "@/pages/PostDetail";
 import NotFound from "@/pages/NotFound";
 
 import AdminLogin from "@/pages/admin/AdminLogin";
@@ -28,6 +30,7 @@ import AdminLeads from "@/pages/admin/AdminLeads";
 import AdminVisits from "@/pages/admin/AdminVisits";
 import AdminContent from "@/pages/admin/AdminContent";
 import AdminTeam from "@/pages/admin/AdminTeam";
+import AdminBlog from "@/pages/admin/AdminBlog";
 
 function App() {
   return (
@@ -49,6 +52,8 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/locations" element={<Locations />} />
               <Route path="/book-visit" element={<BookVisit />} />
+              <Route path="/insights" element={<Insights />} />
+              <Route path="/insights/:slug" element={<PostDetail />} />
             </Route>
 
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -60,6 +65,7 @@ function App() {
                 <Route path="/admin/visits" element={<AdminVisits />} />
                 <Route path="/admin/content" element={<AdminContent />} />
                 <Route path="/admin/team" element={<AdminTeam />} />
+                <Route path="/admin/blog" element={<AdminBlog />} />
               </Route>
             </Route>
 

@@ -21,6 +21,8 @@ export const getRera = () => client.get("/rera").then((r) => r.data);
 export const getBrochures = () => client.get("/brochures").then((r) => r.data);
 export const createLead = (payload) => client.post("/leads", payload).then((r) => r.data);
 export const createSiteVisit = (payload) => client.post("/site-visits", payload).then((r) => r.data);
+export const getPosts = (category) => client.get("/posts", { params: category ? { category } : {} }).then((r) => r.data);
+export const getPost = (slug) => client.get(`/posts/${slug}`).then((r) => r.data);
 
 // ---- Admin ----
 export const adminLogin = (payload) => client.post("/admin/login", payload).then((r) => r.data);
@@ -40,5 +42,16 @@ export const adminUpdateContent = (body) => client.put("/admin/content", body).t
 export const adminCreateTeam = (m) => client.post("/admin/team", m).then((r) => r.data);
 export const adminUpdateTeam = (id, m) => client.put(`/admin/team/${id}`, m).then((r) => r.data);
 export const adminDeleteTeam = (id) => client.delete(`/admin/team/${id}`).then((r) => r.data);
+
+export const adminGetPosts = () => client.get("/admin/posts").then((r) => r.data);
+export const adminCreatePost = (p) => client.post("/admin/posts", p).then((r) => r.data);
+export const adminUpdatePost = (id, p) => client.put(`/admin/posts/${id}`, p).then((r) => r.data);
+export const adminDeletePost = (id) => client.delete(`/admin/posts/${id}`).then((r) => r.data);
+
+export const uploadFile = (file) => {
+  const fd = new FormData();
+  fd.append("file", file);
+  return client.post("/admin/upload", fd, { headers: { "Content-Type": "multipart/form-data" } }).then((r) => r.data);
+};
 
 export default client;

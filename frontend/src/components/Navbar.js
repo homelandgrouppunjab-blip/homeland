@@ -10,6 +10,7 @@ const LINKS = [
   { label: "About", to: "/about" },
   { label: "Locations", to: "/locations" },
   { label: "Brochures", to: "/brochures" },
+  { label: "Insights", to: "/insights" },
   { label: "RERA", to: "/rera" },
 ];
 

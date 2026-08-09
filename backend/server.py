@@ -1,11 +1,14 @@
 import os
 import re
 import uuid
+import shutil
 import logging
+from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Query, BackgroundTasks
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Query, BackgroundTasks, UploadFile, File
+from fastapi.responses import FileResponse
 from starlette.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
@@ -15,6 +18,10 @@ from auth import (
 )
 import seed_data
 import email_utils
+
+UPLOAD_DIR = Path(__file__).parent / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
+ALLOWED_EXT = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif", ".pdf"}
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -152,6 +159,25 @@ class SiteVisit(BaseModel):
     created_at: str = Field(default_factory=now_iso)
 
 
+class PostBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    title: str
+    slug: Optional[str] = None
+    category: str = "Blog"  # Blog | News | Media
+    excerpt: str = ""
+    content: str = ""
+    cover_image: str = ""
+    author: str = "Homeland Group"
+    date: str = ""
+    published: bool = True
+
+
+class Post(PostBase):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    created_at: str = Field(default_factory=now_iso)
+    updated_at: str = Field(default_factory=now_iso)
+
+
 
 # ---------------- Seeding ----------------
 async def seed_database():
@@ -200,6 +226,15 @@ async def seed_database():
         {"slug": "homeland-regalia"},
         {"$set": {"logo_image": "/regalia-logo.png"}},
     )
+
+    # Posts (Blog / News / Media)
+    if await db.posts.count_documents({}) == 0:
+        for p in seed_data.POSTS:
+            post = Post(**p)
+            if not post.slug:
+                post.slug = slugify(post.title)
+            await db.posts.insert_one(post.model_dump())
+        logger.info("Seeded posts")
 
 
 @app.on_event("startup")
@@ -281,6 +316,33 @@ async def get_faqs():
     docs = await db.faqs.find({}, {"_id": 0}).to_list(100)
     docs.sort(key=lambda d: d.get("order", 99))
     return docs
+
+
+@api_router.get("/posts")
+async def list_posts(category: Optional[str] = None):
+    query = {"published": True}
+    if category and category != "All":
+        query["category"] = category
+    docs = await db.posts.find(query, {"_id": 0}).to_list(500)
+    docs.sort(key=lambda d: d.get("date", ""), reverse=True)
+    return docs
+
+
+@api_router.get("/posts/{slug}")
+async def get_post(slug: str):
+    doc = await db.posts.find_one({"slug": slug}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return doc
+
+
+@api_router.get("/uploads/{filename}")
+async def serve_upload(filename: str):
+    safe = os.path.basename(filename)
+    path = UPLOAD_DIR / safe
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(str(path))
 
 
 @api_router.get("/rera")
@@ -536,6 +598,63 @@ async def update_faq(faq_id: str, body: dict, admin=Depends(get_current_admin)):
 @api_router.delete("/admin/faqs/{faq_id}")
 async def delete_faq(faq_id: str, admin=Depends(get_current_admin)):
     await db.faqs.delete_one({"id": faq_id})
+    return {"success": True}
+
+
+# ---------------- Admin: File Upload ----------------
+@api_router.post("/admin/upload")
+async def upload_file(file: UploadFile = File(...), admin=Depends(get_current_admin)):
+    ext = os.path.splitext(file.filename or "")[1].lower()
+    if ext not in ALLOWED_EXT:
+        raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}")
+    fname = f"{uuid.uuid4().hex}{ext}"
+    dest = UPLOAD_DIR / fname
+    with dest.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    return {"url": f"/api/uploads/{fname}", "filename": fname}
+
+
+# ---------------- Admin: Posts (Blog / News / Media) ----------------
+@api_router.get("/admin/posts")
+async def admin_list_posts(admin=Depends(get_current_admin)):
+    docs = await db.posts.find({}, {"_id": 0}).to_list(500)
+    docs.sort(key=lambda d: d.get("date", ""), reverse=True)
+    return docs
+
+
+@api_router.post("/admin/posts", response_model=Post)
+async def create_post(payload: PostBase, admin=Depends(get_current_admin)):
+    post = Post(**payload.model_dump())
+    if not post.slug:
+        post.slug = slugify(post.title)
+    if await db.posts.find_one({"slug": post.slug}):
+        post.slug = f"{post.slug}-{post.id[:6]}"
+    if not post.date:
+        post.date = now_iso()[:10]
+    await db.posts.insert_one(post.model_dump())
+    return post
+
+
+@api_router.put("/admin/posts/{post_id}", response_model=Post)
+async def update_post(post_id: str, payload: PostBase, admin=Depends(get_current_admin)):
+    existing = await db.posts.find_one({"id": post_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Post not found")
+    data = payload.model_dump()
+    if not data.get("slug"):
+        data["slug"] = slugify(data["title"])
+    data["id"] = post_id
+    data["created_at"] = existing.get("created_at", now_iso())
+    data["updated_at"] = now_iso()
+    await db.posts.replace_one({"id": post_id}, data)
+    return Post(**data)
+
+
+@api_router.delete("/admin/posts/{post_id}")
+async def delete_post(post_id: str, admin=Depends(get_current_admin)):
+    res = await db.posts.delete_one({"id": post_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Post not found")
     return {"success": True}
 
 

@@ -392,3 +392,43 @@ FAQS = [
     {"q": "Can I schedule a site visit?", "a": "Absolutely. Use the enquiry form or call our sales team to schedule a guided site visit at your preferred time."},
     {"q": "Are home loans available on Homeland projects?", "a": "Yes, our projects are approved by leading banks and financial institutions. Our team can connect you with loan partners for the best rates."},
 ]
+
+
+POSTS = [
+    {
+        "title": "Homeland Regalia: Setting a New Benchmark for Luxury in Mohali",
+        "slug": "homeland-regalia-new-benchmark-luxury-mohali",
+        "category": "News",
+        "excerpt": "With six iconic towers on International Airport Road, Homeland Regalia is redefining premium living in the Tricity.",
+        "content": "Homeland Regalia continues to attract discerning home-buyers with its six iconic towers, world-class amenities and unmatched connectivity in Sector 77, Mohali. Designed as a true symbol of royalty, the project offers 3, 4 and 5 BHK sky residences with panoramic Shivalik views.\n\nFrom an all-season indoor pool and grand clubhouse to a full-size tennis court and reflexology plaza, every detail has been curated for an elevated lifestyle. Construction is progressing steadily with possession targeted for December 2026.",
+        "cover_image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80",
+        "author": "Homeland Group", "date": "2026-01-15", "published": True,
+    },
+    {
+        "title": "Why New Chandigarh is the Tricity's Next Investment Hotspot",
+        "slug": "new-chandigarh-next-investment-hotspot",
+        "category": "Blog",
+        "excerpt": "Green master-planning, IT City proximity and landmark developments are driving unprecedented interest in New Chandigarh.",
+        "content": "New Chandigarh (Mullanpur) has emerged as one of North India's most promising real estate destinations. With planned green boulevards, proximity to IT City and Medicity, and a wave of premium developments like Homeland Global Park and Homeland Infinia, the region offers both lifestyle and strong appreciation potential.\n\nInvestors are drawn to the low-density planning, clean air at the Shivalik foothills, and excellent connectivity to Chandigarh. For end-users and investors alike, New Chandigarh represents a rare blend of nature and modern infrastructure.",
+        "cover_image": "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1600&q=80",
+        "author": "Homeland Group", "date": "2026-02-02", "published": True,
+    },
+    {
+        "title": "Homeland Group Expands into Amritsar, Himachal & Goa",
+        "slug": "homeland-group-expands-amritsar-himachal-goa",
+        "category": "Media",
+        "excerpt": "The Group announces an ambitious pipeline spanning mixed-use, boutique residences and vacation homes.",
+        "content": "Homeland Group has announced a major expansion of its portfolio with upcoming projects across Punjab, Himachal Pradesh and Goa. Homeland Ranjit Avenue brings a landmark mixed-use development to Amritsar, while Homeland Vaana introduces ultra-luxury hillside villas in Dharampur, Himachal Pradesh.\n\nIn Goa, Ikaahi Homes offers boutique vacation residences designed for leisure and investment. Closer to home, Homeland Leisure Valley will deliver boutique 4 & 5 BHK residences on the Mohali-Chandigarh border. Together, these projects underline the Group's vision of crafting iconic addresses across India.",
+        "cover_image": "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=1600&q=80",
+        "author": "Homeland Group", "date": "2026-03-10", "published": True,
+    },
+    {
+        "title": "5 Things to Check Before Buying a RERA-Registered Home",
+        "slug": "5-things-check-before-buying-rera-registered-home",
+        "category": "Blog",
+        "excerpt": "A quick buyer's guide to making a confident, transparent property purchase.",
+        "content": "Buying a home is one of life's biggest decisions. Here are five things every buyer should verify:\n\n1. RERA registration number and project approval.\n2. Clear title and land ownership documents.\n3. Approved building plans and possession timelines.\n4. Specifications, amenities and carpet area in the agreement.\n5. Developer track record and delivery history.\n\nEvery Homeland project is RERA-registered and built on a foundation of transparency, quality and timely delivery.",
+        "cover_image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80",
+        "author": "Homeland Group", "date": "2026-03-28", "published": True,
+    },
+]
