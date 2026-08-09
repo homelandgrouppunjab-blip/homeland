@@ -1,0 +1,40 @@
+import axios from "axios";
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+export const API = `${BACKEND_URL}/api`;
+
+const client = axios.create({ baseURL: API });
+
+client.interceptors.request.use((config) => {
+  const token = localStorage.getItem("hg_token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// ---- Public ----
+export const getProjects = (params = {}) => client.get("/projects", { params }).then((r) => r.data);
+export const getProject = (slug) => client.get(`/projects/${slug}`).then((r) => r.data);
+export const getContent = () => client.get("/content").then((r) => r.data);
+export const getTeam = () => client.get("/team").then((r) => r.data);
+export const getFaqs = () => client.get("/faqs").then((r) => r.data);
+export const getRera = () => client.get("/rera").then((r) => r.data);
+export const getBrochures = () => client.get("/brochures").then((r) => r.data);
+export const createLead = (payload) => client.post("/leads", payload).then((r) => r.data);
+
+// ---- Admin ----
+export const adminLogin = (payload) => client.post("/admin/login", payload).then((r) => r.data);
+export const adminMe = () => client.get("/admin/me").then((r) => r.data);
+export const adminStats = () => client.get("/admin/stats").then((r) => r.data);
+export const adminGetProjects = () => client.get("/admin/projects").then((r) => r.data);
+export const adminCreateProject = (p) => client.post("/admin/projects", p).then((r) => r.data);
+export const adminUpdateProject = (id, p) => client.put(`/admin/projects/${id}`, p).then((r) => r.data);
+export const adminDeleteProject = (id) => client.delete(`/admin/projects/${id}`).then((r) => r.data);
+export const adminGetLeads = () => client.get("/admin/leads").then((r) => r.data);
+export const adminUpdateLead = (id, status) => client.put(`/admin/leads/${id}`, { status }).then((r) => r.data);
+export const adminDeleteLead = (id) => client.delete(`/admin/leads/${id}`).then((r) => r.data);
+export const adminUpdateContent = (body) => client.put("/admin/content", body).then((r) => r.data);
+export const adminCreateTeam = (m) => client.post("/admin/team", m).then((r) => r.data);
+export const adminUpdateTeam = (id, m) => client.put(`/admin/team/${id}`, m).then((r) => r.data);
+export const adminDeleteTeam = (id) => client.delete(`/admin/team/${id}`).then((r) => r.data);
+
+export default client;
