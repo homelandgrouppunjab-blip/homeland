@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ArrowRight, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import StatusBadge from "@/components/StatusBadge";
+import LogoPlaque from "@/components/LogoPlaque";
 
 export const HeroSlider = ({ projects = [] }) => {
   const [i, setI] = useState(0);
@@ -52,9 +53,7 @@ export const HeroSlider = ({ projects = [] }) => {
               {p.hot_selling && <span className="rounded-full bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold">Hot Selling</span>}
             </div>
             {p.logo_image ? (
-              <div className="inline-block rounded-2xl border border-[color:var(--border-gold)] shadow-[0_20px_60px_rgba(0,0,0,0.55)] bg-[#F7F3EE] px-6 py-4">
-                <img src={p.logo_image} alt={p.name} className="h-24 sm:h-32 lg:h-36 w-auto block object-contain" />
-              </div>
+              <LogoPlaque src={p.logo_image} alt={p.name} size="lg" />
             ) : (
               <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl leading-[1.02] text-ivory">{p.name}</h1>
             )}

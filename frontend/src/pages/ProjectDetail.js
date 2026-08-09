@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { getProject, getProjects } from "@/lib/api";
 import StatusBadge from "@/components/StatusBadge";
 import ProjectMap from "@/components/ProjectMap";
+import LogoPlaque from "@/components/LogoPlaque";
 import EnquiryForm from "@/components/EnquiryForm";
 import FadeUp from "@/components/FadeUp";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -44,8 +45,8 @@ export default function ProjectDetail() {
         <div className="absolute inset-0 flex flex-col justify-end">
           <div className="container-lux pb-10">
             {p.logo_image && (
-              <div className="inline-block rounded-2xl border border-[color:var(--border-gold)] shadow-[0_16px_50px_rgba(0,0,0,0.55)] bg-[#F7F3EE] px-5 py-3.5 mb-5">
-                <img src={p.logo_image} alt={`${p.name} logo`} className="h-20 sm:h-24 w-auto block object-contain" />
+              <div className="mb-5">
+                <LogoPlaque src={p.logo_image} alt={`${p.name} logo`} size="md" />
               </div>
             )}
             <div className="flex flex-wrap items-center gap-3 mb-4">

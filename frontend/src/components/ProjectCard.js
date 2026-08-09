@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { MapPin, ArrowRight, FileText, ShieldCheck } from "lucide-react";
 import StatusBadge from "@/components/StatusBadge";
+import LogoPlaque from "@/components/LogoPlaque";
 
 export const ProjectCard = ({ project }) => {
   const p = project;
@@ -16,8 +17,8 @@ export const ProjectCard = ({ project }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
         {p.logo_image && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl border border-[color:var(--border-gold)] shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-[#F7F3EE] px-4 py-3">
-            <img src={p.logo_image} alt={`${p.name} logo`} loading="lazy" className="h-12 w-auto block object-contain" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <LogoPlaque src={p.logo_image} alt={`${p.name} logo`} size="sm" />
           </div>
         )}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
