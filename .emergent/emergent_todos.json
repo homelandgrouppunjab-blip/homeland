@@ -1,0 +1,26 @@
+[
+  {
+    "content": "Get premium black+gold design guidelines from design_agent",
+    "status": "in_progress"
+  },
+  {
+    "content": "Phase 1: Backend - models, seed data, projects/leads/content/team/RERA APIs, JWT admin auth",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 1: Frontend public site - home, about/history, benchmark, vision/team, projects, detail, compare, upcoming, brochure center, RERA, enquiry, maps",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 1: Admin dashboard - login + CRUD for projects/content/team/RERA + leads inbox",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 1: All user stories covered in development",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 1: End to End Testing using Testing Agent",
+    "status": "pending"
+  }
+]
