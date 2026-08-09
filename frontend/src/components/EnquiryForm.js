@@ -81,10 +81,13 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
           <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
             <SelectItem value="Any">Any Project</SelectItem>
             {projects.map((p) => {
-              const loc = [p.location, p.city].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(", ");
+              const loc = p.location || "";
+              const city = p.city || "";
+              const showCity = city && !loc.toLowerCase().includes(city.toLowerCase());
+              const label = [loc, showCity ? city : ""].filter(Boolean).join(", ");
               return (
                 <SelectItem key={p.slug || p.name} value={p.name}>
-                  {p.name}{loc ? ` — ${loc}` : ""}
+                  {p.name}{label ? ` — ${label}` : ""}
                 </SelectItem>
               );
             })}
