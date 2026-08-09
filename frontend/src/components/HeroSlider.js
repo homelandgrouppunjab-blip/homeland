@@ -52,8 +52,8 @@ export const HeroSlider = ({ projects = [] }) => {
               {p.hot_selling && <span className="rounded-full bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold">Hot Selling</span>}
             </div>
             {p.logo_image ? (
-              <div className="inline-block rounded-2xl overflow-hidden border border-[color:var(--border-gold)] shadow-[0_20px_60px_rgba(0,0,0,0.55)] bg-black/30 backdrop-blur-[2px]">
-                <img src={p.logo_image} alt={p.name} className="h-32 sm:h-44 lg:h-52 w-auto block" />
+              <div className="inline-block rounded-2xl border border-[color:var(--border-gold)] shadow-[0_20px_60px_rgba(0,0,0,0.55)] bg-[#F7F3EE] px-6 py-4">
+                <img src={p.logo_image} alt={p.name} className="h-24 sm:h-32 lg:h-36 w-auto block object-contain" />
               </div>
             ) : (
               <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl leading-[1.02] text-ivory">{p.name}</h1>

@@ -44,8 +44,8 @@ export default function ProjectDetail() {
         <div className="absolute inset-0 flex flex-col justify-end">
           <div className="container-lux pb-10">
             {p.logo_image && (
-              <div className="inline-block rounded-2xl overflow-hidden border border-[color:var(--border-gold)] shadow-[0_16px_50px_rgba(0,0,0,0.55)] bg-black/30 backdrop-blur-[2px] mb-5">
-                <img src={p.logo_image} alt={`${p.name} logo`} className="h-24 sm:h-32 w-auto block" />
+              <div className="inline-block rounded-2xl border border-[color:var(--border-gold)] shadow-[0_16px_50px_rgba(0,0,0,0.55)] bg-[#F7F3EE] px-5 py-3.5 mb-5">
+                <img src={p.logo_image} alt={`${p.name} logo`} className="h-20 sm:h-24 w-auto block object-contain" />
               </div>
             )}
             <div className="flex flex-wrap items-center gap-3 mb-4">
