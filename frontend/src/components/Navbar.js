@@ -24,6 +24,7 @@ export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [social, setSocial] = useState({});
+  const [siteLogo, setSiteLogo] = useState("");
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    getContent().then((c) => setSocial(c?.social || {})).catch(() => {});
+    getContent().then((c) => { setSocial(c?.social || {}); setSiteLogo(c?.site_logo || ""); }).catch(() => {});
   }, []);
 
   const socialLinks = SOCIAL_ICONS.filter((s) => social[s.key]);
@@ -46,7 +47,7 @@ export const Navbar = () => {
     >
       <div className="container-lux flex h-20 items-center justify-between">
         <Link to="/" data-testid="nav-logo" className="flex items-center">
-          <img src="/homeland-logo.webp" alt="Homeland Group" className="h-[19px] sm:h-[22px] w-auto" />
+          <img src={siteLogo || "/homeland-logo.webp"} alt="Homeland Group" className="h-[19px] sm:h-[22px] w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">

@@ -1,22 +1,18 @@
 [
   {
-    "content": "Extract shared EnquiryModal from EnquiryPopup (proven markup) + add onSuccess to EnquiryForm",
+    "content": "Enquiry dropdown: show project sector/city",
     "status": "completed"
   },
   {
-    "content": "Build Exit-Intent popup (once per session, skip if lead already submitted)",
+    "content": "AdminContent: add History paragraphs, Awards, Social, Site Logo editors",
     "status": "completed"
   },
   {
-    "content": "Add Awards data + elegant Awards band on About page",
+    "content": "Wire editable site logo into Navbar & Footer (with fallback)",
     "status": "completed"
   },
   {
-    "content": "Change logo plaque inner layer to transparent grey",
-    "status": "completed"
-  },
-  {
-    "content": "Verify via testing agent (exit popup + awards strip + logo inner color)",
+    "content": "Verify via testing agent (admin content CRUD + enquiry dropdown)",
     "status": "in_progress"
   }
 ]

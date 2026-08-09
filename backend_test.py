@@ -489,9 +489,9 @@ class HomelandAPITester:
                 "DELETE", f"admin/site-visits/{self.visit_id}", 200
             )
 
-        # Test 35: PUT /api/admin/content
+        # Test 35: PUT /api/admin/content (basic update)
         success, content = self.run_test(
-            "PUT /api/admin/content",
+            "PUT /api/admin/content (basic update)",
             "PUT", "admin/content", 200,
             data={
                 "key": "main",
@@ -499,6 +499,145 @@ class HomelandAPITester:
                 "tagline": "Building Dreams, Creating Landmarks"
             }
         )
+
+        # ========== CONTENT MANAGEMENT TESTS (NEW FEATURES) ==========
+        print("\n" + "="*60)
+        print("TESTING CONTENT MANAGEMENT (History, Awards, Social, Logo)")
+        print("="*60)
+
+        # Test 35a: GET /api/content (verify new fields exist)
+        success, content = self.run_test(
+            "GET /api/content (verify new fields)",
+            "GET", "content", 200
+        )
+        if success:
+            # Check for history_full array
+            if 'history_full' in content and isinstance(content['history_full'], list):
+                print(f"   ✅ history_full field present: {len(content['history_full'])} paragraphs")
+            else:
+                print(f"   ⚠️  history_full field missing or not an array")
+                self.failed_tests.append("Content missing history_full array")
+            
+            # Check for awards array
+            if 'awards' in content and isinstance(content['awards'], list):
+                print(f"   ✅ awards field present: {len(content['awards'])} awards")
+            else:
+                print(f"   ⚠️  awards field missing or not an array")
+                self.failed_tests.append("Content missing awards array")
+            
+            # Check for social object
+            if 'social' in content and isinstance(content['social'], dict):
+                social_keys = list(content['social'].keys())
+                print(f"   ✅ social field present with keys: {social_keys}")
+            else:
+                print(f"   ⚠️  social field missing or not an object")
+                self.failed_tests.append("Content missing social object")
+            
+            # Check for site_logo
+            if 'site_logo' in content:
+                print(f"   ✅ site_logo field present: {content.get('site_logo', 'empty')}")
+            else:
+                print(f"   ⚠️  site_logo field missing")
+                self.failed_tests.append("Content missing site_logo field")
+
+        # Test 35b: PUT /api/admin/content (update history_full)
+        timestamp = datetime.now().strftime('%H%M%S')
+        test_history = [
+            f"Test history paragraph 1 - {timestamp}",
+            f"Test history paragraph 2 - {timestamp}",
+            f"Test history paragraph 3 - {timestamp}"
+        ]
+        success, updated_content = self.run_test(
+            "PUT /api/admin/content (update history_full)",
+            "PUT", "admin/content", 200,
+            data={
+                **content,  # Keep existing content
+                "history_full": test_history
+            }
+        )
+        if success:
+            if updated_content.get('history_full') == test_history:
+                print(f"   ✅ history_full updated successfully")
+            else:
+                print(f"   ⚠️  history_full not updated correctly")
+                self.failed_tests.append("history_full update failed")
+
+        # Test 35c: PUT /api/admin/content (update awards)
+        test_awards = [
+            {"title": f"Test Award 1 - {timestamp}", "year": "2024"},
+            {"title": f"Test Award 2 - {timestamp}", "year": "2025"}
+        ]
+        success, updated_content = self.run_test(
+            "PUT /api/admin/content (update awards)",
+            "PUT", "admin/content", 200,
+            data={
+                **content,
+                "awards": test_awards
+            }
+        )
+        if success:
+            if len(updated_content.get('awards', [])) == 2:
+                print(f"   ✅ awards updated successfully: {len(updated_content['awards'])} awards")
+            else:
+                print(f"   ⚠️  awards not updated correctly")
+                self.failed_tests.append("awards update failed")
+
+        # Test 35d: PUT /api/admin/content (update social links)
+        test_social = {
+            "instagram": f"https://instagram.com/test{timestamp}",
+            "facebook": f"https://facebook.com/test{timestamp}",
+            "linkedin": f"https://linkedin.com/test{timestamp}",
+            "youtube": f"https://youtube.com/test{timestamp}"
+        }
+        success, updated_content = self.run_test(
+            "PUT /api/admin/content (update social links)",
+            "PUT", "admin/content", 200,
+            data={
+                **content,
+                "social": test_social
+            }
+        )
+        if success:
+            if updated_content.get('social', {}).get('instagram') == test_social['instagram']:
+                print(f"   ✅ social links updated successfully")
+            else:
+                print(f"   ⚠️  social links not updated correctly")
+                self.failed_tests.append("social links update failed")
+
+        # Test 35e: PUT /api/admin/content (update site_logo)
+        test_logo = f"https://example.com/test-logo-{timestamp}.png"
+        success, updated_content = self.run_test(
+            "PUT /api/admin/content (update site_logo)",
+            "PUT", "admin/content", 200,
+            data={
+                **content,
+                "site_logo": test_logo
+            }
+        )
+        if success:
+            if updated_content.get('site_logo') == test_logo:
+                print(f"   ✅ site_logo updated successfully")
+            else:
+                print(f"   ⚠️  site_logo not updated correctly")
+                self.failed_tests.append("site_logo update failed")
+
+        # Test 35f: GET /api/content (verify persistence)
+        success, final_content = self.run_test(
+            "GET /api/content (verify persistence after updates)",
+            "GET", "content", 200
+        )
+        if success:
+            persistence_ok = True
+            if final_content.get('site_logo') != test_logo:
+                print(f"   ⚠️  site_logo not persisted")
+                persistence_ok = False
+            if final_content.get('social', {}).get('instagram') != test_social['instagram']:
+                print(f"   ⚠️  social links not persisted")
+                persistence_ok = False
+            if persistence_ok:
+                print(f"   ✅ All content updates persisted correctly")
+            else:
+                self.failed_tests.append("Content updates not persisted")
 
         # Test 36: POST /api/admin/team (create)
         timestamp = datetime.now().strftime('%H%M%S')

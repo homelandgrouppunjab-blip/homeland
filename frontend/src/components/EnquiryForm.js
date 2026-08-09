@@ -80,7 +80,14 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
           <SelectTrigger data-testid="enquiry-project-select" className={inputCls}><SelectValue /></SelectTrigger>
           <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
             <SelectItem value="Any">Any Project</SelectItem>
-            {projects.map((p) => <SelectItem key={p.slug || p.name} value={p.name}>{p.name}</SelectItem>)}
+            {projects.map((p) => {
+              const loc = [p.location, p.city].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(", ");
+              return (
+                <SelectItem key={p.slug || p.name} value={p.name}>
+                  {p.name}{loc ? ` — ${loc}` : ""}
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
       </div>

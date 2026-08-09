@@ -14,7 +14,7 @@ export const Footer = () => {
       <div className="container-lux py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-1">
-            <img src="/homeland-logo.webp" alt="Homeland Group" className="h-9 w-auto" />
+            <img src={content?.site_logo || "/homeland-logo.webp"} alt="Homeland Group" className="h-9 w-auto" />
             <p className="mt-4 text-sm text-[color:var(--lux-ivory)]/60 leading-relaxed">
               {content?.brand_tagline || "Crafting iconic addresses across Punjab & the Tricity."}
             </p>
