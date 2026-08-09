@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const inputCls =
   "w-full rounded-xl bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)] px-4 py-3 text-sm text-ivory placeholder:text-[color:var(--lux-ivory)]/40 focus:outline-none focus:ring-2 focus:ring-[rgba(212,175,55,0.35)] focus:border-[color:var(--border-gold)] transition-colors";
 
-export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = false }) => {
+export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = false, onSuccess }) => {
   const [form, setForm] = useState({
     name: "", email: "", phone: "", project: defaultProject,
     requirement: "Residential", budget: "", message: "", preferred_contact_time: "", website: "",
@@ -35,6 +35,7 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
     try {
       await createLead(form);
       setDone(true);
+      if (onSuccess) onSuccess();
       toast.success("Thank you! Our team will reach out to you shortly.");
     } catch (err) {
       toast.error("Something went wrong. Please try again.");

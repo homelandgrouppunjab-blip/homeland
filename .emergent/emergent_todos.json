@@ -1,22 +1,22 @@
 [
   {
-    "content": "Update DB: apply 5 logos to Leisure Valley, Ranjit Avenue, Vaana, Ikaahi, Infinia",
+    "content": "Extract shared EnquiryModal from EnquiryPopup (proven markup) + add onSuccess to EnquiryForm",
     "status": "completed"
   },
   {
-    "content": "Update site_content with summarized Homeland Group history from official about page",
+    "content": "Build Exit-Intent popup (once per session, skip if lead already submitted)",
     "status": "completed"
   },
   {
-    "content": "Render history summary after 'A Legacy of Iconic Living' on Home (and About)",
+    "content": "Add Awards data + elegant Awards band on About page",
     "status": "completed"
   },
   {
-    "content": "Add 'Under Designing' badge on upcoming project cards & detail pages",
+    "content": "Change logo plaque inner layer to transparent grey",
     "status": "completed"
   },
   {
-    "content": "Verify via screenshots (upcoming page, detail pages, home history)",
-    "status": "completed"
+    "content": "Verify via testing agent (exit popup + awards strip + logo inner color)",
+    "status": "in_progress"
   }
 ]

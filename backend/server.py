@@ -256,6 +256,14 @@ async def seed_database():
                 "linkedin": "https://www.linkedin.com/company/homelandgroup/about/",
                 "youtube": "https://www.youtube.com/channel/UCwB0jXrywTjCebCTfC8Xlmw",
             },
+            "awards": [
+                {"title": "Emerging Tricity Award", "year": "2023"},
+                {"title": "Build X Punjab Award", "year": "2023"},
+                {"title": "360 Real Estate Award", "year": "2023"},
+                {"title": "Certificate of Excellence", "year": "2023"},
+                {"title": "CSR Ready Memorial Award", "year": "2023"},
+                {"title": "Homeland Excellence Award", "year": "2023"},
+            ],
         }},
     )
 

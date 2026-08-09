@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Award } from "lucide-react";
 import { getContent } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import FadeUp from "@/components/FadeUp";
@@ -25,6 +26,29 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      {(c?.awards || []).length > 0 && (
+        <section className="section-pad bg-[color:var(--lux-obsidian)] border-y border-[color:var(--border-hairline)]" data-testid="about-awards-section">
+          <div className="container-lux">
+            <SectionHeading align="center" kicker="Recognition" title="Awards & Honours" subtitle="Independent recognition of our commitment to design, delivery and responsible growth." />
+            <div className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-4">
+              {c.awards.map((a, i) => (
+                <FadeUp key={i} delay={i * 0.05}>
+                  <div data-testid={`about-award-${i}`} className="group h-full flex items-center gap-4 rounded-2xl bg-glass hairline p-5 hover:border-[color:var(--border-gold)] transition-colors">
+                    <div className="h-11 w-11 shrink-0 grid place-items-center rounded-full bg-[rgba(212,175,55,0.1)] border border-[rgba(212,175,55,0.3)]">
+                      <Award className="h-5 w-5 text-gold" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-ivory leading-snug">{a.title}</div>
+                      {a.year && <div className="text-xs text-gold tabular-nums mt-0.5">{a.year}</div>}
+                    </div>
+                  </div>
+                </FadeUp>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="section-pad bg-[color:var(--lux-obsidian)] border-y border-[color:var(--border-hairline)]">
         <div className="container-lux">

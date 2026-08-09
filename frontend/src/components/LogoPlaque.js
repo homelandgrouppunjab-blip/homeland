@@ -15,7 +15,7 @@ export const LogoPlaque = ({ src, alt, size = "md", className = "", testId }) =>
       data-testid={testId}
       className={`inline-block ${s.outer} bg-[#2B2B2B]/50 backdrop-blur-md ring-1 ring-white/10 shadow-[0_16px_50px_rgba(0,0,0,0.5)] ${className}`}
     >
-      <div className={`${s.inner} bg-white/85 backdrop-blur-xl ring-1 ring-white/60`}>
+      <div className={`${s.inner} bg-[#454545]/40 backdrop-blur-xl ring-1 ring-white/10`}>
         <img src={src} alt={alt} loading="lazy" className={`${s.img} w-auto block object-contain`} />
       </div>
     </div>
