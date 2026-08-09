@@ -5,7 +5,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Query
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Query, BackgroundTasks
 from starlette.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
@@ -14,6 +14,7 @@ from auth import (
     hash_password, verify_password, create_access_token, get_current_admin,
 )
 import seed_data
+import email_utils
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -61,6 +62,7 @@ class ProjectBase(BaseModel):
     description: str = ""
     highlights: List[str] = []
     hero_image: str = ""
+    logo_image: str = ""
     gallery: List[str] = []
     video_url: str = ""
     brochure_url: str = ""
@@ -122,6 +124,35 @@ class TeamMember(BaseModel):
     order: int = 99
 
 
+class SiteVisitCreate(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    name: str
+    email: EmailStr
+    phone: str
+    project: str = "Any"
+    visit_date: str = ""
+    time_slot: str = ""
+    guests: str = ""
+    notes: str = ""
+    website: str = ""  # honeypot
+
+
+class SiteVisit(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: str
+    phone: str
+    project: str = "Any"
+    visit_date: str = ""
+    time_slot: str = ""
+    guests: str = ""
+    notes: str = ""
+    status: str = "new"  # new | confirmed | completed | cancelled
+    created_at: str = Field(default_factory=now_iso)
+
+
+
 # ---------------- Seeding ----------------
 async def seed_database():
     # Admin user
@@ -163,6 +194,12 @@ async def seed_database():
             tm = TeamMember(**t)
             await db.team.insert_one(tm.model_dump())
         logger.info("Seeded team")
+
+    # Migration: ensure Regalia has its brand logo
+    await db.projects.update_one(
+        {"slug": "homeland-regalia"},
+        {"$set": {"logo_image": "/regalia-logo.png"}},
+    )
 
 
 @app.on_event("startup")
@@ -283,7 +320,7 @@ async def get_brochures():
 
 
 @api_router.post("/leads", response_model=Lead)
-async def create_lead(payload: LeadCreate):
+async def create_lead(payload: LeadCreate, background: BackgroundTasks):
     # Honeypot: silently accept but don't store bots
     if payload.website:
         return Lead(name=payload.name, email=str(payload.email), phone=payload.phone)
@@ -294,7 +331,24 @@ async def create_lead(payload: LeadCreate):
     )
     await db.leads.insert_one(lead.model_dump())
     logger.info(f"New lead: {lead.name} / {lead.project}")
+    subject, html = email_utils.lead_email(lead.model_dump())
+    background.add_task(email_utils.send_notification, subject, html)
     return lead
+
+
+@api_router.post("/site-visits", response_model=SiteVisit)
+async def create_site_visit(payload: SiteVisitCreate, background: BackgroundTasks):
+    if payload.website:
+        return SiteVisit(name=payload.name, email=str(payload.email), phone=payload.phone)
+    visit = SiteVisit(
+        name=payload.name, email=str(payload.email), phone=payload.phone, project=payload.project,
+        visit_date=payload.visit_date, time_slot=payload.time_slot, guests=payload.guests, notes=payload.notes,
+    )
+    await db.site_visits.insert_one(visit.model_dump())
+    logger.info(f"New site visit: {visit.name} / {visit.project} / {visit.visit_date}")
+    subject, html = email_utils.visit_email(visit.model_dump())
+    background.add_task(email_utils.send_notification, subject, html)
+    return visit
 
 
 # ---------------- Admin: Auth ----------------
@@ -320,6 +374,8 @@ async def admin_stats(admin=Depends(get_current_admin)):
     upcoming = await db.projects.count_documents({"status": "UPCOMING"})
     total_leads = await db.leads.count_documents({})
     new_leads = await db.leads.count_documents({"status": "new"})
+    total_visits = await db.site_visits.count_documents({})
+    new_visits = await db.site_visits.count_documents({"status": "new"})
     return {
         "total_projects": total_projects,
         "delivered": delivered,
@@ -327,6 +383,8 @@ async def admin_stats(admin=Depends(get_current_admin)):
         "upcoming": upcoming,
         "total_leads": total_leads,
         "new_leads": new_leads,
+        "total_visits": total_visits,
+        "new_visits": new_visits,
     }
 
 
@@ -395,6 +453,31 @@ async def delete_lead(lead_id: str, admin=Depends(get_current_admin)):
     res = await db.leads.delete_one({"id": lead_id})
     if res.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Lead not found")
+    return {"success": True}
+
+
+# ---------------- Admin: Site Visits ----------------
+@api_router.get("/admin/site-visits")
+async def admin_list_visits(admin=Depends(get_current_admin)):
+    docs = await db.site_visits.find({}, {"_id": 0}).to_list(1000)
+    docs.sort(key=lambda d: d.get("created_at", ""), reverse=True)
+    return docs
+
+
+@api_router.put("/admin/site-visits/{visit_id}")
+async def update_visit(visit_id: str, body: dict, admin=Depends(get_current_admin)):
+    res = await db.site_visits.update_one({"id": visit_id}, {"$set": {"status": body.get("status", "new")}})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Site visit not found")
+    doc = await db.site_visits.find_one({"id": visit_id}, {"_id": 0})
+    return doc
+
+
+@api_router.delete("/admin/site-visits/{visit_id}")
+async def delete_visit(visit_id: str, admin=Depends(get_current_admin)):
+    res = await db.site_visits.delete_one({"id": visit_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Site visit not found")
     return {"success": True}
 
 

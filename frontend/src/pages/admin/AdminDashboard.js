@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Building2, Inbox, CheckCircle2, Clock, ArrowRight } from "lucide-react";
+import { Building2, Inbox, CheckCircle2, Clock, ArrowRight, CalendarClock } from "lucide-react";
 import { adminStats, adminGetLeads } from "@/lib/api";
 
 export default function AdminDashboard() {
@@ -13,9 +13,9 @@ export default function AdminDashboard() {
 
   const cards = [
     { label: "Total Projects", value: stats?.total_projects, icon: Building2 },
-    { label: "Delivered", value: stats?.delivered, icon: CheckCircle2 },
-    { label: "Ongoing", value: stats?.ongoing, icon: Clock },
     { label: "Total Leads", value: stats?.total_leads, icon: Inbox },
+    { label: "Site Visits", value: stats?.total_visits, icon: CalendarClock },
+    { label: "Ongoing", value: stats?.ongoing, icon: Clock },
   ];
 
   return (

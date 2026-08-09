@@ -1,30 +1,30 @@
 [
   {
-    "content": "Get premium black+gold design guidelines from design_agent",
+    "content": "Download Regalia logo to frontend/public and add logo_image field to Regalia project",
     "status": "completed"
   },
   {
-    "content": "Phase 1: Backend - models, seed data, projects/leads/content/team/RERA APIs, JWT admin auth",
+    "content": "Backend: SiteVisit model + public/admin endpoints, email (SMTP) notifications for leads & visits, .env SMTP config, stats update",
     "status": "completed"
   },
   {
-    "content": "Phase 1: Frontend foundation - index.css tokens, fonts, api lib, auth context, layout, shared components",
+    "content": "Frontend: Floating WhatsApp button (uses content.contact_whatsapp)",
     "status": "completed"
   },
   {
-    "content": "Phase 1: Public pages - Home, About, Benchmark, Vision/Team, Projects, Detail, Compare, Upcoming, Brochures, RERA, Contact, Locations",
+    "content": "Frontend: Book a Site Visit page (calendar + time slots) + route + nav",
     "status": "completed"
   },
   {
-    "content": "Phase 1: Admin dashboard - login + CRUD for projects/content/team + leads inbox",
+    "content": "Frontend: Admin Site Visits inbox page + nav + dashboard stat",
     "status": "completed"
   },
   {
-    "content": "Phase 1: All user stories covered in development",
+    "content": "Frontend: Regalia logo on card & detail hero",
     "status": "completed"
   },
   {
-    "content": "Phase 1: End to End Testing using Testing Agent (31/31 backend + full frontend passed)",
-    "status": "completed"
+    "content": "Test: end-to-end testing of new features via testing agent",
+    "status": "in_progress"
   }
 ]

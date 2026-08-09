@@ -16,6 +16,7 @@ import Brochures from "@/pages/Brochures";
 import Rera from "@/pages/Rera";
 import Contact from "@/pages/Contact";
 import Locations from "@/pages/Locations";
+import BookVisit from "@/pages/BookVisit";
 import NotFound from "@/pages/NotFound";
 
 import AdminLogin from "@/pages/admin/AdminLogin";
@@ -24,6 +25,7 @@ import AdminLayout from "@/pages/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProjects from "@/pages/admin/AdminProjects";
 import AdminLeads from "@/pages/admin/AdminLeads";
+import AdminVisits from "@/pages/admin/AdminVisits";
 import AdminContent from "@/pages/admin/AdminContent";
 import AdminTeam from "@/pages/admin/AdminTeam";
 
@@ -46,6 +48,7 @@ function App() {
               <Route path="/rera" element={<Rera />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/locations" element={<Locations />} />
+              <Route path="/book-visit" element={<BookVisit />} />
             </Route>
 
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -54,6 +57,7 @@ function App() {
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/projects" element={<AdminProjects />} />
                 <Route path="/admin/leads" element={<AdminLeads />} />
+                <Route path="/admin/visits" element={<AdminVisits />} />
                 <Route path="/admin/content" element={<AdminContent />} />
                 <Route path="/admin/team" element={<AdminTeam />} />
               </Route>

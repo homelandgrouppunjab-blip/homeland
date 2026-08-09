@@ -53,6 +53,13 @@ export const Navbar = () => {
 
         <div className="hidden lg:flex items-center gap-3">
           <Link
+            to="/book-visit"
+            data-testid="nav-book-visit-button"
+            className="rounded-xl bg-glass hairline px-4 py-2.5 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors"
+          >
+            Book Visit
+          </Link>
+          <Link
             to="/contact"
             data-testid="nav-enquire-button"
             className="rounded-xl border gold-line px-5 py-2.5 text-sm font-semibold tracking-wide text-gold hover:bg-[rgba(212,175,55,0.08)] transition-colors"
@@ -83,9 +90,16 @@ export const Navbar = () => {
                   </Link>
                 ))}
                 <Link
+                  to="/book-visit"
+                  onClick={() => setOpen(false)}
+                  className="mt-4 rounded-xl bg-glass hairline px-5 py-3 text-center text-sm font-semibold text-ivory"
+                >
+                  Book a Site Visit
+                </Link>
+                <Link
                   to="/contact"
                   onClick={() => setOpen(false)}
-                  className="mt-4 rounded-xl border gold-line px-5 py-3 text-center text-sm font-semibold text-gold"
+                  className="mt-2 rounded-xl border gold-line px-5 py-3 text-center text-sm font-semibold text-gold"
                 >
                   Enquire Now
                 </Link>

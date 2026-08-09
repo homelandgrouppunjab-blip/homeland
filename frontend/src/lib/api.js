@@ -20,6 +20,7 @@ export const getFaqs = () => client.get("/faqs").then((r) => r.data);
 export const getRera = () => client.get("/rera").then((r) => r.data);
 export const getBrochures = () => client.get("/brochures").then((r) => r.data);
 export const createLead = (payload) => client.post("/leads", payload).then((r) => r.data);
+export const createSiteVisit = (payload) => client.post("/site-visits", payload).then((r) => r.data);
 
 // ---- Admin ----
 export const adminLogin = (payload) => client.post("/admin/login", payload).then((r) => r.data);
@@ -32,6 +33,9 @@ export const adminDeleteProject = (id) => client.delete(`/admin/projects/${id}`)
 export const adminGetLeads = () => client.get("/admin/leads").then((r) => r.data);
 export const adminUpdateLead = (id, status) => client.put(`/admin/leads/${id}`, { status }).then((r) => r.data);
 export const adminDeleteLead = (id) => client.delete(`/admin/leads/${id}`).then((r) => r.data);
+export const adminGetVisits = () => client.get("/admin/site-visits").then((r) => r.data);
+export const adminUpdateVisit = (id, status) => client.put(`/admin/site-visits/${id}`, { status }).then((r) => r.data);
+export const adminDeleteVisit = (id) => client.delete(`/admin/site-visits/${id}`).then((r) => r.data);
 export const adminUpdateContent = (body) => client.put("/admin/content", body).then((r) => r.data);
 export const adminCreateTeam = (m) => client.post("/admin/team", m).then((r) => r.data);
 export const adminUpdateTeam = (id, m) => client.put(`/admin/team/${id}`, m).then((r) => r.data);

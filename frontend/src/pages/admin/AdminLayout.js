@@ -1,12 +1,13 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
-import { LayoutDashboard, Building2, Inbox, FileText, Users, LogOut, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Building2, Inbox, FileText, Users, LogOut, ExternalLink, CalendarClock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/projects", label: "Projects", icon: Building2 },
   { to: "/admin/leads", label: "Leads", icon: Inbox },
+  { to: "/admin/visits", label: "Visits", icon: CalendarClock },
   { to: "/admin/content", label: "Content", icon: FileText },
   { to: "/admin/team", label: "Team", icon: Users },
 ];

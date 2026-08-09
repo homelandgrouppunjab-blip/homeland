@@ -190,20 +190,84 @@ class HomelandAPITester:
             }
         )
 
+        # Test 16: POST /api/site-visits (valid)
+        timestamp = datetime.now().strftime('%H%M%S')
+        success, visit = self.run_test(
+            "POST /api/site-visits (valid)",
+            "POST", "site-visits", 200,
+            data={
+                "name": f"Test Visitor {timestamp}",
+                "email": f"visitor{timestamp}@example.com",
+                "phone": "9876543210",
+                "project": "Any",
+                "visit_date": "2025-09-15",
+                "time_slot": "10:00 AM",
+                "guests": "2",
+                "notes": "Test site visit",
+                "website": ""  # honeypot empty
+            }
+        )
+        if success:
+            self.visit_id = visit.get('id')
+            print(f"   Site visit created: {visit.get('id')}")
+
+        # Test 17: POST /api/site-visits (honeypot - should accept but not store)
+        success, visit = self.run_test(
+            "POST /api/site-visits (honeypot filled - bot)",
+            "POST", "site-visits", 200,
+            data={
+                "name": "Bot Visitor",
+                "email": "botvisitor@spam.com",
+                "phone": "0000000000",
+                "project": "Any",
+                "visit_date": "2025-09-15",
+                "time_slot": "10:00 AM",
+                "website": "http://spam.com"  # honeypot filled
+            }
+        )
+        if success:
+            print(f"   Honeypot test: Bot request accepted (but should not be stored)")
+
+        # Test 18: POST /api/site-visits (invalid email)
+        success, visit = self.run_test(
+            "POST /api/site-visits (invalid email)",
+            "POST", "site-visits", 422,  # Pydantic validation error
+            data={
+                "name": "Invalid Email Visitor",
+                "email": "not-an-email",
+                "phone": "9876543210",
+                "visit_date": "2025-09-15",
+                "time_slot": "10:00 AM"
+            }
+        )
+
+        # Test 19: GET /api/projects/homeland-regalia (check logo)
+        success, regalia = self.run_test(
+            "GET /api/projects/homeland-regalia (check logo)",
+            "GET", "projects/homeland-regalia", 200
+        )
+        if success:
+            logo = regalia.get('logo_image', '')
+            if logo == '/regalia-logo.png':
+                print(f"   ✅ Regalia logo correct: {logo}")
+            else:
+                print(f"   ⚠️  Regalia logo unexpected: {logo}")
+                self.failed_tests.append(f"Regalia logo - Expected '/regalia-logo.png', got '{logo}'")
+
     # ========== ADMIN AUTH TESTS ==========
     def test_admin_auth(self):
         print("\n" + "="*60)
         print("TESTING ADMIN AUTH")
         print("="*60)
 
-        # Test 16: POST /api/admin/login (invalid credentials)
+        # Test 20: POST /api/admin/login (invalid credentials)
         self.run_test(
             "POST /api/admin/login (invalid credentials)",
             "POST", "admin/login", 401,
             data={"email": "wrong@example.com", "password": "wrongpass"}
         )
 
-        # Test 17: POST /api/admin/login (valid credentials)
+        # Test 21: POST /api/admin/login (valid credentials)
         success, response = self.run_test(
             "POST /api/admin/login (valid credentials)",
             "POST", "admin/login", 200,
@@ -213,7 +277,7 @@ class HomelandAPITester:
             self.token = response['access_token']
             print(f"   Token obtained: {self.token[:20]}...")
 
-        # Test 18: GET /api/admin/me (without token)
+        # Test 22: GET /api/admin/me (without token)
         temp_token = self.token
         self.token = None
         self.run_test(
@@ -222,7 +286,7 @@ class HomelandAPITester:
         )
         self.token = temp_token
 
-        # Test 19: GET /api/admin/me (with token)
+        # Test 23: GET /api/admin/me (with token)
         success, admin = self.run_test(
             "GET /api/admin/me (with token)",
             "GET", "admin/me", 200
@@ -240,15 +304,21 @@ class HomelandAPITester:
             print("⚠️  Skipping admin tests - no token available")
             return
 
-        # Test 20: GET /api/admin/stats
+        # Test 24: GET /api/admin/stats (check new fields)
         success, stats = self.run_test(
             "GET /api/admin/stats",
             "GET", "admin/stats", 200
         )
         if success:
             print(f"   Stats: {stats}")
+            # Verify new fields exist
+            if 'total_visits' in stats and 'new_visits' in stats:
+                print(f"   ✅ New stats fields present: total_visits={stats['total_visits']}, new_visits={stats['new_visits']}")
+            else:
+                print(f"   ⚠️  Missing new stats fields")
+                self.failed_tests.append("Stats missing total_visits or new_visits fields")
 
-        # Test 21: GET /api/admin/projects
+        # Test 25: GET /api/admin/projects
         success, projects = self.run_test(
             "GET /api/admin/projects",
             "GET", "admin/projects", 200
@@ -256,7 +326,7 @@ class HomelandAPITester:
         if success:
             print(f"   Found {len(projects)} projects in admin")
 
-        # Test 22: POST /api/admin/projects (create)
+        # Test 26: POST /api/admin/projects (create)
         timestamp = datetime.now().strftime('%H%M%S')
         success, new_project = self.run_test(
             "POST /api/admin/projects (create)",
@@ -275,7 +345,7 @@ class HomelandAPITester:
             self.test_project_id = new_project.get('id')
             print(f"   Created project: {self.test_project_id}")
 
-        # Test 23: PUT /api/admin/projects/{id} (update)
+        # Test 27: PUT /api/admin/projects/{id} (update)
         if hasattr(self, 'test_project_id'):
             success, updated = self.run_test(
                 "PUT /api/admin/projects/{id} (update)",
@@ -291,14 +361,14 @@ class HomelandAPITester:
                 }
             )
 
-        # Test 24: DELETE /api/admin/projects/{id}
+        # Test 28: DELETE /api/admin/projects/{id}
         if hasattr(self, 'test_project_id'):
             self.run_test(
                 "DELETE /api/admin/projects/{id}",
                 "DELETE", f"admin/projects/{self.test_project_id}", 200
             )
 
-        # Test 25: GET /api/admin/leads
+        # Test 29: GET /api/admin/leads
         success, leads = self.run_test(
             "GET /api/admin/leads",
             "GET", "admin/leads", 200
@@ -311,7 +381,7 @@ class HomelandAPITester:
                 if test_lead:
                     print(f"   Test lead found in admin: {test_lead.get('name')}")
 
-        # Test 26: PUT /api/admin/leads/{id} (status change)
+        # Test 30: PUT /api/admin/leads/{id} (status change)
         if hasattr(self, 'lead_id'):
             self.run_test(
                 "PUT /api/admin/leads/{id} (status change)",
@@ -319,14 +389,42 @@ class HomelandAPITester:
                 data={"status": "contacted"}
             )
 
-        # Test 27: DELETE /api/admin/leads/{id}
+        # Test 31: DELETE /api/admin/leads/{id}
         if hasattr(self, 'lead_id'):
             self.run_test(
                 "DELETE /api/admin/leads/{id}",
                 "DELETE", f"admin/leads/{self.lead_id}", 200
             )
 
-        # Test 28: PUT /api/admin/content
+        # Test 32: GET /api/admin/site-visits
+        success, visits = self.run_test(
+            "GET /api/admin/site-visits",
+            "GET", "admin/site-visits", 200
+        )
+        if success:
+            print(f"   Found {len(visits)} site visits")
+            if visits and hasattr(self, 'visit_id'):
+                # Find our test visit
+                test_visit = next((v for v in visits if v.get('id') == self.visit_id), None)
+                if test_visit:
+                    print(f"   Test visit found in admin: {test_visit.get('name')}")
+
+        # Test 33: PUT /api/admin/site-visits/{id} (status change)
+        if hasattr(self, 'visit_id'):
+            self.run_test(
+                "PUT /api/admin/site-visits/{id} (status change)",
+                "PUT", f"admin/site-visits/{self.visit_id}", 200,
+                data={"status": "confirmed"}
+            )
+
+        # Test 34: DELETE /api/admin/site-visits/{id}
+        if hasattr(self, 'visit_id'):
+            self.run_test(
+                "DELETE /api/admin/site-visits/{id}",
+                "DELETE", f"admin/site-visits/{self.visit_id}", 200
+            )
+
+        # Test 35: PUT /api/admin/content
         success, content = self.run_test(
             "PUT /api/admin/content",
             "PUT", "admin/content", 200,
@@ -337,7 +435,7 @@ class HomelandAPITester:
             }
         )
 
-        # Test 29: POST /api/admin/team (create)
+        # Test 36: POST /api/admin/team (create)
         timestamp = datetime.now().strftime('%H%M%S')
         success, team_member = self.run_test(
             "POST /api/admin/team (create)",
@@ -354,7 +452,7 @@ class HomelandAPITester:
             self.test_team_id = team_member.get('id')
             print(f"   Created team member: {self.test_team_id}")
 
-        # Test 30: PUT /api/admin/team/{id} (update)
+        # Test 37: PUT /api/admin/team/{id} (update)
         if hasattr(self, 'test_team_id'):
             self.run_test(
                 "PUT /api/admin/team/{id} (update)",
@@ -368,7 +466,7 @@ class HomelandAPITester:
                 }
             )
 
-        # Test 31: DELETE /api/admin/team/{id}
+        # Test 38: DELETE /api/admin/team/{id}
         if hasattr(self, 'test_team_id'):
             self.run_test(
                 "DELETE /api/admin/team/{id}",

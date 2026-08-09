@@ -61,6 +61,7 @@ PROJECTS = [
             "Grand triple-height entrance lobby",
         ],
         "hero_image": IMG["regalia_hero"],
+        "logo_image": "/regalia-logo.png",
         "gallery": GALLERY_RES,
         "video_url": VIDEO,
         "brochure_url": "https://homelandregalia.com",
