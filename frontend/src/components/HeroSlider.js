@@ -51,7 +51,13 @@ export const HeroSlider = ({ projects = [] }) => {
               <StatusBadge status={p.status} />
               {p.hot_selling && <span className="rounded-full bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold">Hot Selling</span>}
             </div>
-            <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl leading-[1.02] text-ivory">{p.name}</h1>
+            {p.logo_image ? (
+              <div className="inline-block rounded-2xl overflow-hidden border border-[color:var(--border-gold)] shadow-[0_20px_60px_rgba(0,0,0,0.55)] bg-black/30 backdrop-blur-[2px]">
+                <img src={p.logo_image} alt={p.name} className="h-32 sm:h-44 lg:h-52 w-auto block" />
+              </div>
+            ) : (
+              <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl leading-[1.02] text-ivory">{p.name}</h1>
+            )}
             <p className="mt-4 text-base sm:text-lg text-[color:var(--lux-ivory)]/80 max-w-2xl">{p.tagline}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link to={`/projects/${p.slug}`} data-testid="hero-explore-button" className="inline-flex items-center gap-2 rounded-xl border gold-line bg-[rgba(212,175,55,0.08)] px-6 py-3.5 text-sm font-semibold tracking-wide text-gold hover:bg-[rgba(212,175,55,0.16)] transition-colors">
