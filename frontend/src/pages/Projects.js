@@ -7,7 +7,7 @@ import { getProjects } from "@/lib/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const STATUSES = ["All", "ONGOING", "DELIVERED", "UPCOMING"];
-const TYPES = ["All", "Residential", "Commercial", "Mixed-Use"];
+const TYPES = ["All", "Residential", "Commercial", "Mixed-Use", "Vacation Home"];
 
 export default function Projects() {
   const [all, setAll] = useState([]);

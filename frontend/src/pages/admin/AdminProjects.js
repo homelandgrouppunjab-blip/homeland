@@ -103,7 +103,7 @@ export default function AdminProjects() {
             </div>
             <div><label className={lbl}>Type</label>
               <Select value={form.type} onValueChange={(v) => set("type", v)}><SelectTrigger className={cls}><SelectValue /></SelectTrigger>
-                <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">{["Residential","Commercial","Mixed-Use"].map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select>
+                <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">{["Residential","Commercial","Mixed-Use","Vacation Home"].map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select>
             </div>
             <div><label className={lbl}>Location (short)</label><input className={cls} value={form.location} onChange={(e) => set("location", e.target.value)} /></div>
             <div><label className={lbl}>City</label><input className={cls} value={form.city} onChange={(e) => set("city", e.target.value)} /></div>
