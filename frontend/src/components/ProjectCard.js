@@ -15,6 +15,11 @@ export const ProjectCard = ({ project }) => {
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+        {p.logo_image && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl overflow-hidden border border-[color:var(--border-gold)] shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-black/30 backdrop-blur-[2px]">
+            <img src={p.logo_image} alt={`${p.name} logo`} loading="lazy" className="h-16 w-auto block" />
+          </div>
+        )}
         <div className="absolute top-4 left-4 flex gap-2">
           <StatusBadge status={p.status} />
         </div>
