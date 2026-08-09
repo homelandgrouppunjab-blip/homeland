@@ -1,0 +1,44 @@
+{
+  "summary": "Tested enquiry popup fix for Select dropdown closing issue. CRITICAL BUG: The primary fix FAILED - popup still closes when Project of Interest or Requirement select dropdowns are clicked. The onMouseDown fix with e.target===e.currentTarget check is not preventing the popup from closing. Root cause: overlay and modal card are DOM siblings, so overlay receives mousedown events independently. Text inputs work correctly, and all three Home page section paragraphs are present with correct kickers and subtitles.",
+  
+  "backend_issues": {},
+  
+  "frontend_issues": {
+    "critical_bugs": [
+      {
+        "component": "EnquiryPopup",
+        "issue": "PRIMARY FIX FAILED: Popup closes when Project of Interest or Requirement Select dropdowns are clicked. The fix (onMouseDown with e.target===e.currentTarget) is not working.",
+        "root_cause": "Overlay (z-[200]) and modal card (z-[201]) are DOM siblings in the JSX structure. When clicking SelectTrigger, the overlay receives the mousedown event independently (not through bubbling), so stopPropagation on modal card doesn't help. The overlay covers the entire screen and intercepts pointer events.",
+        "affected_selectors": ["[data-testid='enquiry-popup-overlay']", "[data-testid='enquiry-project-select']", "[data-testid='enquiry-requirement-select']"],
+        "fix_priority": "CRITICAL",
+        "suggested_fix": "Add pointer-events-none to the overlay div and only enable pointer-events on a specific backdrop area outside the modal card. OR restructure DOM so modal card is a child of overlay with proper z-index layering. OR use a portal for the modal card to ensure it's truly above the overlay in the stacking context."
+      }
+    ],
+    "ui_bugs": [],
+    "integration_issues": []
+  },
+  
+  "passed_tests": [
+    "Enquiry popup auto-appears after ~3 seconds on home page",
+    "Homeland logo visible in popup",
+    "X close button closes popup correctly",
+    "Escape key closes popup correctly",
+    "Text inputs (name, phone, email) are fillable and popup remains open while typing",
+    "Home page content check: 'Numbers That Define Trust' section has kicker 'Benchmark & Performance' and descriptive subtitle",
+    "Home page content check: 'Milestones That Shaped Us' section has kicker 'Our Journey' and descriptive subtitle",
+    "Home page content check: 'Building the Future of Living' section has kicker 'Our Vision' and descriptive subtitle"
+  ],
+  
+  "test_report_links": [],
+  
+  "success_percentage": {
+    "frontend": "50% - Critical Select dropdown bug prevents form completion. Text inputs and content display work correctly."
+  },
+  
+  "updated_files": [],
+  
+  "action_item_for_main_agent": "CRITICAL: Fix the enquiry popup Select dropdown closing bug. The current fix (onMouseDown with e.target===e.currentTarget on overlay) is NOT working. Suggested approach: (1) Add pointer-events-none to overlay div, then add a separate clickable backdrop div behind the modal card, OR (2) Restructure DOM so modal card is child of overlay with proper event handling, OR (3) Use React Portal for modal card to ensure proper stacking context. The overlay is intercepting clicks on SelectTrigger because overlay and modal card are siblings, not parent-child. Test by clicking Project of Interest or Requirement dropdowns - popup should stay open.",
+  
+  "should_call_test_agent_after_fix": "true",
+  "should_main_agent_test_itself": "false"
+}

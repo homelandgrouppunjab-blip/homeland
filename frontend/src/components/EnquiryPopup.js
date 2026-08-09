@@ -48,8 +48,10 @@ export const EnquiryPopup = () => {
       {/* Background overlay - clickable to close */}
       <div
         className="fixed inset-0 z-[200] bg-black/75 backdrop-blur-sm"
-        onClick={(e) => {
-          // Only close if clicking directly on overlay, not on any portaled content
+        onMouseDown={(e) => {
+          // Only close if the press starts directly on the overlay itself.
+          // Using mousedown (not click) avoids stray synthetic clicks from
+          // portaled Select content closing the popup.
           if (e.target === e.currentTarget) {
             setOpen(false);
           }

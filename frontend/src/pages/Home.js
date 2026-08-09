@@ -94,7 +94,7 @@ export default function Home() {
       {/* Benchmark KPI strip */}
       <section className="section-pad bg-[color:var(--lux-obsidian)] border-y border-[color:var(--border-hairline)]">
         <div className="container-lux">
-          <SectionHeading align="center" kicker="Benchmark & Performance" title="Numbers That Define Trust" />
+          <SectionHeading align="center" kicker="Benchmark & Performance" title="Numbers That Define Trust" subtitle="Every figure below is earned — homes delivered on time, families settled, and square feet crafted to an uncompromising standard. These are the milestones that turn a promise into a proven track record." />
           <div className="mt-12 grid grid-cols-2 lg:grid-cols-3 gap-4">
             {(content?.benchmark_kpis || []).map((k, idx) => {
               const Icon = ICONS[k.icon] || Award;
@@ -117,7 +117,7 @@ export default function Home() {
 
       {/* Timeline */}
       <section className="section-pad container-lux">
-        <SectionHeading kicker="Our Journey" title="Milestones That Shaped Us" />
+        <SectionHeading kicker="Our Journey" title="Milestones That Shaped Us" subtitle="From our first foundation stone to today's landmark addresses, each milestone reflects a decision to build better. This is the story behind the trust our homeowners place in us." />
         <div className="mt-12 grid md:grid-cols-2 gap-x-16">
           {(content?.milestones || []).map((m, idx) => (
             <FadeUp key={idx} delay={idx * 0.05}>
@@ -147,7 +147,7 @@ export default function Home() {
       <section className="section-pad container-lux">
         <div className="grid lg:grid-cols-2 gap-14 items-start">
           <div>
-            <SectionHeading kicker="Our Vision" title="Building the Future of Living" subtitle={content?.vision_statement} />
+            <SectionHeading kicker="Our Vision" title="Building the Future of Living" subtitle={content?.vision_statement || "We design more than buildings — we shape the way tomorrow lives, works and gathers. Guided by innovation, sustainability and enduring craftsmanship, our vision is to create landmark communities that stand proudly for generations."} />
             <div className="mt-8 space-y-3">
               {(content?.vision_pillars || []).slice(0, 5).map((p, idx) => (
                 <FadeUp key={idx} delay={idx * 0.05}>
