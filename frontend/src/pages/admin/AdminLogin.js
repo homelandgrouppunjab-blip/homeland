@@ -30,9 +30,9 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen grid place-items-center px-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="font-display text-3xl text-ivory">HOMELAND</div>
-          <div className="text-[10px] tracking-[0.4em] text-gold uppercase mt-1">Admin Portal</div>
+        <div className="text-center mb-8 flex flex-col items-center">
+          <img src="/homeland-logo.webp" alt="Homeland Group" className="h-9 w-auto" />
+          <div className="text-[10px] tracking-[0.4em] text-gold uppercase mt-3">Admin Portal</div>
         </div>
         <form onSubmit={submit} className="rounded-2xl bg-glass hairline p-8">
           <div className="flex items-center gap-2 text-gold mb-6"><Lock className="h-5 w-5" /><span className="font-semibold">Sign in to continue</span></div>

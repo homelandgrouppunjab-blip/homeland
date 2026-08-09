@@ -31,9 +31,8 @@ export const Navbar = () => {
       }`}
     >
       <div className="container-lux flex h-20 items-center justify-between">
-        <Link to="/" data-testid="nav-logo" className="flex flex-col leading-none">
-          <span className="font-display text-xl sm:text-2xl text-ivory tracking-wide">HOMELAND</span>
-          <span className="text-[10px] tracking-[0.4em] text-gold uppercase mt-0.5">Group Mohali</span>
+        <Link to="/" data-testid="nav-logo" className="flex items-center">
+          <img src="/homeland-logo.webp" alt="Homeland Group" className="h-8 sm:h-9 w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
@@ -77,7 +76,7 @@ export const Navbar = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-[color:var(--lux-charcoal)] border-l border-[color:var(--border-hairline)] text-ivory">
               <div className="flex flex-col gap-1 mt-8">
-                <div className="font-display text-2xl mb-4">HOMELAND</div>
+                <img src="/homeland-logo.webp" alt="Homeland Group" className="h-8 w-auto mb-6" />
                 {LINKS.map((l) => (
                   <Link
                     key={l.to}

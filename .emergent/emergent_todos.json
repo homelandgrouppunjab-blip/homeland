@@ -1,14 +1,10 @@
 [
   {
-    "content": "Download Regalia logo to frontend/public and add logo_image field to Regalia project",
+    "content": "Backend: SiteVisit model + endpoints, email (SMTP) notifications, stats update",
     "status": "completed"
   },
   {
-    "content": "Backend: SiteVisit model + public/admin endpoints, email (SMTP) notifications for leads & visits, .env SMTP config, stats update",
-    "status": "completed"
-  },
-  {
-    "content": "Frontend: Floating WhatsApp button (uses content.contact_whatsapp)",
+    "content": "Frontend: Floating WhatsApp button",
     "status": "completed"
   },
   {
@@ -16,15 +12,19 @@
     "status": "completed"
   },
   {
-    "content": "Frontend: Admin Site Visits inbox page + nav + dashboard stat",
+    "content": "Frontend: Admin Site Visits inbox + nav + dashboard stat",
     "status": "completed"
   },
   {
-    "content": "Frontend: Regalia logo on card & detail hero",
+    "content": "Apply official Homeland wordmark logo to header/footer/admin",
     "status": "completed"
   },
   {
-    "content": "Test: end-to-end testing of new features via testing agent",
-    "status": "in_progress"
+    "content": "Apply Regalia logo to its card & detail hero",
+    "status": "completed"
+  },
+  {
+    "content": "Test new features end-to-end (backend 38/38 + booking flow verified)",
+    "status": "completed"
   }
 ]

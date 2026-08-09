@@ -20,9 +20,9 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen flex">
       <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-[color:var(--border-hairline)] bg-[color:var(--lux-obsidian)] p-5">
-        <Link to="/admin" className="mb-8">
-          <div className="font-display text-2xl text-ivory">HOMELAND</div>
-          <div className="text-[10px] tracking-[0.4em] text-gold uppercase mt-1">Admin</div>
+        <Link to="/admin" className="mb-8 block">
+          <img src="/homeland-logo.webp" alt="Homeland Group" className="h-7 w-auto" />
+          <div className="text-[10px] tracking-[0.4em] text-gold uppercase mt-2">Admin</div>
         </Link>
         <nav className="flex-1 space-y-1">
           {NAV.map((n) => (
@@ -40,7 +40,7 @@ export default function AdminLayout() {
 
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-16 border-b border-[color:var(--border-hairline)] bg-[color:var(--surface-glass-strong)] backdrop-blur-xl flex items-center justify-between px-6 sticky top-0 z-30">
-          <div className="lg:hidden font-display text-lg text-ivory">HOMELAND Admin</div>
+          <img src="/homeland-logo.webp" alt="Homeland Group" className="lg:hidden h-6 w-auto" />
           <div className="flex items-center gap-4 ml-auto">
             <span className="text-xs text-[color:var(--lux-ivory)]/60">{email}</span>
             <button onClick={doLogout} className="lg:hidden text-[color:var(--lux-ivory)]/70"><LogOut className="h-4 w-4" /></button>
