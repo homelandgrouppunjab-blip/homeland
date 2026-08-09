@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollToTop from "@/components/ScrollToTop";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import EnquiryPopup from "@/components/EnquiryPopup";
 
 export const PublicLayout = () => (
   <div className="relative">
@@ -14,6 +15,7 @@ export const PublicLayout = () => (
     </main>
     <Footer />
     <WhatsAppButton />
+    <EnquiryPopup />
   </div>
 );
 

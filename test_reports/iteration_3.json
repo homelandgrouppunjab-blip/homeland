@@ -1,0 +1,43 @@
+{
+  "summary": "Tested enquiry popup auto-show functionality and critical bug fix for form fillability. The CRITICAL BUG (unable to fill form inputs) has been FIXED - all text inputs are now fully fillable without the popup closing. However, a new issue was discovered: Select dropdowns (Project/Requirement) cause the popup to close when clicked.",
+  "backend_issues": {
+    "critical_bugs": [],
+    "flaky_endpoints": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "component": "EnquiryPopup + shadcn Select",
+        "issue": "Clicking Select dropdowns (enquiry-project-select, enquiry-requirement-select) causes the popup to close immediately. The Radix UI Select Portal renders dropdown content outside the modal, and when the SelectTrigger is clicked, it triggers the popup to close. This prevents users from selecting project/requirement options.",
+        "affected_selectors": ["[data-testid='enquiry-project-select']", "[data-testid='enquiry-requirement-select']"],
+        "fix_priority": "HIGH",
+        "suggested_fix": "The Select component needs special handling in the modal context. Options: (1) Use modal={false} prop on Radix Select if available, (2) Replace shadcn Select with a custom dropdown that doesn't use portals, (3) Add event handling to prevent popup close when Select is interacting, (4) Increase Select portal z-index further and add onOpenChange handler to prevent modal close"
+      }
+    ],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Popup appears automatically ~3 seconds after page load",
+    "Popup shows only once per browser session (sessionStorage check works)",
+    "Homeland logo visible at top of popup (data-testid='enquiry-popup-logo')",
+    "CRITICAL FIX VERIFIED: Name input (enquiry-name-input) is fully fillable, popup stays open",
+    "CRITICAL FIX VERIFIED: Phone input (enquiry-phone-input) is fully fillable, popup stays open",
+    "CRITICAL FIX VERIFIED: Email input (enquiry-email-input) is fully fillable, popup stays open",
+    "Close button (X) successfully closes popup",
+    "Clicking overlay background closes popup",
+    "All text input values persist correctly"
+  ],
+  "test_report_links": [],
+  "action_item_for_main_agent": "CRITICAL BUG FIX SUCCESSFUL: Form text inputs are now fully fillable without popup closing. NEW ISSUE: Select dropdowns (Project of Interest, Requirement) cause popup to close on click. This needs to be fixed by either: (1) configuring Radix Select to work in modal context, (2) replacing with a non-portal-based select component, or (3) adding special event handling to prevent modal close during select interactions. The z-index of SelectContent was increased to z-[250] but the issue persists, suggesting it's an event handling problem rather than a z-index issue.",
+  "updated_files": [
+    "/app/frontend/src/components/EnquiryPopup.js",
+    "/app/frontend/src/components/ui/select.jsx"
+  ],
+  "success_percentage": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "75% (6 of 8 features working - text inputs fixed, selects broken)"
+  },
+  "should_call_test_agent_after_fix": "true",
+  "should_main_agent_test_itself": "false"
+}
