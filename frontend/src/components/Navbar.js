@@ -32,7 +32,7 @@ export const Navbar = () => {
     >
       <div className="container-lux flex h-20 items-center justify-between">
         <Link to="/" data-testid="nav-logo" className="flex items-center">
-          <img src="/homeland-logo.webp" alt="Homeland Group" className="h-8 sm:h-9 w-auto" />
+          <img src="/homeland-logo.webp" alt="Homeland Group" className="h-6 sm:h-7 w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
