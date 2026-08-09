@@ -34,7 +34,7 @@ export default function Home() {
           <SectionHeading
             kicker={`Established ${content?.founding_year || 2013}`}
             title="A Legacy of Iconic Living"
-            subtitle={content?.history_intro}
+            subtitle={(content?.history_full && content.history_full[0]) || content?.history_intro}
           />
           <FadeUp delay={0.1}>
             <div className="grid grid-cols-2 gap-4">
@@ -51,6 +51,18 @@ export default function Home() {
             </div>
           </FadeUp>
         </div>
+        {(content?.history_full || []).length > 1 && (
+          <FadeUp delay={0.15}>
+            <div data-testid="home-history-summary" className="mt-12 max-w-4xl space-y-5">
+              {content.history_full.slice(1).map((para, i) => (
+                <p key={i} className="text-[color:var(--lux-ivory)]/70 leading-relaxed">{para}</p>
+              ))}
+              <Link to="/about" className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:gap-3 transition-all">
+                Read Our Full Story <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </FadeUp>
+        )}
       </section>
 
       {/* Featured */}

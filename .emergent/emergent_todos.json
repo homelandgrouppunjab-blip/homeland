@@ -1,26 +1,22 @@
 [
   {
-    "content": "Backend: file upload endpoint (images + PDF) + static serving under /api/uploads",
+    "content": "Update DB: apply 5 logos to Leisure Valley, Ranjit Avenue, Vaana, Ikaahi, Infinia",
     "status": "completed"
   },
   {
-    "content": "Frontend: reusable ImageUpload/FileUpload widget wired into Admin Projects & Team",
+    "content": "Update site_content with summarized Homeland Group history from official about page",
     "status": "completed"
   },
   {
-    "content": "Backend: Blog/News/Media Post model + public & admin endpoints + seed starter posts",
+    "content": "Render history summary after 'A Legacy of Iconic Living' on Home (and About)",
     "status": "completed"
   },
   {
-    "content": "Frontend: public Insights page (Blog/News/Media tabs) + post detail + nav/footer links",
+    "content": "Add 'Under Designing' badge on upcoming project cards & detail pages",
     "status": "completed"
   },
   {
-    "content": "Frontend: Admin Blog manager (CRUD)",
+    "content": "Verify via screenshots (upcoming page, detail pages, home history)",
     "status": "completed"
-  },
-  {
-    "content": "Test new features end-to-end via testing agent",
-    "status": "in_progress"
   }
 ]

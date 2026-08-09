@@ -18,7 +18,11 @@ export default function About() {
       <section className="section-pad container-lux">
         <div className="max-w-3xl">
           <SectionHeading kicker="About Homeland Group" title="A Legacy Built on Trust" />
-          <p className="mt-6 text-[color:var(--lux-ivory)]/75 leading-relaxed text-lg">{c?.history_intro}</p>
+          <div className="mt-6 space-y-5">
+            {((c?.history_full && c.history_full.length ? c.history_full : [c?.history_intro]).filter(Boolean)).map((para, i) => (
+              <p key={i} className="text-[color:var(--lux-ivory)]/75 leading-relaxed text-lg">{para}</p>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -227,6 +227,31 @@ async def seed_database():
         {"$set": {"logo_image": "/regalia-logo.png"}},
     )
 
+    # Migration: apply project logos for upcoming & other developments
+    _project_logos = {
+        "homeland-leisure-valley": "/leisure-valley-logo.jpeg",
+        "homeland-ranjit-avenue": "/ranjit-avenue-logo.jpeg",
+        "homeland-vaana": "/vaana-logo.jpeg",
+        "ikaahi-homes": "/ikaahi-logo.jpeg",
+        "homeland-infinia": "/infinia-logo.jpeg",
+    }
+    for _slug, _logo in _project_logos.items():
+        await db.projects.update_one({"slug": _slug}, {"$set": {"logo_image": _logo}})
+
+    # Migration: ensure summarized company history is present
+    _hist_full = [
+        "Established in 2013, Homeland Group has emerged as one of North India's most trusted real estate developers, reshaping the cityscapes of Chandigarh, Mohali and the wider Tricity region. What began with a simple vision \u2014 to create transformative spaces that shape better lifestyles and thriving business communities \u2014 has grown into a portfolio of landmark residential and commercial developments.",
+        "Guided by three core values \u2014 integrity, innovation and responsibility \u2014 the group is known for thoughtful design, robust construction and lasting value. From luxury residences that raise the benchmark for living to commercial destinations that redefine business environments, Homeland doesn't simply add to skylines; it transforms prime addresses into vibrant, enduring landmarks.",
+        "This commitment has been recognised through numerous industry honours, including the Emerging Tricity Award, the Build X Punjab Award, the 360 Real Estate Award and a Certificate of Excellence. Today, Homeland Group continues to build on a legacy defined by trust, craftsmanship and a promise of a life elevated.",
+    ]
+    await db.site_content.update_one(
+        {"key": "main"},
+        {"$set": {
+            "history_full": _hist_full,
+            "history_intro": _hist_full[0],
+        }},
+    )
+
     # Posts (Blog / News / Media)
     if await db.posts.count_documents({}) == 0:
         for p in seed_data.POSTS:

@@ -20,8 +20,16 @@ export const ProjectCard = ({ project }) => {
             <img src={p.logo_image} alt={`${p.name} logo`} loading="lazy" className="h-12 w-auto block object-contain" />
           </div>
         )}
-        <div className="absolute top-4 left-4 flex gap-2">
+        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
           <StatusBadge status={p.status} />
+          {p.status === "UPCOMING" && (
+            <span
+              data-testid={`project-card-under-designing-${p.slug}`}
+              className="rounded-full bg-[rgba(198,169,105,0.12)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold backdrop-blur-md"
+            >
+              Under Designing
+            </span>
+          )}
         </div>
         {p.hot_selling && (
           <div className="absolute top-4 right-4 rounded-full bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold backdrop-blur-md">

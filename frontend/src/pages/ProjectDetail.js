@@ -50,6 +50,9 @@ export default function ProjectDetail() {
             )}
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <StatusBadge status={p.status} />
+              {p.status === "UPCOMING" && (
+                <span data-testid="detail-under-designing" className="rounded-full bg-[rgba(198,169,105,0.12)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold">Under Designing</span>
+              )}
               {p.hot_selling && <span className="rounded-full bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold">Hot Selling</span>}
               {p.featured && <span className="rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-platinum">Featured</span>}
             </div>
