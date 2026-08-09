@@ -27,6 +27,14 @@ export default function ProjectDetail() {
   if (!p) return <div className="container-lux py-40 text-center text-[color:var(--lux-ivory)]/50">Loading project…</div>;
 
   const images = [p.hero_image, ...(p.gallery || [])].filter(Boolean);
+  const hasVideo = !!p.video_url;
+  // Combined media used by the gallery lightbox: all images + the video (if any).
+  const media = [
+    ...images.map((src) => ({ type: "image", src })),
+    ...(hasVideo ? [{ type: "video", src: p.video_url }] : []),
+  ];
+  const videoIndex = images.length; // video sits after the images
+  const videoEmbedSrc = hasVideo ? `${p.video_url}${p.video_url.includes("?") ? "&" : "?"}autoplay=1` : "";
   const copyRera = (r) => { navigator.clipboard.writeText(r); toast.success("RERA number copied"); };
 
   const isDelivered = p.status === "DELIVERED";
@@ -67,7 +75,7 @@ export default function ProjectDetail() {
       </div>
 
       {/* Thumbnails */}
-      {images.length > 1 && (
+      {(images.length > 1 || hasVideo) && (
         <div className="container-lux -mt-8 relative z-10">
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
             {images.map((img, i) => (
@@ -75,6 +83,22 @@ export default function ProjectDetail() {
                 <img src={img} alt="" className="h-full w-full object-cover" />
               </button>
             ))}
+            {hasVideo && (
+              <button
+                onClick={() => setLightbox(videoIndex)}
+                data-testid="detail-video-thumb"
+                aria-label="Play project video"
+                className="relative shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 border-transparent opacity-90 hover:opacity-100 transition-colors group"
+              >
+                <img src={images[0]} alt="" className="h-full w-full object-cover" />
+                <span className="absolute inset-0 grid place-items-center bg-black/45 group-hover:bg-black/30 transition-colors">
+                  <span className="h-8 w-8 grid place-items-center rounded-full bg-[color:var(--lux-gold)] text-black">
+                    <Play className="h-4 w-4 fill-current translate-x-[1px]" />
+                  </span>
+                </span>
+                <span className="absolute bottom-1 left-1 text-[9px] font-semibold uppercase tracking-wider text-ivory bg-black/60 rounded px-1.5 py-0.5">Video</span>
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -93,7 +117,7 @@ export default function ProjectDetail() {
                   <span className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-5 py-3 text-sm text-[color:var(--lux-ivory)]/60"><FileText className="h-4 w-4" /> Brochure Coming Soon</span>
                 )
               )}
-              <button onClick={() => setLightbox(0)} data-testid="detail-gallery-button" className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-5 py-3 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors">View Gallery ({images.length})</button>
+              <button onClick={() => setLightbox(0)} data-testid="detail-gallery-button" className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-5 py-3 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors">View Gallery ({media.length})</button>
             </div>
           </FadeUp>
 
@@ -139,11 +163,6 @@ export default function ProjectDetail() {
                       <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" /> {h}
                     </div>
                   ))}
-                </div>
-              )}
-              {p.video_url && (
-                <div className="mt-8 rounded-2xl overflow-hidden hairline aspect-video">
-                  <iframe title="walkthrough" src={p.video_url} className="w-full h-full" allowFullScreen />
                 </div>
               )}
             </TabsContent>
@@ -199,10 +218,20 @@ export default function ProjectDetail() {
         <DialogContent className="max-w-5xl bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] p-2">
           {lightbox >= 0 && (
             <div className="relative">
-              <img src={images[lightbox]} alt="" className="w-full max-h-[80vh] object-contain rounded-lg" />
-              <button onClick={() => setLightbox((v) => (v - 1 + images.length) % images.length)} className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 grid place-items-center rounded-full bg-black/60 text-ivory"><ChevronLeft className="h-5 w-5" /></button>
-              <button onClick={() => setLightbox((v) => (v + 1) % images.length)} className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 grid place-items-center rounded-full bg-black/60 text-ivory"><ChevronRight className="h-5 w-5" /></button>
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-ivory/80 bg-black/60 rounded-full px-3 py-1">{lightbox + 1} / {images.length}</div>
+              {media[lightbox]?.type === "video" ? (
+                <div className="w-full aspect-video rounded-lg overflow-hidden bg-black">
+                  <iframe title="Project video" src={videoEmbedSrc} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                </div>
+              ) : (
+                <img src={media[lightbox]?.src} alt="" className="w-full max-h-[80vh] object-contain rounded-lg" />
+              )}
+              {media.length > 1 && (
+                <>
+                  <button onClick={() => setLightbox((v) => (v - 1 + media.length) % media.length)} className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 grid place-items-center rounded-full bg-black/60 text-ivory"><ChevronLeft className="h-5 w-5" /></button>
+                  <button onClick={() => setLightbox((v) => (v + 1) % media.length)} className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 grid place-items-center rounded-full bg-black/60 text-ivory"><ChevronRight className="h-5 w-5" /></button>
+                </>
+              )}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-ivory/80 bg-black/60 rounded-full px-3 py-1">{media[lightbox]?.type === "video" ? "Video" : `${lightbox + 1} / ${media.length}`}</div>
             </div>
           )}
         </DialogContent>
