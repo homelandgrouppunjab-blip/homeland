@@ -28,13 +28,21 @@ export default function ProjectDetail() {
 
   const images = [p.hero_image, ...(p.gallery || [])].filter(Boolean);
   const hasVideo = !!p.video_url;
-  // Combined media used by the gallery lightbox: all images + the video (if any).
+  // Combined media for the hero slider + gallery lightbox. Video comes FIRST.
   const media = [
-    ...images.map((src) => ({ type: "image", src })),
     ...(hasVideo ? [{ type: "video", src: p.video_url }] : []),
+    ...images.map((src) => ({ type: "image", src })),
   ];
-  const videoIndex = images.length; // video sits after the images
-  const videoEmbedSrc = hasVideo ? `${p.video_url}${p.video_url.includes("?") ? "&" : "?"}autoplay=1` : "";
+  const videoIndex = 0; // video sits first
+  // YouTube id (for looping background playback)
+  const ytId = hasVideo ? ((p.video_url.split("/embed/")[1] || "").split(/[?&]/)[0]) : "";
+  // Muted, looping, chrome-less background playback for the hero
+  const bgVideoSrc = hasVideo
+    ? `${p.video_url}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1`
+    : "";
+  // Full playback with sound for the lightbox
+  const videoEmbedSrc = hasVideo ? `${p.video_url}?autoplay=1&rel=0` : "";
+  const activeMedia = media[active] || media[0];
   const copyRera = (r) => { navigator.clipboard.writeText(r); toast.success("RERA number copied"); };
 
   const isDelivered = p.status === "DELIVERED";
@@ -50,10 +58,21 @@ export default function ProjectDetail() {
   return (
     <div>
       {/* Hero */}
-      <div className="relative h-[70vh] min-h-[480px]">
-        <img src={images[active]} alt={p.name} className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20" />
-        <div className="absolute inset-0 flex flex-col justify-end">
+      <div className="relative h-[70vh] min-h-[480px] overflow-hidden">
+        {activeMedia?.type === "video" ? (
+          <div className="absolute inset-0 overflow-hidden bg-black pointer-events-none" data-testid="detail-hero-video">
+            <iframe
+              title="Project background video"
+              src={bgVideoSrc}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[177.78vh] min-w-full h-[56.25vw] min-h-full"
+              allow="autoplay; encrypted-media; picture-in-picture"
+            />
+          </div>
+        ) : (
+          <img src={activeMedia?.src} alt={p.name} className="h-full w-full object-cover" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20 pointer-events-none" />
+        <div className="absolute inset-0 flex flex-col justify-end pointer-events-none">
           <div className="container-lux pb-10">
             {p.logo_image && (
               <div className="mb-5">
@@ -75,30 +94,30 @@ export default function ProjectDetail() {
       </div>
 
       {/* Thumbnails */}
-      {(images.length > 1 || hasVideo) && (
+      {media.length > 1 && (
         <div className="container-lux -mt-8 relative z-10">
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-            {images.map((img, i) => (
-              <button key={i} onClick={() => setActive(i)} className={`shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 transition-colors ${i === active ? "border-[color:var(--lux-gold)]" : "border-transparent opacity-70 hover:opacity-100"}`}>
-                <img src={img} alt="" className="h-full w-full object-cover" />
+            {media.map((m, i) => (
+              <button
+                key={i}
+                onClick={() => setActive(i)}
+                data-testid={m.type === "video" ? "detail-video-thumb" : undefined}
+                aria-label={m.type === "video" ? "Play project video" : "View image"}
+                className={`relative shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 transition-colors group ${i === active ? "border-[color:var(--lux-gold)]" : "border-transparent opacity-70 hover:opacity-100"}`}
+              >
+                <img src={m.type === "video" ? images[0] : m.src} alt="" className="h-full w-full object-cover" />
+                {m.type === "video" && (
+                  <>
+                    <span className="absolute inset-0 grid place-items-center bg-black/45 group-hover:bg-black/30 transition-colors">
+                      <span className="h-8 w-8 grid place-items-center rounded-full bg-[color:var(--lux-gold)] text-black">
+                        <Play className="h-4 w-4 fill-current translate-x-[1px]" />
+                      </span>
+                    </span>
+                    <span className="absolute bottom-1 left-1 text-[9px] font-semibold uppercase tracking-wider text-ivory bg-black/60 rounded px-1.5 py-0.5">Video</span>
+                  </>
+                )}
               </button>
             ))}
-            {hasVideo && (
-              <button
-                onClick={() => setLightbox(videoIndex)}
-                data-testid="detail-video-thumb"
-                aria-label="Play project video"
-                className="relative shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 border-transparent opacity-90 hover:opacity-100 transition-colors group"
-              >
-                <img src={images[0]} alt="" className="h-full w-full object-cover" />
-                <span className="absolute inset-0 grid place-items-center bg-black/45 group-hover:bg-black/30 transition-colors">
-                  <span className="h-8 w-8 grid place-items-center rounded-full bg-[color:var(--lux-gold)] text-black">
-                    <Play className="h-4 w-4 fill-current translate-x-[1px]" />
-                  </span>
-                </span>
-                <span className="absolute bottom-1 left-1 text-[9px] font-semibold uppercase tracking-wider text-ivory bg-black/60 rounded px-1.5 py-0.5">Video</span>
-              </button>
-            )}
           </div>
         </div>
       )}
@@ -117,7 +136,7 @@ export default function ProjectDetail() {
                   <span className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-5 py-3 text-sm text-[color:var(--lux-ivory)]/60"><FileText className="h-4 w-4" /> Brochure Coming Soon</span>
                 )
               )}
-              <button onClick={() => setLightbox(0)} data-testid="detail-gallery-button" className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-5 py-3 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors">View Gallery ({media.length})</button>
+              <button onClick={() => setLightbox(active)} data-testid="detail-gallery-button" className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-5 py-3 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors">View Gallery ({media.length})</button>
             </div>
           </FadeUp>
 

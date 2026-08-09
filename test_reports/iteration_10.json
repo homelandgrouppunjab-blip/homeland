@@ -1,0 +1,52 @@
+{
+  "summary": "Completed comprehensive frontend testing of the new video feature for Homeland Group luxury real-estate website. Tested video-first media slider, background video autoplay, thumbnail interactions, lightbox video playback, and regression scenarios across multiple projects (homeland-regalia, cp67, homeland-leisure-valley).",
+  "backend_issues": {
+    "critical_bugs": [],
+    "flaky_endpoints": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "content_issues": [
+      {
+        "component": "ProjectDetail - Lightbox Video",
+        "issue": "YouTube video (ID: 1O6Qstncpnc) shows 'Video unavailable - This content isn't available' message in both background hero and lightbox",
+        "affected_projects": ["homeland-regalia", "cp67"],
+        "root_cause": "YouTube video content is private, deleted, or restricted - NOT a code implementation issue",
+        "fix_priority": "LOW",
+        "recommendation": "Replace with a valid, public YouTube video URL in the project data. The code implementation is correct and working as expected."
+      }
+    ]
+  },
+  "passed_tests": [
+    "✓ Background video container (data-testid='detail-hero-video') renders correctly on project detail pages with video",
+    "✓ Background video iframe has correct title 'Project background video' and parameters (autoplay=1, mute=1, loop=1, playlist, controls=0)",
+    "✓ Video thumbnail is FIRST in the media slider with data-testid='detail-video-thumb'",
+    "✓ Video thumbnail has gold border (active state) on initial page load",
+    "✓ Video thumbnail displays gold play icon and 'VIDEO' label",
+    "✓ Hero overlay content (project name, status badges, address, logo plaque) is visible on top of background video",
+    "✓ Clicking image thumbnail switches hero from video to image view (video container removed)",
+    "✓ Clicking video thumbnail switches hero back to background video view (video container restored)",
+    "✓ 'View Gallery' button (data-testid='detail-gallery-button') shows correct count (images + 1 for video)",
+    "✓ Lightbox opens and renders video iframe with title 'Project video'",
+    "✓ Lightbox video has correct parameters (autoplay=1, NO mute - plays with sound)",
+    "✓ Lightbox bottom label shows 'Video' for video slides",
+    "✓ Lightbox navigation arrows work correctly and wrap around media array",
+    "✓ Tested successfully on homeland-regalia (6 media items: 1 video + 5 images)",
+    "✓ Tested successfully on cp67 (5 media items: 1 video + 4 images)",
+    "✓ REGRESSION: Projects without video (homeland-leisure-valley) display hero image correctly",
+    "✓ REGRESSION: No video thumbnail appears for projects without video",
+    "✓ REGRESSION: No duplicate video iframe in Overview tab",
+    "✓ REGRESSION: Gallery lightbox shows only images for projects without video"
+  ],
+  "test_report_links": [],
+  "success_percentage": {
+    "frontend": "100%",
+    "backend": "N/A (frontend-only testing)"
+  },
+  "updated_files": [],
+  "action_item_for_main_agent": "OPTIONAL: Replace YouTube video URL in project data (homeland-regalia, cp67) with a valid, public video. Current video ID (1O6Qstncpnc) shows 'Video unavailable'. This is a content/data issue, not a code issue. All video feature requirements are implemented correctly and working as expected.",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_test_itself": false
+}
