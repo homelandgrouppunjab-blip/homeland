@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { getContent } from "@/lib/api";
 
 const LINKS = [
   { label: "Home", to: "/" },
@@ -9,14 +10,20 @@ const LINKS = [
   { label: "Compare", to: "/compare" },
   { label: "About", to: "/about" },
   { label: "Locations", to: "/locations" },
-  { label: "Brochures", to: "/brochures" },
   { label: "Insights", to: "/insights" },
-  { label: "RERA", to: "/rera" },
+];
+
+const SOCIAL_ICONS = [
+  { key: "instagram", Icon: Instagram, label: "Instagram" },
+  { key: "facebook", Icon: Facebook, label: "Facebook" },
+  { key: "linkedin", Icon: Linkedin, label: "LinkedIn" },
+  { key: "youtube", Icon: Youtube, label: "YouTube" },
 ];
 
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [social, setSocial] = useState({});
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -24,6 +31,12 @@ export const Navbar = () => {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    getContent().then((c) => setSocial(c?.social || {})).catch(() => {});
+  }, []);
+
+  const socialLinks = SOCIAL_ICONS.filter((s) => social[s.key]);
 
   return (
     <header
@@ -52,6 +65,23 @@ export const Navbar = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
+          {socialLinks.length > 0 && (
+            <div className="flex items-center gap-1.5 pr-2 mr-1 border-r border-[color:var(--border-hairline)]">
+              {socialLinks.map(({ key, Icon, label }) => (
+                <a
+                  key={key}
+                  href={social[key]}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                  data-testid={`nav-social-${key}`}
+                  className="h-9 w-9 grid place-items-center rounded-full border border-[color:var(--border-hairline)] text-[color:var(--lux-ivory)]/70 hover:text-gold hover:border-[color:var(--border-gold)] transition-colors"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+          )}
           <Link
             to="/book-visit"
             data-testid="nav-book-visit-button"
@@ -89,6 +119,23 @@ export const Navbar = () => {
                     {l.label}
                   </Link>
                 ))}
+                {socialLinks.length > 0 && (
+                  <div className="flex items-center gap-2 mt-5 pt-4 border-t border-[color:var(--border-hairline)]">
+                    {socialLinks.map(({ key, Icon, label }) => (
+                      <a
+                        key={key}
+                        href={social[key]}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={label}
+                        data-testid={`mobile-nav-social-${key}`}
+                        className="h-10 w-10 grid place-items-center rounded-full border border-[color:var(--border-hairline)] text-[color:var(--lux-ivory)]/70 hover:text-gold hover:border-[color:var(--border-gold)] transition-colors"
+                      >
+                        <Icon className="h-4 w-4" />
+                      </a>
+                    ))}
+                  </div>
+                )}
                 <Link
                   to="/book-visit"
                   onClick={() => setOpen(false)}

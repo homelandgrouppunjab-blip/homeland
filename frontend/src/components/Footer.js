@@ -19,8 +19,16 @@ export const Footer = () => {
               {content?.brand_tagline || "Crafting iconic addresses across Punjab & the Tricity."}
             </p>
             <div className="flex gap-3 mt-5">
-              {[Facebook, Instagram, Linkedin, Youtube].map((Icon, i) => (
-                <a key={i} href="#" aria-label="social" className="h-9 w-9 grid place-items-center rounded-full border border-[color:var(--border-hairline)] text-[color:var(--lux-ivory)]/70 hover:text-gold hover:border-[color:var(--border-gold)] transition-colors">
+              {[["facebook", Facebook], ["instagram", Instagram], ["linkedin", Linkedin], ["youtube", Youtube]].map(([key, Icon]) => (
+                <a
+                  key={key}
+                  href={content?.social?.[key] || "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={key}
+                  data-testid={`footer-social-${key}`}
+                  className="h-9 w-9 grid place-items-center rounded-full border border-[color:var(--border-hairline)] text-[color:var(--lux-ivory)]/70 hover:text-gold hover:border-[color:var(--border-gold)] transition-colors"
+                >
                   <Icon className="h-4 w-4" />
                 </a>
               ))}

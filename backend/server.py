@@ -250,6 +250,12 @@ async def seed_database():
         {"$set": {
             "history_full": _hist_full,
             "history_intro": _hist_full[0],
+            "social": {
+                "facebook": "https://www.facebook.com/homelandgroupofficial/",
+                "instagram": "https://www.instagram.com/homelandgroup/",
+                "linkedin": "https://www.linkedin.com/company/homelandgroup/about/",
+                "youtube": "https://www.youtube.com/channel/UCwB0jXrywTjCebCTfC8Xlmw",
+            },
         }},
     )
 
