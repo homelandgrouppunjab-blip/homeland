@@ -96,7 +96,7 @@ export default function BookVisit() {
                   <SelectTrigger data-testid="visit-project-select" className={inputCls}><SelectValue /></SelectTrigger>
                   <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
                     <SelectItem value="Any">Any Project</SelectItem>
-                    {projects.map((p) => <SelectItem key={p.slug} value={p.name}>{p.name}</SelectItem>)}
+                    {projects.filter((p) => p.status !== "DELIVERED").map((p) => <SelectItem key={p.slug} value={p.name}>{p.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>

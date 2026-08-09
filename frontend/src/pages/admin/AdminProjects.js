@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import FileUpload from "@/components/FileUpload";
 
 const EMPTY = {
-  name: "", tagline: "", status: "UPCOMING", possession: "", location: "", full_address: "", city: "",
+  name: "", tagline: "", status: "UPCOMING", possession: "", delivery_year: "", location: "", full_address: "", city: "",
   type: "Residential", unit_types: [], key_units: "", price_range: "", rera_numbers: [], rera_registered_date: "",
   rera_certificate_url: "", amenities: [], description: "", highlights: [], hero_image: "", logo_image: "", gallery: [], video_url: "",
   brochure_url: "", map_lat: "", map_lng: "", landmarks: [], featured: false, hot_selling: false, order: 99,
@@ -110,6 +110,7 @@ export default function AdminProjects() {
             <div><label className={lbl}>City</label><input className={cls} value={form.city} onChange={(e) => set("city", e.target.value)} /></div>
             <div className="sm:col-span-2"><label className={lbl}>Full Address</label><input className={cls} value={form.full_address} onChange={(e) => set("full_address", e.target.value)} /></div>
             <div><label className={lbl}>Possession</label><input className={cls} value={form.possession} onChange={(e) => set("possession", e.target.value)} /></div>
+            <div><label className={lbl}>Delivery Year (for delivered projects)</label><input className={cls} value={form.delivery_year} onChange={(e) => set("delivery_year", e.target.value)} placeholder="e.g. 2022" data-testid="admin-project-delivery-year" /></div>
             <div><label className={lbl}>Price Range</label><input className={cls} value={form.price_range} onChange={(e) => set("price_range", e.target.value)} /></div>
             <div><label className={lbl}>Key Units</label><input className={cls} value={form.key_units} onChange={(e) => set("key_units", e.target.value)} /></div>
             <div><label className={lbl}>Order</label><input type="number" className={cls} value={form.order} onChange={(e) => set("order", e.target.value)} /></div>

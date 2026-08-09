@@ -29,10 +29,13 @@ export default function ProjectDetail() {
   const images = [p.hero_image, ...(p.gallery || [])].filter(Boolean);
   const copyRera = (r) => { navigator.clipboard.writeText(r); toast.success("RERA number copied"); };
 
+  const isDelivered = p.status === "DELIVERED";
   const stats = [
     { icon: Building2, label: "Type", value: p.type },
     { icon: Home, label: "Configurations", value: (p.unit_types || []).join(", ") || "—" },
-    { icon: CalendarClock, label: "Possession", value: p.possession },
+    isDelivered
+      ? { icon: CalendarClock, label: "Delivered", value: p.delivery_year || p.possession || "—" }
+      : { icon: CalendarClock, label: "Possession", value: p.possession },
     { icon: Ruler, label: "Price", value: p.price_range },
   ];
 
@@ -83,10 +86,12 @@ export default function ProjectDetail() {
             <div className="kicker mb-2">{p.type} · {p.location}</div>
             <p className="font-display text-2xl text-ivory leading-snug">{p.tagline}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              {p.brochure_url ? (
-                <a href={p.brochure_url} target="_blank" rel="noreferrer" data-testid="detail-brochure-button" className="inline-flex items-center gap-2 rounded-xl border gold-line bg-[rgba(212,175,55,0.08)] px-5 py-3 text-sm font-semibold text-gold hover:bg-[rgba(212,175,55,0.16)] transition-colors"><FileText className="h-4 w-4" /> Download Brochure</a>
-              ) : (
-                <span className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-5 py-3 text-sm text-[color:var(--lux-ivory)]/60"><FileText className="h-4 w-4" /> Brochure Coming Soon</span>
+              {!isDelivered && (
+                p.brochure_url ? (
+                  <a href={p.brochure_url} target="_blank" rel="noreferrer" data-testid="detail-brochure-button" className="inline-flex items-center gap-2 rounded-xl border gold-line bg-[rgba(212,175,55,0.08)] px-5 py-3 text-sm font-semibold text-gold hover:bg-[rgba(212,175,55,0.16)] transition-colors"><FileText className="h-4 w-4" /> Download Brochure</a>
+                ) : (
+                  <span className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-5 py-3 text-sm text-[color:var(--lux-ivory)]/60"><FileText className="h-4 w-4" /> Brochure Coming Soon</span>
+                )
               )}
               <button onClick={() => setLightbox(0)} data-testid="detail-gallery-button" className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-5 py-3 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors">View Gallery ({images.length})</button>
             </div>

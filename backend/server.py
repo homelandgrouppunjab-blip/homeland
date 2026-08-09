@@ -55,6 +55,7 @@ class ProjectBase(BaseModel):
     tagline: str = ""
     status: str = "UPCOMING"  # DELIVERED | ONGOING | UPCOMING
     possession: str = ""
+    delivery_year: str = ""
     location: str = ""
     full_address: str = ""
     city: str = ""

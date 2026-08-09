@@ -62,12 +62,16 @@ export const HeroSlider = ({ projects = [] }) => {
               <Link to={`/projects/${p.slug}`} data-testid="hero-explore-button" className="inline-flex items-center gap-2 rounded-xl border gold-line bg-[rgba(212,175,55,0.08)] px-6 py-3.5 text-sm font-semibold tracking-wide text-gold hover:bg-[rgba(212,175,55,0.16)] transition-colors">
                 Explore Project <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/contact" data-testid="hero-schedule-visit-button" className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-6 py-3.5 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors">
-                Schedule a Visit
-              </Link>
-              <Link to="/brochures" data-testid="hero-brochure-button" className="inline-flex items-center gap-2 rounded-xl px-4 py-3.5 text-sm font-semibold text-[color:var(--lux-ivory)]/80 hover:text-gold transition-colors">
-                <FileText className="h-4 w-4" /> Download Brochure
-              </Link>
+              {p.status !== "DELIVERED" && (
+                <Link to="/contact" data-testid="hero-schedule-visit-button" className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-6 py-3.5 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors">
+                  Schedule a Visit
+                </Link>
+              )}
+              {p.status !== "DELIVERED" && (
+                <Link to="/brochures" data-testid="hero-brochure-button" className="inline-flex items-center gap-2 rounded-xl px-4 py-3.5 text-sm font-semibold text-[color:var(--lux-ivory)]/80 hover:text-gold transition-colors">
+                  <FileText className="h-4 w-4" /> Download Brochure
+                </Link>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>

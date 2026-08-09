@@ -67,7 +67,7 @@ export const ProjectCard = ({ project }) => {
           >
             Explore <ArrowRight className="h-4 w-4" />
           </Link>
-          <span className="text-xs text-[color:var(--lux-ivory)]/50">{p.possession}</span>
+          <span className="text-xs text-[color:var(--lux-ivory)]/50">{p.status === "DELIVERED" && p.delivery_year ? `Delivered ${p.delivery_year}` : p.possession}</span>
         </div>
       </div>
     </div>
