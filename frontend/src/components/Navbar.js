@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, Facebook, Instagram, Linkedin, Youtube, Share2 } from "lucide-react";
+import { Menu, Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getContent } from "@/lib/api";
 
 const LINKS = [
@@ -15,10 +14,10 @@ const LINKS = [
 ];
 
 const SOCIAL_ICONS = [
-  { key: "instagram", Icon: Instagram, label: "Instagram", style: { background: "linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5)" } },
-  { key: "facebook", Icon: Facebook, label: "Facebook", style: { background: "#1877F2" } },
-  { key: "linkedin", Icon: Linkedin, label: "LinkedIn", style: { background: "#0A66C2" } },
-  { key: "youtube", Icon: Youtube, label: "YouTube", style: { background: "#FF0000" } },
+  { key: "instagram", Icon: Instagram, label: "Instagram" },
+  { key: "facebook", Icon: Facebook, label: "Facebook" },
+  { key: "linkedin", Icon: Linkedin, label: "LinkedIn" },
+  { key: "youtube", Icon: Youtube, label: "YouTube" },
 ];
 
 export const Navbar = () => {
@@ -68,36 +67,20 @@ export const Navbar = () => {
 
         <div className="hidden lg:flex items-center gap-3">
           {socialLinks.length > 0 && (
-            <div className="pr-2 mr-1 border-r border-[color:var(--border-hairline)]">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    aria-label="Follow us"
-                    data-testid="nav-social-trigger"
-                    className="h-8 w-8 grid place-items-center rounded-full border border-[color:var(--border-hairline)] text-[color:var(--lux-ivory)]/70 hover:text-gold hover:border-[color:var(--border-gold)] transition-colors"
-                  >
-                    <Share2 className="h-3.5 w-3.5" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent align="end" sideOffset={10} className="w-auto p-2.5 bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)]" data-testid="nav-social-popover">
-                  <div className="flex items-center gap-2">
-                    {socialLinks.map(({ key, Icon, label, style }) => (
-                      <a
-                        key={key}
-                        href={social[key]}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={label}
-                        data-testid={`nav-social-${key}`}
-                        style={style}
-                        className="h-8 w-8 grid place-items-center rounded-full text-white transition-transform hover:scale-110 focus-visible:scale-110"
-                      >
-                        <Icon className="h-3.5 w-3.5" />
-                      </a>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
+            <div className="flex items-center gap-1.5 pr-2 mr-1 border-r border-[color:var(--border-hairline)]">
+              {socialLinks.map(({ key, Icon, label }) => (
+                <a
+                  key={key}
+                  href={social[key]}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                  data-testid={`nav-social-${key}`}
+                  className="h-9 w-9 grid place-items-center rounded-full border border-[color:var(--border-hairline)] text-[color:var(--lux-ivory)]/70 hover:text-gold hover:border-[color:var(--border-gold)] transition-colors"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
             </div>
           )}
           <Link
@@ -139,7 +122,7 @@ export const Navbar = () => {
                 ))}
                 {socialLinks.length > 0 && (
                   <div className="flex items-center gap-2 mt-5 pt-4 border-t border-[color:var(--border-hairline)]">
-                    {socialLinks.map(({ key, Icon, label, style }) => (
+                    {socialLinks.map(({ key, Icon, label }) => (
                       <a
                         key={key}
                         href={social[key]}
@@ -147,10 +130,9 @@ export const Navbar = () => {
                         rel="noreferrer"
                         aria-label={label}
                         data-testid={`mobile-nav-social-${key}`}
-                        style={style}
-                        className="h-9 w-9 grid place-items-center rounded-full text-white transition-transform hover:scale-110"
+                        className="h-10 w-10 grid place-items-center rounded-full border border-[color:var(--border-hairline)] text-[color:var(--lux-ivory)]/70 hover:text-gold hover:border-[color:var(--border-gold)] transition-colors"
                       >
-                        <Icon className="h-3.5 w-3.5" />
+                        <Icon className="h-4 w-4" />
                       </a>
                     ))}
                   </div>
