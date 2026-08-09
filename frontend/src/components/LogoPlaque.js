@@ -1,6 +1,6 @@
 import React from "react";
 
-// Frosted-glass plaque with a blurred white outer lining, used to present
+// Frosted-glass plaque with a blurred dark-grey outer lining, used to present
 // project brand logos consistently across cards, hero slider and detail pages.
 const SIZE = {
   sm: { outer: "rounded-2xl p-1.5", inner: "rounded-xl px-4 py-3", img: "h-12" },
@@ -13,7 +13,7 @@ export const LogoPlaque = ({ src, alt, size = "md", className = "", testId }) =>
   return (
     <div
       data-testid={testId}
-      className={`inline-block ${s.outer} bg-white/25 backdrop-blur-md ring-1 ring-white/50 shadow-[0_16px_50px_rgba(0,0,0,0.5)] ${className}`}
+      className={`inline-block ${s.outer} bg-[#2B2B2B]/50 backdrop-blur-md ring-1 ring-white/10 shadow-[0_16px_50px_rgba(0,0,0,0.5)] ${className}`}
     >
       <div className={`${s.inner} bg-white/85 backdrop-blur-xl ring-1 ring-white/60`}>
         <img src={src} alt={alt} loading="lazy" className={`${s.img} w-auto block object-contain`} />
