@@ -9,11 +9,11 @@ export const EnquiryPopup = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    // Show the enquiry invite on every page load / refresh (after a short delay).
+    // Show the enquiry invite after a delay so visitors can view the page first.
     getProjects().then(setProjects).catch(() => {});
     const t = setTimeout(() => {
       setOpen(true);
-    }, 3000);
+    }, 7000);
     return () => clearTimeout(t);
   }, []);
 
