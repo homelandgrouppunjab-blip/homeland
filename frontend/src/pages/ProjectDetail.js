@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2 } from "lucide-react";
+import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2, Layers, Waves, Dumbbell, Car, Trees, Utensils, ArrowUpDown, Baby, Sparkles, Users, Zap, BatteryCharging, Droplets, Sun, Snowflake, Briefcase, Film, ShoppingBag, Compass, Wind, Trophy, ChefHat, BellRing } from "lucide-react";
 import { toast } from "sonner";
 import { getProject, getProjects } from "@/lib/api";
 import StatusBadge from "@/components/StatusBadge";
@@ -49,9 +49,41 @@ export default function ProjectDetail() {
     { icon: Building2, label: "No. of Floors", value: p.floor_count },
   ].filter((s) => s.value);
   const hasSpecs = specItems.length > 0 || !!p.specifications;
+  const configValue = (p.unit_types || []).join(", ");
+  const heroStripItems = [
+    ...specItems,
+    ...(configValue ? [{ icon: Layers, label: "Config", value: configValue }] : []),
+  ];
   const internalFeatures = p.internal_features || [];
   const externalFeatures = p.external_features || [];
   const hasFeatures = internalFeatures.length > 0 || externalFeatures.length > 0;
+  const featureIcon = (text) => {
+    const t = (text || "").toLowerCase();
+    if (/(pool|swimming)/.test(t)) return Waves;
+    if (/(gym|fitness)/.test(t)) return Dumbbell;
+    if (/(\bspa\b|meditat|wellness|massage)/.test(t)) return Sparkles;
+    if (/(security|cctv|surveillance)/.test(t)) return ShieldCheck;
+    if (/(parking|basement)/.test(t)) return Car;
+    if (/(garden|landscap|green|park|tree|promenade)/.test(t)) return Trees;
+    if (/(kitchen)/.test(t)) return ChefHat;
+    if (/(lift|elevator|escalator)/.test(t)) return ArrowUpDown;
+    if (/(kid|child|play)/.test(t)) return Baby;
+    if (/(club)/.test(t)) return Users;
+    if (/(power backup|generator)/.test(t)) return Zap;
+    if (/(ev charg|charging|battery)/.test(t)) return BatteryCharging;
+    if (/(rainwater|water|droplet|harvest)/.test(t)) return Droplets;
+    if (/(solar|sun)/.test(t)) return Sun;
+    if (/(air.?condition|vrv|central air|snow)/.test(t)) return Snowflake;
+    if (/(business|co-?working|office|corporate|management)/.test(t)) return Briefcase;
+    if (/(multiplex|entertainment|pvr|cinema|film|screen)/.test(t)) return Film;
+    if (/(food court|dining|restaurant|banquet|culinary)/.test(t)) return Utensils;
+    if (/(retail|brand|shop|store|mall)/.test(t)) return ShoppingBag;
+    if (/(vaastu|vastu)/.test(t)) return Compass;
+    if (/(jog|cycl|track|sport|tennis|badminton|squash|cricket|court)/.test(t)) return Trophy;
+    if (/(concierge)/.test(t)) return BellRing;
+    if (/(balcon|view|ventilation)/.test(t)) return Wind;
+    return Check;
+  };
   const stats = [
     { icon: Building2, label: "Type", value: p.type },
     { icon: Home, label: "Configurations", value: (p.unit_types || []).join(", ") || "—" },
@@ -100,9 +132,9 @@ export default function ProjectDetail() {
                 </div>
                 <h1 className="font-display text-4xl sm:text-6xl text-ivory leading-tight max-w-4xl">{p.name}</h1>
                 <div className="mt-3 flex items-center gap-2 text-[color:var(--lux-ivory)]/80"><MapPin className="h-4 w-4 text-gold" /> {p.full_address || p.location}</div>
-                {specItems.length > 0 && (
+                {heroStripItems.length > 0 && (
                   <div data-testid="hero-spec-strip" className="mt-5 flex flex-wrap gap-2.5">
-                    {specItems.map((s, i) => (
+                    {heroStripItems.map((s, i) => (
                       <div key={i} className="inline-flex items-center gap-2 rounded-full bg-black/40 backdrop-blur-sm border border-white/15 px-3.5 py-1.5">
                         <s.icon className="h-3.5 w-3.5 text-gold shrink-0" />
                         <span className="text-[10px] uppercase tracking-wider text-[color:var(--lux-ivory)]/55">{s.label}</span>
@@ -241,11 +273,15 @@ export default function ProjectDetail() {
                     <div>
                       <h3 className="font-display text-lg text-ivory mb-4">Internal Features</h3>
                       <div className="space-y-3">
-                        {internalFeatures.map((f, i) => (
-                          <div key={i} className="flex items-start gap-3 text-sm text-[color:var(--lux-ivory)]/80">
-                            <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" /> {f}
-                          </div>
-                        ))}
+                        {internalFeatures.map((f, i) => {
+                          const Icon = featureIcon(f);
+                          return (
+                            <div key={i} className="flex items-start gap-3 rounded-xl bg-glass hairline px-4 py-3 text-sm text-[color:var(--lux-ivory)]/85">
+                              <span className="h-7 w-7 grid place-items-center rounded-lg bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)] shrink-0"><Icon className="h-4 w-4 text-gold" /></span>
+                              <span className="mt-1">{f}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -253,11 +289,15 @@ export default function ProjectDetail() {
                     <div>
                       <h3 className="font-display text-lg text-ivory mb-4">External Features &amp; Amenities</h3>
                       <div className="space-y-3">
-                        {externalFeatures.map((f, i) => (
-                          <div key={i} className="flex items-start gap-3 text-sm text-[color:var(--lux-ivory)]/80">
-                            <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" /> {f}
-                          </div>
-                        ))}
+                        {externalFeatures.map((f, i) => {
+                          const Icon = featureIcon(f);
+                          return (
+                            <div key={i} className="flex items-start gap-3 rounded-xl bg-glass hairline px-4 py-3 text-sm text-[color:var(--lux-ivory)]/85">
+                              <span className="h-7 w-7 grid place-items-center rounded-lg bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)] shrink-0"><Icon className="h-4 w-4 text-gold" /></span>
+                              <span className="mt-1">{f}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -287,7 +327,7 @@ export default function ProjectDetail() {
         </div>
 
         {/* Sidebar enquiry */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1" id="enquiry-form">
           <div className="sticky top-24 rounded-2xl bg-glass hairline p-6">
             <div className="text-gold text-sm font-semibold">Interested in {p.name}?</div>
             <p className="text-xs text-[color:var(--lux-ivory)]/60 mt-1 mb-5">Register your interest — our team will reach out.</p>
@@ -334,6 +374,21 @@ export default function ProjectDetail() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Sticky mobile Enquire bar */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-[color:var(--border-hairline)] bg-[rgba(15,15,15,0.85)] backdrop-blur-md px-4 py-3 flex items-center gap-3" data-testid="mobile-enquire-bar">
+        <div className="min-w-0 flex-1">
+          <div className="text-[11px] uppercase tracking-wider text-[color:var(--lux-ivory)]/55">Interested?</div>
+          <div className="text-sm font-semibold text-ivory truncate">{p.name}</div>
+        </div>
+        <button
+          onClick={() => document.getElementById("enquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          data-testid="mobile-enquire-button"
+          className="shrink-0 inline-flex items-center gap-2 rounded-xl border gold-line bg-[rgba(212,175,55,0.12)] px-5 py-2.5 text-sm font-semibold text-gold hover:bg-[rgba(212,175,55,0.2)] active:scale-[0.98] transition-transform"
+        >
+          Enquire Now
+        </button>
+      </div>
     </div>
   );
 }
