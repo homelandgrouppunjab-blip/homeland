@@ -56,7 +56,23 @@ Click **Deploy**. After it finishes:
 
 ## File uploads
 Admin uploads (images/PDFs) are stored **inside MongoDB** and served from
-`/api/uploads/<filename>` — no external storage service required. (Max 15 MB/file.)
+`/api/uploads/<filename>` — no external storage service required.
+
+> **Vercel upload-size limit:** Vercel serverless functions accept a request body of
+> **~4.5 MB** on the Hobby plan (larger on Pro). Keep admin image/PDF uploads under
+> ~4.5 MB on Hobby. (The current brochures/images are well within this.) For very large
+> files, upload on Pro or use an external object store.
+
+## Client-side routing (SPA)
+`vercel.json` includes a catch-all rewrite so that deep links and refreshes on
+React-Router routes (e.g. `/projects/homeland-regalia`, `/admin/login`) always serve
+`index.html`. API calls are matched first and routed to the serverless function:
+```
+"rewrites": [
+  { "source": "/api/(.*)", "destination": "/api/index" },
+  { "source": "/(.*)",     "destination": "/index.html" }
+]
+```
 
 ## Local development (optional)
 ```
