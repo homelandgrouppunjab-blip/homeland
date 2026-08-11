@@ -1,5 +1,6 @@
 // Homeland Group — Vercel-native REST API (Node.js + native MongoDB driver)
 // No Python/FastAPI. Deploys as a Vercel serverless function.
+try { require("dotenv").config(); } catch (e) { /* dotenv optional (Vercel uses dashboard env) */ }
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
