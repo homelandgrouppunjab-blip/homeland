@@ -14,17 +14,18 @@ export const ExitPopup = () => {
       try {
         return sessionStorage.getItem(EXIT_KEY) === "1" || sessionStorage.getItem(LEAD_KEY) === "1";
       } catch (e) {
+        console.warn("ExitPopup: sessionStorage unavailable", e);
         return false;
       }
     };
     if (already()) return;
 
-    getProjects().then(setProjects).catch(() => {});
+    getProjects().then(setProjects).catch((e) => console.error("ExitPopup: failed to load projects", e));
 
     const trigger = () => {
       if (already()) return;
       setOpen(true);
-      try { sessionStorage.setItem(EXIT_KEY, "1"); } catch (e) { /* ignore */ }
+      try { sessionStorage.setItem(EXIT_KEY, "1"); } catch (e) { console.warn("ExitPopup: could not persist EXIT_KEY", e); }
       cleanup();
     };
 
@@ -52,6 +53,9 @@ export const ExitPopup = () => {
     }
 
     return cleanup;
+    // Runs once on mount: sets up exit-intent listeners. getProjects/setProjects
+    // are stable module/dispatch references, so an empty dep array is intentional.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -63,7 +67,7 @@ export const ExitPopup = () => {
       title="Don't Miss Priority Allotment"
       subtitle="Leave your details and our team will send curated options, current pricing and exclusive launch access."
       dismissText="No thanks"
-      onSuccess={() => { try { sessionStorage.setItem(LEAD_KEY, "1"); } catch (e) { /* ignore */ } }}
+      onSuccess={() => { try { sessionStorage.setItem(LEAD_KEY, "1"); } catch (e) { console.warn("ExitPopup: could not persist LEAD_KEY", e); } }}
     />
   );
 };

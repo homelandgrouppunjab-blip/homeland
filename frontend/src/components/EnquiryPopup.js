@@ -10,15 +10,17 @@ export const EnquiryPopup = () => {
 
   useEffect(() => {
     // Show the enquiry invite after a delay so visitors can view the page first.
-    getProjects().then(setProjects).catch(() => {});
+    getProjects().then(setProjects).catch((e) => console.error("EnquiryPopup: failed to load projects", e));
     const t = setTimeout(() => {
       setOpen(true);
     }, 7000);
     return () => clearTimeout(t);
+    // Runs once on mount; getProjects/setProjects are stable references.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const markLead = () => {
-    try { sessionStorage.setItem(LEAD_KEY, "1"); } catch (e) { /* ignore */ }
+    try { sessionStorage.setItem(LEAD_KEY, "1"); } catch (e) { console.warn("EnquiryPopup: could not persist LEAD_KEY", e); }
   };
 
   return (

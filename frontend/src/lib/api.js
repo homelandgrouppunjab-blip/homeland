@@ -8,8 +8,15 @@ export const API = `${BACKEND_URL}/api`;
 const client = axios.create({ baseURL: API });
 
 client.interceptors.request.use((config) => {
-  const token = localStorage.getItem("hg_token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  // Bearer token for the stateless JWT API. Stored in localStorage so it can be
+  // attached as an Authorization header (see AuthContext for the storage rationale
+  // and the httpOnly-cookie migration note). Guarded in case storage is blocked.
+  try {
+    const token = localStorage.getItem("hg_token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  } catch (e) {
+    console.warn("api: localStorage unavailable for auth token", e);
+  }
   return config;
 });
 

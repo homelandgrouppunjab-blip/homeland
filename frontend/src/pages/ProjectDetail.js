@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2, Layers, Waves, Dumbbell, Car, Trees, Utensils, ArrowUpDown, Baby, Sparkles, Users, Zap, BatteryCharging, Droplets, Sun, Snowflake, Briefcase, Film, ShoppingBag, Compass, Wind, Trophy, ChefHat, BellRing } from "lucide-react";
 import { toast } from "sonner";
@@ -11,6 +11,36 @@ import FadeUp from "@/components/FadeUp";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
+// Pure helper (kept at module scope to reduce component complexity): maps a
+// feature label to a contextual icon based on keyword matching.
+const featureIcon = (text) => {
+  const t = (text || "").toLowerCase();
+  if (/(pool|swimming)/.test(t)) return Waves;
+  if (/(gym|fitness)/.test(t)) return Dumbbell;
+  if (/(\bspa\b|meditat|wellness|massage)/.test(t)) return Sparkles;
+  if (/(security|cctv|surveillance)/.test(t)) return ShieldCheck;
+  if (/(parking|basement)/.test(t)) return Car;
+  if (/(garden|landscap|green|park|tree|promenade)/.test(t)) return Trees;
+  if (/(kitchen)/.test(t)) return ChefHat;
+  if (/(lift|elevator|escalator)/.test(t)) return ArrowUpDown;
+  if (/(kid|child|play)/.test(t)) return Baby;
+  if (/(club)/.test(t)) return Users;
+  if (/(power backup|generator)/.test(t)) return Zap;
+  if (/(ev charg|charging|battery)/.test(t)) return BatteryCharging;
+  if (/(rainwater|water|droplet|harvest)/.test(t)) return Droplets;
+  if (/(solar|sun)/.test(t)) return Sun;
+  if (/(air.?condition|vrv|central air|snow)/.test(t)) return Snowflake;
+  if (/(business|co-?working|office|corporate|management)/.test(t)) return Briefcase;
+  if (/(multiplex|entertainment|pvr|cinema|film|screen)/.test(t)) return Film;
+  if (/(food court|dining|restaurant|banquet|culinary)/.test(t)) return Utensils;
+  if (/(retail|brand|shop|store|mall)/.test(t)) return ShoppingBag;
+  if (/(vaastu|vastu)/.test(t)) return Compass;
+  if (/(jog|cycl|track|sport|tennis|badminton|squash|cricket|court)/.test(t)) return Trophy;
+  if (/(concierge)/.test(t)) return BellRing;
+  if (/(balcon|view|ventilation)/.test(t)) return Wind;
+  return Check;
+};
+
 export default function ProjectDetail() {
   const { slug } = useParams();
   const [p, setP] = useState(null);
@@ -20,9 +50,17 @@ export default function ProjectDetail() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    getProject(slug).then((d) => { setP(d); setActive(0); }).catch(() => setP(null));
-    getProjects().then(setAll).catch(() => {});
+    getProject(slug).then((d) => { setP(d); setActive(0); }).catch((e) => { console.error("ProjectDetail: failed to load project", e); setP(null); });
+    getProjects().then(setAll).catch((e) => console.error("ProjectDetail: failed to load projects", e));
+    // Re-fetch only when the slug changes; the api helpers are stable imports.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
+
+  // Memoized so the filter/slice does not re-run on unrelated re-renders.
+  const related = useMemo(
+    () => (p ? all.filter((x) => x.slug !== p.slug).slice(0, 5) : []),
+    [all, p]
+  );
 
   if (!p) return <div className="container-lux py-40 text-center text-[color:var(--lux-ivory)]/50">Loading project…</div>;
 
@@ -57,33 +95,6 @@ export default function ProjectDetail() {
   const internalFeatures = p.internal_features || [];
   const externalFeatures = p.external_features || [];
   const hasFeatures = internalFeatures.length > 0 || externalFeatures.length > 0;
-  const featureIcon = (text) => {
-    const t = (text || "").toLowerCase();
-    if (/(pool|swimming)/.test(t)) return Waves;
-    if (/(gym|fitness)/.test(t)) return Dumbbell;
-    if (/(\bspa\b|meditat|wellness|massage)/.test(t)) return Sparkles;
-    if (/(security|cctv|surveillance)/.test(t)) return ShieldCheck;
-    if (/(parking|basement)/.test(t)) return Car;
-    if (/(garden|landscap|green|park|tree|promenade)/.test(t)) return Trees;
-    if (/(kitchen)/.test(t)) return ChefHat;
-    if (/(lift|elevator|escalator)/.test(t)) return ArrowUpDown;
-    if (/(kid|child|play)/.test(t)) return Baby;
-    if (/(club)/.test(t)) return Users;
-    if (/(power backup|generator)/.test(t)) return Zap;
-    if (/(ev charg|charging|battery)/.test(t)) return BatteryCharging;
-    if (/(rainwater|water|droplet|harvest)/.test(t)) return Droplets;
-    if (/(solar|sun)/.test(t)) return Sun;
-    if (/(air.?condition|vrv|central air|snow)/.test(t)) return Snowflake;
-    if (/(business|co-?working|office|corporate|management)/.test(t)) return Briefcase;
-    if (/(multiplex|entertainment|pvr|cinema|film|screen)/.test(t)) return Film;
-    if (/(food court|dining|restaurant|banquet|culinary)/.test(t)) return Utensils;
-    if (/(retail|brand|shop|store|mall)/.test(t)) return ShoppingBag;
-    if (/(vaastu|vastu)/.test(t)) return Compass;
-    if (/(jog|cycl|track|sport|tennis|badminton|squash|cricket|court)/.test(t)) return Trophy;
-    if (/(concierge)/.test(t)) return BellRing;
-    if (/(balcon|view|ventilation)/.test(t)) return Wind;
-    return Check;
-  };
   const stats = [
     { icon: Building2, label: "Type", value: p.type },
     { icon: Home, label: "Configurations", value: (p.unit_types || []).join(", ") || "—" },
@@ -135,7 +146,7 @@ export default function ProjectDetail() {
                 {heroStripItems.length > 0 && (
                   <div data-testid="hero-spec-strip" className="mt-5 flex flex-wrap gap-2.5">
                     {heroStripItems.map((s, i) => (
-                      <div key={i} className="inline-flex items-center gap-2 rounded-full bg-black/40 backdrop-blur-sm border border-white/15 px-3.5 py-1.5">
+                      <div key={s.label} className="inline-flex items-center gap-2 rounded-full bg-black/40 backdrop-blur-sm border border-white/15 px-3.5 py-1.5">
                         <s.icon className="h-3.5 w-3.5 text-gold shrink-0" />
                         <span className="text-[10px] uppercase tracking-wider text-[color:var(--lux-ivory)]/55">{s.label}</span>
                         <span className="text-xs font-semibold text-ivory">{s.value}</span>
@@ -155,7 +166,7 @@ export default function ProjectDetail() {
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
             {images.map((img, i) => (
               <button
-                key={i}
+                key={`${img}-${i}`}
                 onClick={() => (hasVideo ? setLightbox(i) : setActive(i))}
                 aria-label="View image"
                 className={`shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 transition-colors ${!hasVideo && i === active ? "border-[color:var(--lux-gold)]" : "border-transparent opacity-70 hover:opacity-100"}`}
@@ -207,7 +218,7 @@ export default function ProjectDetail() {
               <div className="flex items-center gap-2 text-gold text-sm font-semibold"><ShieldCheck className="h-5 w-5" /> RERA Registered</div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {(p.rera_numbers || []).map((r, i) => (
-                  <button key={i} onClick={() => copyRera(r)} className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)] px-3 py-2 text-sm text-ivory tabular-nums hover:border-[color:var(--border-gold)] transition-colors">
+                  <button key={r} onClick={() => copyRera(r)} className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)] px-3 py-2 text-sm text-ivory tabular-nums hover:border-[color:var(--border-gold)] transition-colors">
                     {r} <Copy className="h-3.5 w-3.5 opacity-60" />
                   </button>
                 ))}
@@ -219,7 +230,7 @@ export default function ProjectDetail() {
           {/* Stats */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
             {stats.map((s, i) => (
-              <div key={i} className="rounded-xl bg-glass hairline p-4">
+              <div key={s.label} className="rounded-xl bg-glass hairline p-4">
                 <s.icon className="h-5 w-5 text-gold" />
                 <div className="text-xs text-[color:var(--lux-ivory)]/55 mt-3">{s.label}</div>
                 <div className="text-sm text-ivory font-semibold mt-0.5">{s.value}</div>
@@ -241,7 +252,7 @@ export default function ProjectDetail() {
               {(p.highlights || []).length > 0 && (
                 <div className="mt-6 grid sm:grid-cols-2 gap-3">
                   {p.highlights.map((h, i) => (
-                    <div key={i} className="flex items-start gap-3 text-sm text-[color:var(--lux-ivory)]/80">
+                    <div key={h} className="flex items-start gap-3 text-sm text-[color:var(--lux-ivory)]/80">
                       <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" /> {h}
                     </div>
                   ))}
@@ -253,7 +264,7 @@ export default function ProjectDetail() {
                 {specItems.length > 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {specItems.map((s, i) => (
-                      <div key={i} className="rounded-xl bg-glass hairline p-5">
+                      <div key={s.label} className="rounded-xl bg-glass hairline p-5">
                         <s.icon className="h-5 w-5 text-gold" />
                         <div className="text-xs text-[color:var(--lux-ivory)]/55 mt-3">{s.label}</div>
                         <div className="text-lg text-ivory font-semibold mt-0.5">{s.value}</div>
@@ -276,7 +287,7 @@ export default function ProjectDetail() {
                         {internalFeatures.map((f, i) => {
                           const Icon = featureIcon(f);
                           return (
-                            <div key={i} className="flex items-start gap-3 rounded-xl bg-glass hairline px-4 py-3 text-sm text-[color:var(--lux-ivory)]/85">
+                            <div key={f} className="flex items-start gap-3 rounded-xl bg-glass hairline px-4 py-3 text-sm text-[color:var(--lux-ivory)]/85">
                               <span className="h-7 w-7 grid place-items-center rounded-lg bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)] shrink-0"><Icon className="h-4 w-4 text-gold" /></span>
                               <span className="mt-1">{f}</span>
                             </div>
@@ -292,7 +303,7 @@ export default function ProjectDetail() {
                         {externalFeatures.map((f, i) => {
                           const Icon = featureIcon(f);
                           return (
-                            <div key={i} className="flex items-start gap-3 rounded-xl bg-glass hairline px-4 py-3 text-sm text-[color:var(--lux-ivory)]/85">
+                            <div key={f} className="flex items-start gap-3 rounded-xl bg-glass hairline px-4 py-3 text-sm text-[color:var(--lux-ivory)]/85">
                               <span className="h-7 w-7 grid place-items-center rounded-lg bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)] shrink-0"><Icon className="h-4 w-4 text-gold" /></span>
                               <span className="mt-1">{f}</span>
                             </div>
@@ -307,7 +318,7 @@ export default function ProjectDetail() {
             <TabsContent value="amenities" className="mt-6">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {(p.amenities || []).map((a, i) => (
-                  <div key={i} className="flex items-center gap-3 rounded-xl bg-glass hairline px-4 py-3 text-sm text-[color:var(--lux-ivory)]/80">
+                  <div key={a} className="flex items-center gap-3 rounded-xl bg-glass hairline px-4 py-3 text-sm text-[color:var(--lux-ivory)]/80">
                     <span className="h-1.5 w-1.5 rounded-full bg-gold" /> {a}
                   </div>
                 ))}
@@ -318,7 +329,7 @@ export default function ProjectDetail() {
               {(p.landmarks || []).length > 0 && (
                 <div className="mt-5 flex flex-wrap gap-2">
                   {p.landmarks.map((l, i) => (
-                    <span key={i} className="inline-flex items-center gap-2 rounded-full bg-glass hairline px-3 py-1.5 text-xs text-[color:var(--lux-ivory)]/75"><MapPin className="h-3 w-3 text-gold" /> {l}</span>
+                    <span key={l} className="inline-flex items-center gap-2 rounded-full bg-glass hairline px-3 py-1.5 text-xs text-[color:var(--lux-ivory)]/75"><MapPin className="h-3 w-3 text-gold" /> {l}</span>
                   ))}
                 </div>
               )}
@@ -341,7 +352,7 @@ export default function ProjectDetail() {
         <div className="container-lux">
           <h2 className="font-display text-2xl text-ivory mb-8">More Developments</h2>
           <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-            {all.filter((x) => x.slug !== p.slug).slice(0, 5).map((x) => (
+            {related.map((x) => (
               <Link key={x.slug} to={`/projects/${x.slug}`} className="shrink-0 w-72 rounded-2xl overflow-hidden bg-glass hairline lift">
                 <div className="aspect-[4/3] overflow-hidden"><img src={x.hero_image} alt={x.name} className="h-full w-full object-cover" /></div>
                 <div className="p-4"><div className="text-ivory font-semibold text-sm">{x.name}</div><div className="text-xs text-gold mt-1">{x.location}</div></div>

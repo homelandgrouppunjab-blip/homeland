@@ -33,7 +33,7 @@ export const HeroSlider = ({ projects = [] }) => {
           className="absolute inset-0"
         >
           <img src={p.hero_image} alt={p.name} className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
           <div className="absolute inset-0 hero-atmosphere" />
         </motion.div>
       </AnimatePresence>
