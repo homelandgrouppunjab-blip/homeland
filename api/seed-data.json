@@ -1,0 +1,778 @@
+{
+  "projects": [
+    {
+      "id": "f94e4d1f-866f-4a60-8ed6-336b90ecc56b",
+      "tagline": "The Most Powerful Address in Punjab — Reserved for the Exclusive Few.",
+      "possession": "Possession by Dec 2026",
+      "full_address": "Sector 77, International Airport Road, Mohali, Punjab 160070",
+      "key_units": "6 Iconic Towers · 3/4/5 BHK Sky Residences",
+      "price_range": "₹3.5 Cr onwards",
+      "rera_numbers": [
+        "PBRERA-SAS81-PR0757"
+      ],
+      "rera_registered_date": "2021-08-12",
+      "rera_certificate_url": "/api/uploads/regalia-form-v.pdf",
+      "amenities": [
+        "World-class Concierge Services",
+        "All-season Indoor Pool",
+        "Fitness Zones",
+        "Landscaped Gardens",
+        "Grand Clubhouse",
+        "Children's Play Areas",
+        "Private Locker Room",
+        "Indoor AC Basketball Court",
+        "Outdoor Gym",
+        "Yoga Area",
+        "Full-size Tennis Court",
+        "Sunbathing Area",
+        "Outdoor Cricket Pitch",
+        "Club Deck with Bar & Cafe",
+        "Reflexology Plaza"
+      ],
+      "highlights": [
+        "6 iconic towers with panoramic Shivalik views",
+        "3-side open sky residences with private decks",
+        "On International Airport Road, Sector 77",
+        "Grand triple-height entrance lobby"
+      ],
+      "logo_image": "/regalia-logo.png",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "video_url": "https://www.youtube.com/embed/1O6Qstncpnc",
+      "brochure_url": "/api/uploads/regalia-form-v.pdf",
+      "map_lat": 30.6788,
+      "map_lng": 76.7369,
+      "landmarks": [
+        "CP67 – Mohali's lifestyle & entertainment hub",
+        "On International Airport Road, Sector 77",
+        "Seamless connectivity to Chandigarh & highways"
+      ],
+      "featured": true,
+      "hot_selling": true,
+      "name": "Homeland Regalia",
+      "slug": "homeland-regalia",
+      "status": "ONGOING",
+      "location": "Sector 77, Mohali",
+      "city": "Mohali",
+      "type": "Residential",
+      "unit_types": [
+        "3 BHK",
+        "4 BHK",
+        "5 BHK"
+      ],
+      "description": "Experience ultra-luxury living at Homeland Regalia, a premium residential project designed as a true symbol of royalty. With top-tier amenities, lush green surroundings, and unmatched connectivity to Mohali, Chandigarh, and beyond, this is not just a home, it is a royal lifestyle. Thoughtfully designed and carefully crafted by one of the most trusted builders in North India, Homeland Regalia is ideal for those seeking family-friendly residential apartments with modern amenities.",
+      "hero_image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80",
+      "order": 1,
+      "created_at": "2026-08-09T16:11:56.553606+00:00",
+      "updated_at": "2026-08-09T16:11:56.553615+00:00"
+    },
+    {
+      "id": "9740f88a-36a4-4504-8424-eeb9bbbc4c7d",
+      "tagline": "The Most Lucrative Investment in India's Most Lucrative Destination.",
+      "possession": "Possession by Mar 2028",
+      "full_address": "Homeland Atelier, Plot A-40A, Industrial Focal Point, Phase 8 Extension, Sector 75, Mohali 140308",
+      "key_units": "Luxury Mall · Business Suites · Serviced Residences · Entertainment",
+      "price_range": "₹80 Lac onwards",
+      "rera_numbers": [
+        "PBRERA-SAS81-PC0419-032026"
+      ],
+      "rera_registered_date": "2022-06-18",
+      "rera_certificate_url": "",
+      "amenities": [
+        "Uber-premium Luxury Mall",
+        "High-street Retail Boulevards",
+        "Luxe Retail Promenade",
+        "Fine-dine & Culinary Boulevard",
+        "Entertainment Enclave with Cinemas & Gaming Arcades",
+        "Executive Offices / Business Suites",
+        "Serviced Residences",
+        "Smart Parking"
+      ],
+      "highlights": [
+        "Uber-premium luxury mall & high-street retail",
+        "Business suites + serviced residences",
+        "Entertainment enclave with cinemas & gaming",
+        "Phase 8 Extension, Sector 75 Mohali"
+      ],
+      "logo_image": "/global-park-logo.jpg",
+      "gallery": [
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "video_url": "https://www.youtube.com/embed/1O6Qstncpnc",
+      "brochure_url": "https://homelandglobalpark.com",
+      "map_lat": 30.6935,
+      "map_lng": 76.7208,
+      "landmarks": [
+        "Industrial Focal Point, Phase 8, Mohali",
+        "Sector 75, Mohali",
+        "Well connected to Chandigarh & Airport"
+      ],
+      "featured": true,
+      "hot_selling": true,
+      "name": "Homeland Global Park",
+      "slug": "homeland-global-park",
+      "status": "ONGOING",
+      "location": "Sector 75, Mohali",
+      "city": "Mohali",
+      "type": "Mixed-Use",
+      "unit_types": [
+        "Retail",
+        "Offices",
+        "Serviced Residences",
+        "Mall",
+        "Entertainment"
+      ],
+      "description": "Homeland Global Park is a massive mixed-use development in Punjab featuring an uber-premium luxury mall, business suites and serviced residences. It aims to redefine shopping, working, playing and living in the region — capitalizing on Punjab's rapid growth and its position as one of India's most lucrative investment destinations.",
+      "hero_image": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=1600&q=80",
+      "order": 2,
+      "created_at": "2026-08-09T16:11:56.554608+00:00",
+      "updated_at": "2026-08-09T16:11:56.554617+00:00"
+    },
+    {
+      "id": "ebccbaac-25b0-48ee-aa7c-3478b91add0d",
+      "tagline": "Live the Luxury.",
+      "possession": "Delivered · Ready to Move",
+      "full_address": "Sector 70, Mohali, Punjab 160071",
+      "key_units": "2/3/4 BHK · 1200–1800 sq.ft.",
+      "price_range": "₹60 Lac onwards",
+      "rera_numbers": [
+        "RERA registered — number on request"
+      ],
+      "rera_registered_date": "2017-03-20",
+      "rera_certificate_url": "",
+      "amenities": [
+        "Clubhouse",
+        "Spa",
+        "Lounge",
+        "Celebration Lawn",
+        "Sports Arena",
+        "Gymnasium",
+        "Game Zone",
+        "Swimming Pool, Kids Pool & Pool Deck"
+      ],
+      "highlights": [
+        "Delivered, ready-to-move luxury residences",
+        "Spacious, well-ventilated homes",
+        "Near Mohali International Airport",
+        "Close to Chandigarh"
+      ],
+      "logo_image": "/heights-logo.png",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "video_url": "https://www.youtube.com/embed/1O6Qstncpnc",
+      "brochure_url": "https://www.homelandgroup.org/projects/homeland-heights/",
+      "map_lat": 30.7046,
+      "map_lng": 76.7179,
+      "landmarks": [
+        "Near Mohali International Airport",
+        "Close to Chandigarh",
+        "Sector 70, Mohali"
+      ],
+      "featured": false,
+      "hot_selling": false,
+      "name": "Homeland Heights",
+      "slug": "homeland-heights",
+      "status": "DELIVERED",
+      "location": "Sector 70, Mohali",
+      "city": "Mohali",
+      "type": "Residential",
+      "unit_types": [
+        "2 BHK",
+        "3 BHK",
+        "4 BHK"
+      ],
+      "description": "Homeland Heights is one of its kind luxury residential projects with avant-garde splendour and distinctive architectural supremacy. Each home is seamlessly blended with efficacy and magnificence, with attention to detail that offers convenience and comfort. Widely spaced apartments with ample ventilation ensure a harmonious living experience for those who never settle for less.",
+      "hero_image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=80",
+      "order": 3,
+      "created_at": "2026-08-09T16:11:56.555210+00:00",
+      "updated_at": "2026-08-09T16:11:56.555216+00:00"
+    },
+    {
+      "id": "518347d2-2cc8-499f-b6e8-b97e009af4f7",
+      "tagline": "Many Reasons to Be Here.",
+      "possession": "100% Leased Asset",
+      "full_address": "CP67, Sector 67, Mohali, Punjab",
+      "key_units": "Pre-leased Showrooms · Food Courts · Grade-A Offices",
+      "price_range": "On Request",
+      "rera_numbers": [
+        "PBRERA-SAS80-PR0198"
+      ],
+      "rera_registered_date": "2016-11-05",
+      "rera_certificate_url": "",
+      "amenities": [
+        "Pre-leased Showrooms",
+        "Food Courts (Burger King, Domino's, Taco Bell, Haldiram's, Subway)",
+        "Grade-A Offices leased to MNCs",
+        "Flexible Office Suites",
+        "Ample Car Parking",
+        "24x7 Security",
+        "Premium International Brand Mix"
+      ],
+      "highlights": [
+        "Longest frontage on the International Airport Road",
+        "100% leased, operational asset",
+        "World-class international brand mix",
+        "Grade-A offices leased to multinationals"
+      ],
+      "logo_image": "/cp67-logo.png",
+      "gallery": [
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "video_url": "https://www.youtube.com/embed/1O6Qstncpnc",
+      "brochure_url": "https://www.homelandgroup.org/projects/cp-67",
+      "map_lat": 30.7011,
+      "map_lng": 76.7285,
+      "landmarks": [
+        "In Sector 67 Mohali",
+        "5 min to Phase 7 Market",
+        "10 min to Chandigarh"
+      ],
+      "featured": false,
+      "hot_selling": false,
+      "name": "CP67",
+      "slug": "cp67",
+      "status": "DELIVERED",
+      "location": "Sector 67, Mohali",
+      "city": "Mohali",
+      "type": "Commercial",
+      "unit_types": [
+        "Pre-leased Showrooms",
+        "Food Courts",
+        "Pre-leased Offices",
+        "Self-use Offices"
+      ],
+      "description": "CP67 Mohali is where life, work, shopping, dining and entertainment converge seamlessly. A place where patrons indulge, retailers thrive and businesses grow. With a rich legacy of standardized business spaces and delightful food hubs, CP67 has become a symbol of productivity, excellence and progress — built on the trust and belief of our clients.",
+      "hero_image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80",
+      "order": 4,
+      "created_at": "2026-08-09T16:11:56.555809+00:00",
+      "updated_at": "2026-08-09T16:11:56.555816+00:00"
+    },
+    {
+      "id": "d5e119ea-3b24-4a99-a878-4bd6d6f7219d",
+      "tagline": "Where New Chandigarh Meets Its Finest Address.",
+      "possession": "Possession by Dec 2026",
+      "full_address": "Mullanpur, New Chandigarh, Punjab 140901",
+      "key_units": "2/3/4 BHK · 1200–2000 sq.ft.",
+      "price_range": "₹1.2 Cr onwards",
+      "rera_numbers": [
+        "RERA registration in process"
+      ],
+      "rera_registered_date": "2023-01-30",
+      "rera_certificate_url": "",
+      "amenities": [
+        "Swimming Pool",
+        "Gymnasium",
+        "Clubhouse",
+        "Children's Play Area",
+        "Landscaped Gardens",
+        "24x7 Security",
+        "Parking Facility",
+        "Jogging Track"
+      ],
+      "highlights": [
+        "Foothills of the Shivaliks",
+        "Planned green township of New Chandigarh",
+        "Low-density premium living",
+        "Close to Medicity & educational hubs"
+      ],
+      "logo_image": "/infinia-logo.jpeg",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "video_url": "https://www.youtube.com/embed/1O6Qstncpnc",
+      "brochure_url": "https://www.homelandinfinia.com/",
+      "map_lat": 30.79,
+      "map_lng": 76.69,
+      "landmarks": [
+        "Near Chandigarh International Airport",
+        "Proximity to major highways",
+        "Close to educational institutions",
+        "Nearby shopping centres"
+      ],
+      "featured": false,
+      "hot_selling": false,
+      "name": "Homeland Infinia",
+      "slug": "homeland-infinia",
+      "status": "ONGOING",
+      "location": "New Chandigarh",
+      "city": "New Chandigarh",
+      "type": "Residential",
+      "unit_types": [
+        "2 BHK",
+        "3 BHK",
+        "4 BHK"
+      ],
+      "description": "Discover Homeland Infinia, offering ultra-luxury apartments in New Chandigarh. Experience premium residences, modern amenities and elegant living amidst the green, planned township at the foothills of the Shivaliks.",
+      "hero_image": "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1600&q=80",
+      "order": 5,
+      "created_at": "2026-08-09T16:11:56.556330+00:00",
+      "updated_at": "2026-08-09T16:11:56.556337+00:00"
+    },
+    {
+      "id": "3ab3d728-e904-4291-b43b-ceec8693d676",
+      "tagline": "Boutique 4 & 5 BHK Residences on the Mohali-Chandigarh Border.",
+      "possession": "Launching Soon",
+      "full_address": "Sector 62, Mohali-Chandigarh Border, Punjab",
+      "key_units": "Boutique 4 & 5 BHK Residences",
+      "price_range": "Coming Soon",
+      "rera_numbers": [
+        "RERA Application In Process"
+      ],
+      "rera_registered_date": "",
+      "rera_certificate_url": "",
+      "amenities": [
+        "Boutique Clubhouse",
+        "Swimming Pool",
+        "Landscaped Greens",
+        "Gymnasium",
+        "Kids Play Area",
+        "24x7 Security"
+      ],
+      "highlights": [
+        "Boutique low-density living",
+        "Sector 62 — Mohali-Chandigarh border",
+        "Spacious 4 & 5 BHK homes",
+        "Register early for priority allotment"
+      ],
+      "logo_image": "/leisure-valley-logo.jpeg",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "video_url": "",
+      "brochure_url": "https://www.homelandgroup.org",
+      "map_lat": 30.7267,
+      "map_lng": 76.7392,
+      "landmarks": [
+        "Sector 62 Mohali",
+        "Mohali-Chandigarh border",
+        "5 min to Chandigarh Sector 51"
+      ],
+      "featured": false,
+      "hot_selling": false,
+      "name": "Homeland Leisure Valley",
+      "slug": "homeland-leisure-valley",
+      "status": "UPCOMING",
+      "location": "Sector 62, Mohali",
+      "city": "Mohali",
+      "type": "Residential",
+      "unit_types": [
+        "4 BHK",
+        "5 BHK"
+      ],
+      "description": "Homeland Leisure Valley is an upcoming boutique development of spacious 4 & 5 BHK residences at Sector 62, right on the Mohali-Chandigarh border — offering exclusivity, greenery and unmatched connectivity.",
+      "hero_image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80",
+      "order": 6,
+      "created_at": "2026-08-09T16:11:56.556873+00:00",
+      "updated_at": "2026-08-09T16:11:56.556879+00:00"
+    },
+    {
+      "id": "a4c64762-1279-443c-a47f-48fb92389b28",
+      "tagline": "Your Dream Home Awaits in Amritsar.",
+      "possession": "Launching Soon",
+      "full_address": "Ranjit Avenue, Amritsar, Punjab 143001",
+      "key_units": "Premium 2 & 3 BHK Residences",
+      "price_range": "Coming Soon",
+      "rera_numbers": [
+        "RERA registration in process"
+      ],
+      "rera_registered_date": "",
+      "rera_certificate_url": "",
+      "amenities": [
+        "Swimming Pool",
+        "Gymnasium",
+        "Clubhouse",
+        "24x7 Security",
+        "Children's Play Area"
+      ],
+      "highlights": [
+        "Prime Ranjit Avenue location",
+        "Mixed-use premium development",
+        "Group's flagship entry into Amritsar",
+        "Register early for priority allotment"
+      ],
+      "logo_image": "/ranjit-avenue-logo.jpeg",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "video_url": "",
+      "brochure_url": "https://nsventures.in/Homeland-Amritsar/",
+      "map_lat": 31.634,
+      "map_lng": 74.8723,
+      "landmarks": [
+        "Golden Temple (~5 km)",
+        "Amritsar Railway Station (~3 km)",
+        "Amritsar Airport (~10 km)"
+      ],
+      "featured": false,
+      "hot_selling": false,
+      "name": "Homeland Ranjit Avenue",
+      "slug": "homeland-ranjit-avenue",
+      "status": "UPCOMING",
+      "location": "Ranjit Avenue, Amritsar",
+      "city": "Amritsar",
+      "type": "Mixed-Use",
+      "unit_types": [
+        "2 BHK",
+        "3 BHK"
+      ],
+      "description": "Homeland Amritsar (Ranjit Avenue) is a premium residential project in the heart of Ranjit Avenue, blending modern architecture with luxurious living. Strategically located near major landmarks, it offers a comfortable lifestyle with all essential amenities.",
+      "hero_image": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=80",
+      "order": 7,
+      "created_at": "2026-08-09T16:11:56.557345+00:00",
+      "updated_at": "2026-08-09T16:11:56.557352+00:00"
+    },
+    {
+      "id": "e2e56bcb-0d28-4de0-b926-99d99c6c8a67",
+      "tagline": "A Serene Retreat in Kasauli.",
+      "possession": "Launching Soon",
+      "full_address": "Kasauli, Himachal Pradesh, India",
+      "key_units": "3 & 4 BHK Villas · 2000–2500 sq.ft.",
+      "price_range": "₹1.5 Cr onwards",
+      "rera_numbers": [
+        "RERA registration in process"
+      ],
+      "rera_registered_date": "",
+      "rera_certificate_url": "",
+      "amenities": [
+        "Swimming Pool",
+        "Clubhouse",
+        "Gymnasium",
+        "Children's Play Area",
+        "24x7 Security",
+        "Landscaped Gardens"
+      ],
+      "highlights": [
+        "Luxury villas in serene Kasauli",
+        "Stunning valley & hill views",
+        "Perfect vacation & second-home retreat",
+        "Modern amenities amidst nature"
+      ],
+      "logo_image": "/vaana-logo.jpeg",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "video_url": "",
+      "brochure_url": "https://nsventures.tech/Homeland_Kasauli1/",
+      "map_lat": 30.899,
+      "map_lng": 76.965,
+      "landmarks": [
+        "Kasauli Mall Road",
+        "Kasauli Church",
+        "Sunset Point"
+      ],
+      "featured": false,
+      "hot_selling": false,
+      "name": "Homeland Vaana",
+      "slug": "homeland-vaana",
+      "status": "UPCOMING",
+      "location": "Kasauli, Himachal Pradesh",
+      "city": "Kasauli",
+      "type": "Vacation Home",
+      "unit_types": [
+        "3 BHK Villa",
+        "4 BHK Villa"
+      ],
+      "description": "Homeland Vaana offers a tranquil living experience amidst the lush greenery of Kasauli. With modern architecture, premium amenities and spacious villas with stunning valley views, it is designed for those seeking peace and luxury away from the city.",
+      "hero_image": "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1600&q=80",
+      "order": 8,
+      "created_at": "2026-08-09T16:11:56.557917+00:00",
+      "updated_at": "2026-08-09T16:11:56.557923+00:00"
+    },
+    {
+      "id": "ce7d41c3-ba20-424a-ab2e-1b915c647379",
+      "tagline": "Vacation Homes in the Heart of Goa.",
+      "possession": "Launching Soon",
+      "full_address": "Goa, India",
+      "key_units": "Boutique Vacation Homes",
+      "price_range": "Coming Soon",
+      "rera_numbers": [
+        "RERA Application In Process"
+      ],
+      "rera_registered_date": "",
+      "rera_certificate_url": "",
+      "amenities": [
+        "Resort-style Pool",
+        "Landscaped Gardens",
+        "Clubhouse",
+        "Concierge",
+        "Proximity to Beaches"
+      ],
+      "highlights": [
+        "Vacation homes in sunny Goa",
+        "Ideal for leisure & rental investment",
+        "Close to beaches & lifestyle hubs",
+        "Register early for priority allotment"
+      ],
+      "logo_image": "/ikaahi-logo.jpeg",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "video_url": "",
+      "brochure_url": "https://www.homelandgroup.org",
+      "map_lat": 15.2993,
+      "map_lng": 74.124,
+      "landmarks": [
+        "Goa",
+        "Near the coastline",
+        "Close to lifestyle & nightlife hubs"
+      ],
+      "featured": false,
+      "hot_selling": false,
+      "name": "Ikaahi Homes",
+      "slug": "ikaahi-homes",
+      "status": "UPCOMING",
+      "location": "Goa",
+      "city": "Goa",
+      "type": "Vacation Home",
+      "unit_types": [
+        "Vacation Villas",
+        "Apartments"
+      ],
+      "description": "Ikaahi Homes brings the Homeland promise to Goa — boutique vacation homes designed for leisure, investment and an idyllic coastal lifestyle. Your perfect getaway by the sea.",
+      "hero_image": "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=1600&q=80",
+      "order": 9,
+      "created_at": "2026-08-09T16:11:56.558348+00:00",
+      "updated_at": "2026-08-09T16:11:56.558354+00:00"
+    }
+  ],
+  "site_content": [
+    {
+      "key": "main",
+      "company_name": "Homeland Group Mohali",
+      "tagline": "Building Dreams, Creating Landmarks",
+      "site_logo": "",
+      "awards": [
+        {
+          "title": "Emerging Tricity Award",
+          "year": "2023"
+        },
+        {
+          "title": "Build X Punjab Award",
+          "year": "2023"
+        },
+        {
+          "title": "360 Real Estate Award",
+          "year": "2023"
+        },
+        {
+          "title": "Certificate of Excellence",
+          "year": "2023"
+        },
+        {
+          "title": "CSR Ready Memorial Award",
+          "year": "2023"
+        },
+        {
+          "title": "Homeland Excellence Award",
+          "year": "2023"
+        }
+      ],
+      "history_full": [
+        "Established in 2013, Homeland Group has emerged as one of North India's most trusted real estate developers, reshaping the cityscapes of Chandigarh, Mohali and the wider Tricity region. What began with a simple vision — to create transformative spaces that shape better lifestyles and thriving business communities — has grown into a portfolio of landmark residential and commercial developments.",
+        "Guided by three core values — integrity, innovation and responsibility — the group is known for thoughtful design, robust construction and lasting value. From luxury residences that raise the benchmark for living to commercial destinations that redefine business environments, Homeland doesn't simply add to skylines; it transforms prime addresses into vibrant, enduring landmarks.",
+        "This commitment has been recognised through numerous industry honours, including the Emerging Tricity Award, the Build X Punjab Award, the 360 Real Estate Award and a Certificate of Excellence. Today, Homeland Group continues to build on a legacy defined by trust, craftsmanship and a promise of a life elevated."
+      ],
+      "history_intro": "Established in 2013, Homeland Group has emerged as one of North India's most trusted real estate developers, reshaping the cityscapes of Chandigarh, Mohali and the wider Tricity region. What began with a simple vision — to create transformative spaces that shape better lifestyles and thriving business communities — has grown into a portfolio of landmark residential and commercial developments.",
+      "social": {
+        "facebook": "https://www.facebook.com/homelandgroupofficial/",
+        "instagram": "https://www.instagram.com/homelandgroup/",
+        "linkedin": "https://www.linkedin.com/company/homelandgroup/about/",
+        "youtube": "https://www.youtube.com/channel/UCwB0jXrywTjCebCTfC8Xlmw"
+      }
+    }
+  ],
+  "faqs": [
+    {
+      "id": "b4eadf30-dab1-493c-9350-86fbb6419593",
+      "q": "What does RERA registration mean for buyers?",
+      "a": "RERA (Real Estate Regulatory Authority) registration ensures a project is legally compliant, transparent and accountable. Every Homeland project displays its RERA number and is registered with the Punjab RERA authority.",
+      "order": 0
+    },
+    {
+      "id": "ab5a950d-3582-43b4-971f-fa0961d92616",
+      "q": "How can I download a project brochure?",
+      "a": "Visit any project detail page or the Brochure Center and click 'Download Brochure'. You may optionally share your contact details so our team can assist you further.",
+      "order": 1
+    },
+    {
+      "id": "a74ea53d-4de7-47a2-b579-e231b21aa35b",
+      "q": "Do you assist NRI buyers?",
+      "a": "Yes. Our dedicated NRI desk assists with documentation, virtual tours and end-to-end purchase support. Submit an enquiry and our team will reach out.",
+      "order": 2
+    },
+    {
+      "id": "12acd09d-db32-4735-bb15-c29fa0a52225",
+      "q": "Can I schedule a site visit?",
+      "a": "Absolutely. Use the enquiry form or call our sales team to schedule a guided site visit at your preferred time.",
+      "order": 3
+    },
+    {
+      "id": "9b695370-5ba1-4b9e-986f-7b1bdb6c1d44",
+      "q": "Are home loans available on Homeland projects?",
+      "a": "Yes, our projects are approved by leading banks and financial institutions. Our team can connect you with loan partners for the best rates.",
+      "order": 4
+    }
+  ],
+  "team": [
+    {
+      "id": "abaf5340-76a5-4032-a650-8b212f309104",
+      "name": "Mr. Umang Jindal",
+      "role": "Director",
+      "expertise": "Visionary behind North India's premium real estate projects.",
+      "bio": "Mr. Umang Jindal is the visionary behind North India's most premium real estate projects. Today, he stands amongst one of the youngest pioneers in creating extraordinary infrastructural developments and avant-garde lifestyle projects in the real estate sector. He truly is the man responsible for setting new benchmarks in the real estate sector around Tricity.",
+      "image": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80",
+      "order": 1
+    },
+    {
+      "id": "dfd248c3-8d4b-41de-8a30-363cee984576",
+      "name": "Mr. Abhay Jindal",
+      "role": "Director",
+      "expertise": "Leader in innovative projects and construction ventures.",
+      "bio": "Mr. Abhay Jindal, a smart and suave individual who has built innovative projects and construction ventures blossoming in the upper Northern region of the country. Under his brilliant leadership, he has set a paradigm by building the Homeland Group, a pioneer of luxury townships saturated in premium comfort.",
+      "image": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=600&q=80",
+      "order": 2
+    },
+    {
+      "id": "6ef05cbf-5271-44f1-b8f7-0eb7fe870572",
+      "name": "Mr. Mrinaal Mittal",
+      "role": "Director",
+      "expertise": "Dynamic leader & strategic thinker — finance and business development.",
+      "bio": "Mr. Mrinaal Mittal, a dynamic leader and strategic thinker, plays a key role in driving Homeland Group's growth and expansion across the country. With a strong vision for innovation and excellence, he continues to elevate the Group's presence in the Indian real estate landscape. His expertise in finance and business development has been instrumental in shaping the Group's success and setting new benchmarks in the industry.",
+      "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+      "order": 3
+    },
+    {
+      "id": "a27f18d1-f226-4841-a94d-422ab411fd4a",
+      "name": "Mr. Nitin Gulati",
+      "role": "VP — Sales & Leasing",
+      "expertise": "Two decades driving growth for Punjab's real estate industry.",
+      "bio": "Mr. Nitin Gulati has established a league of his own in the real estate landscape of Punjab. With an honourable education background in technology & management, Nitin has spent two awe-inspiring decades driving growth for Punjab's real estate industry, positioning himself among the who's who of the business.",
+      "image": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80",
+      "order": 4
+    },
+    {
+      "id": "19bd3744-6114-4bce-9ee6-0e61fa4f515a",
+      "name": "Dr. Deepinder Kaur Dhingra",
+      "role": "VP — Sales",
+      "expertise": "Award-winning real estate authority with international experience.",
+      "bio": "Dr. Deepinder Dhingra is a highly accomplished professional with a distinguished background in dentistry and real estate. Following her initial pursuits in dentistry, she expanded her expertise internationally, honing her skills in real estate in New Zealand. Through her unwavering dedication and exceptional professional approach, Dr. Dhingra has garnered multiple prestigious awards and established herself as a trusted and respected authority in the real estate industry.",
+      "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80",
+      "order": 5
+    },
+    {
+      "id": "16bad67e-dfb7-422c-8876-868eae8ee6f7",
+      "name": "Mr. Kushal Bansal",
+      "role": "VP — Sales",
+      "expertise": "Law graduate & strategic consultant redefining luxury real estate.",
+      "bio": "Mr. Kushal Bansal is a distinguished name in Punjab's real estate sector, with over a decade of strategic consulting experience. A law graduate with expertise in land regulations, he blends legal insight with sharp market intelligence. Known for his investment acumen and entrepreneurial spirit, Kushal has led several high-value, complex transactions. With global exposure shaping his vision, he now spearheads marquee projects, redefining luxury real estate in North India.",
+      "image": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=600&q=80",
+      "order": 6
+    },
+    {
+      "id": "2a6a4230-1f1a-4116-afad-6b1a00de7bfc",
+      "name": "Mr. Amit Gupta",
+      "role": "VP — Sales",
+      "expertise": "16+ years in sales & business development.",
+      "bio": "Mr. Amit Gupta brings over 16 years of rich experience in sales and business development. Known for his sharp negotiation skills and natural ability to convince and close deals, he has consistently driven growth for the organization. His strategic approach and client-first mindset set him apart in the real estate industry, and his leadership continues to inspire his team towards higher achievements.",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80",
+      "order": 7
+    }
+  ],
+  "posts": [
+    {
+      "title": "Homeland Regalia: Setting a New Benchmark for Luxury in Mohali",
+      "slug": "homeland-regalia-new-benchmark-luxury-mohali",
+      "category": "News",
+      "excerpt": "With six iconic towers on International Airport Road, Homeland Regalia is redefining premium living in the Tricity.",
+      "content": "Homeland Regalia continues to attract discerning home-buyers with its six iconic towers, world-class amenities and unmatched connectivity in Sector 77, Mohali. Designed as a true symbol of royalty, the project offers 3, 4 and 5 BHK sky residences with panoramic Shivalik views.\n\nFrom an all-season indoor pool and grand clubhouse to a full-size tennis court and reflexology plaza, every detail has been curated for an elevated lifestyle. Construction is progressing steadily with possession targeted for December 2026.",
+      "cover_image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80",
+      "author": "Homeland Group",
+      "date": "2026-01-15",
+      "published": true,
+      "id": "5e1cfa96-e03e-47a5-97ff-23e430adfff8",
+      "created_at": "2026-08-09T16:16:55.805382+00:00",
+      "updated_at": "2026-08-09T16:16:55.805395+00:00"
+    },
+    {
+      "title": "Why New Chandigarh is the Tricity's Next Investment Hotspot",
+      "slug": "new-chandigarh-next-investment-hotspot",
+      "category": "Blog",
+      "excerpt": "Green master-planning, IT City proximity and landmark developments are driving unprecedented interest in New Chandigarh.",
+      "content": "New Chandigarh (Mullanpur) has emerged as one of North India's most promising real estate destinations. With planned green boulevards, proximity to IT City and Medicity, and a wave of premium developments like Homeland Global Park and Homeland Infinia, the region offers both lifestyle and strong appreciation potential.\n\nInvestors are drawn to the low-density planning, clean air at the Shivalik foothills, and excellent connectivity to Chandigarh. For end-users and investors alike, New Chandigarh represents a rare blend of nature and modern infrastructure.",
+      "cover_image": "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1600&q=80",
+      "author": "Homeland Group",
+      "date": "2026-02-02",
+      "published": true,
+      "id": "1b60ad32-9bf2-46f8-b551-e76ac912de47",
+      "created_at": "2026-08-09T16:16:55.824337+00:00",
+      "updated_at": "2026-08-09T16:16:55.824349+00:00"
+    },
+    {
+      "title": "Homeland Group Expands into Amritsar, Himachal & Goa",
+      "slug": "homeland-group-expands-amritsar-himachal-goa",
+      "category": "Media",
+      "excerpt": "The Group announces an ambitious pipeline spanning mixed-use, boutique residences and vacation homes.",
+      "content": "Homeland Group has announced a major expansion of its portfolio with upcoming projects across Punjab, Himachal Pradesh and Goa. Homeland Ranjit Avenue brings a landmark mixed-use development to Amritsar, while Homeland Vaana introduces ultra-luxury hillside villas in Dharampur, Himachal Pradesh.\n\nIn Goa, Ikaahi Homes offers boutique vacation residences designed for leisure and investment. Closer to home, Homeland Leisure Valley will deliver boutique 4 & 5 BHK residences on the Mohali-Chandigarh border. Together, these projects underline the Group's vision of crafting iconic addresses across India.",
+      "cover_image": "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=1600&q=80",
+      "author": "Homeland Group",
+      "date": "2026-03-10",
+      "published": true,
+      "id": "741b2f71-093e-4186-b6ad-a6a19781c3a8",
+      "created_at": "2026-08-09T16:16:55.825155+00:00",
+      "updated_at": "2026-08-09T16:16:55.825163+00:00"
+    },
+    {
+      "title": "5 Things to Check Before Buying a RERA-Registered Home",
+      "slug": "5-things-check-before-buying-rera-registered-home",
+      "category": "Blog",
+      "excerpt": "A quick buyer's guide to making a confident, transparent property purchase.",
+      "content": "Buying a home is one of life's biggest decisions. Here are five things every buyer should verify:\n\n1. RERA registration number and project approval.\n2. Clear title and land ownership documents.\n3. Approved building plans and possession timelines.\n4. Specifications, amenities and carpet area in the agreement.\n5. Developer track record and delivery history.\n\nEvery Homeland project is RERA-registered and built on a foundation of transparency, quality and timely delivery.",
+      "cover_image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80",
+      "author": "Homeland Group",
+      "date": "2026-03-28",
+      "published": true,
+      "id": "c61b3169-7095-4468-859c-639f7f6eaa73",
+      "created_at": "2026-08-09T16:16:55.825650+00:00",
+      "updated_at": "2026-08-09T16:16:55.825655+00:00"
+    },
+    {
+      "title": "Updated Test Post from Playwright",
+      "slug": "test-post-from-playwright",
+      "category": "Blog",
+      "excerpt": "",
+      "content": "",
+      "cover_image": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800",
+      "author": "Homeland Group",
+      "date": "2026-08-09",
+      "published": true,
+      "id": "dc7c8e97-8e8a-4d92-ba29-264efac2c24c",
+      "created_at": "2026-08-09T16:27:31.733499+00:00",
+      "updated_at": "2026-08-09T16:27:36.189356+00:00"
+    }
+  ]
+}

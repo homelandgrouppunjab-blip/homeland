@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+// Same-origin by default (works on Vercel where the API is served under /api).
+// If REACT_APP_BACKEND_URL is set (e.g. Emergent preview), it is used as the base.
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "";
 export const API = `${BACKEND_URL}/api`;
 
 const client = axios.create({ baseURL: API });
