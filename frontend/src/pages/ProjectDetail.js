@@ -28,24 +28,30 @@ export default function ProjectDetail() {
 
   const images = [p.hero_image, ...(p.gallery || [])].filter(Boolean);
   const hasVideo = !!p.video_url;
-  // Combined media for the hero slider + gallery lightbox. Video comes FIRST.
+  // The video auto-plays (muted, looped) as the hero BACKGROUND on the project page.
+  // The logo sits to the left so it never blocks the video. The video also opens
+  // with sound in the gallery lightbox when its thumbnail is clicked.
   const media = [
-    ...(hasVideo ? [{ type: "video", src: p.video_url }] : []),
     ...images.map((src) => ({ type: "image", src })),
+    ...(hasVideo ? [{ type: "video", src: p.video_url }] : []),
   ];
-  const videoIndex = 0; // video sits first
-  // YouTube id (for looping background playback)
-  const ytId = hasVideo ? ((p.video_url.split("/embed/")[1] || "").split(/[?&]/)[0]) : "";
-  // Muted, looping, chrome-less background playback for the hero
-  const bgVideoSrc = hasVideo
-    ? `${p.video_url}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1`
-    : "";
-  // Full playback with sound for the lightbox
-  const videoEmbedSrc = hasVideo ? `${p.video_url}?autoplay=1&rel=0` : "";
-  const activeMedia = media[active] || media[0];
+  const videoLightboxIndex = images.length; // video sits after images in the lightbox
+  const ytId = hasVideo ? ((p.video_url.match(/(?:embed\/|watch\?v=|youtu\.be\/|shorts\/)([A-Za-z0-9_-]{6,})/) || [])[1] || "") : "";
+  const videoEmbedSrc = hasVideo ? `${p.video_url}?autoplay=1&rel=0` : ""; // lightbox: with sound
+  const videoBgSrc = hasVideo ? `${p.video_url}?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1${ytId ? `&playlist=${ytId}` : ""}` : ""; // hero bg: muted loop
+  const heroImage = images[active] || images[0];
   const copyRera = (r) => { navigator.clipboard.writeText(r); toast.success("RERA number copied"); };
 
   const isDelivered = p.status === "DELIVERED";
+  const specItems = [
+    { icon: Ruler, label: "Land Area", value: p.land_area },
+    { icon: Home, label: "Unit Area", value: p.unit_area },
+    { icon: Building2, label: "No. of Floors", value: p.floor_count },
+  ].filter((s) => s.value);
+  const hasSpecs = specItems.length > 0 || !!p.specifications;
+  const internalFeatures = p.internal_features || [];
+  const externalFeatures = p.external_features || [];
+  const hasFeatures = internalFeatures.length > 0 || externalFeatures.length > 0;
   const stats = [
     { icon: Building2, label: "Type", value: p.type },
     { icon: Home, label: "Configurations", value: (p.unit_types || []).join(", ") || "—" },
@@ -58,37 +64,44 @@ export default function ProjectDetail() {
   return (
     <div>
       {/* Hero */}
-      <div className="relative h-[70vh] min-h-[480px] overflow-hidden">
-        {activeMedia?.type === "video" ? (
-          <div className="absolute inset-0 overflow-hidden bg-black pointer-events-none" data-testid="detail-hero-video">
+      <div className="relative h-[70vh] min-h-[480px] overflow-hidden bg-black">
+        {hasVideo ? (
+          <div className="absolute inset-0 overflow-hidden" data-testid="detail-hero-video">
+            {heroImage && <img src={heroImage} alt={p.name} className="absolute inset-0 h-full w-full object-cover" />}
             <iframe
-              title="Project background video"
-              src={bgVideoSrc}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[177.78vh] min-w-full h-[56.25vw] min-h-full"
+              title={`${p.name} video`}
+              src={videoBgSrc}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen h-[56.25vw] min-h-full min-w-[177.78vh] pointer-events-none"
               allow="autoplay; encrypted-media; picture-in-picture"
+              frameBorder="0"
+              aria-hidden="true"
             />
           </div>
         ) : (
-          <img src={activeMedia?.src} alt={p.name} className="h-full w-full object-cover" />
+          <img src={heroImage} alt={p.name} className="h-full w-full object-cover" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20 pointer-events-none" />
         <div className="absolute inset-0 flex flex-col justify-end pointer-events-none">
           <div className="container-lux pb-10">
-            {p.logo_image && (
-              <div className="mb-5">
-                <LogoPlaque src={p.logo_image} alt={`${p.name} logo`} size="md" />
-              </div>
-            )}
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <StatusBadge status={p.status} />
-              {p.status === "UPCOMING" && (
-                <span data-testid="detail-under-designing" className="rounded-full bg-[rgba(198,169,105,0.12)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold">Under Designing</span>
+            <div className="flex flex-col sm:flex-row sm:items-end gap-5">
+              {p.logo_image && (
+                <div className="shrink-0" data-testid="detail-hero-logo">
+                  <LogoPlaque src={p.logo_image} alt={`${p.name} logo`} size="md" />
+                </div>
               )}
-              {p.hot_selling && <span className="rounded-full bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold">Hot Selling</span>}
-              {p.featured && <span className="rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-platinum">Featured</span>}
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <StatusBadge status={p.status} />
+                  {p.status === "UPCOMING" && (
+                    <span data-testid="detail-under-designing" className="rounded-full bg-[rgba(198,169,105,0.12)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold">Under Designing</span>
+                  )}
+                  {p.hot_selling && <span className="rounded-full bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold">Hot Selling</span>}
+                  {p.featured && <span className="rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-platinum">Featured</span>}
+                </div>
+                <h1 className="font-display text-4xl sm:text-6xl text-ivory leading-tight max-w-4xl">{p.name}</h1>
+                <div className="mt-3 flex items-center gap-2 text-[color:var(--lux-ivory)]/80"><MapPin className="h-4 w-4 text-gold" /> {p.full_address || p.location}</div>
+              </div>
             </div>
-            <h1 className="font-display text-4xl sm:text-6xl text-ivory leading-tight max-w-4xl">{p.name}</h1>
-            <div className="mt-3 flex items-center gap-2 text-[color:var(--lux-ivory)]/80"><MapPin className="h-4 w-4 text-gold" /> {p.full_address || p.location}</div>
           </div>
         </div>
       </div>
@@ -97,27 +110,32 @@ export default function ProjectDetail() {
       {media.length > 1 && (
         <div className="container-lux -mt-8 relative z-10">
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-            {media.map((m, i) => (
+            {images.map((img, i) => (
               <button
                 key={i}
-                onClick={() => setActive(i)}
-                data-testid={m.type === "video" ? "detail-video-thumb" : undefined}
-                aria-label={m.type === "video" ? "Play project video" : "View image"}
-                className={`relative shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 transition-colors group ${i === active ? "border-[color:var(--lux-gold)]" : "border-transparent opacity-70 hover:opacity-100"}`}
+                onClick={() => (hasVideo ? setLightbox(i) : setActive(i))}
+                aria-label="View image"
+                className={`shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 transition-colors ${!hasVideo && i === active ? "border-[color:var(--lux-gold)]" : "border-transparent opacity-70 hover:opacity-100"}`}
               >
-                <img src={m.type === "video" ? images[0] : m.src} alt="" className="h-full w-full object-cover" />
-                {m.type === "video" && (
-                  <>
-                    <span className="absolute inset-0 grid place-items-center bg-black/45 group-hover:bg-black/30 transition-colors">
-                      <span className="h-8 w-8 grid place-items-center rounded-full bg-[color:var(--lux-gold)] text-black">
-                        <Play className="h-4 w-4 fill-current translate-x-[1px]" />
-                      </span>
-                    </span>
-                    <span className="absolute bottom-1 left-1 text-[9px] font-semibold uppercase tracking-wider text-ivory bg-black/60 rounded px-1.5 py-0.5">Video</span>
-                  </>
-                )}
+                <img src={img} alt="" className="h-full w-full object-cover" />
               </button>
             ))}
+            {hasVideo && (
+              <button
+                onClick={() => setLightbox(videoLightboxIndex)}
+                data-testid="detail-video-thumb"
+                aria-label="Play project video"
+                className="relative shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 border-transparent opacity-90 hover:opacity-100 transition-colors group"
+              >
+                <img src={images[0]} alt="" className="h-full w-full object-cover" />
+                <span className="absolute inset-0 grid place-items-center bg-black/45 group-hover:bg-black/30 transition-colors">
+                  <span className="h-8 w-8 grid place-items-center rounded-full bg-[color:var(--lux-gold)] text-black">
+                    <Play className="h-4 w-4 fill-current translate-x-[1px]" />
+                  </span>
+                </span>
+                <span className="absolute bottom-1 left-1 text-[9px] font-semibold uppercase tracking-wider text-ivory bg-black/60 rounded px-1.5 py-0.5">Video</span>
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -170,6 +188,8 @@ export default function ProjectDetail() {
           <Tabs defaultValue="overview" className="mt-10">
             <TabsList className="bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)]">
               <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
+              {hasSpecs && <TabsTrigger value="specifications" data-testid="tab-specifications">Specifications</TabsTrigger>}
+              {hasFeatures && <TabsTrigger value="features" data-testid="tab-features">Features</TabsTrigger>}
               <TabsTrigger value="amenities" data-testid="tab-amenities">Amenities</TabsTrigger>
               <TabsTrigger value="location" data-testid="tab-location">Location</TabsTrigger>
             </TabsList>
@@ -185,6 +205,54 @@ export default function ProjectDetail() {
                 </div>
               )}
             </TabsContent>
+            {hasSpecs && (
+              <TabsContent value="specifications" className="mt-6" data-testid="specifications-content">
+                {specItems.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {specItems.map((s, i) => (
+                      <div key={i} className="rounded-xl bg-glass hairline p-5">
+                        <s.icon className="h-5 w-5 text-gold" />
+                        <div className="text-xs text-[color:var(--lux-ivory)]/55 mt-3">{s.label}</div>
+                        <div className="text-lg text-ivory font-semibold mt-0.5">{s.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {p.specifications && (
+                  <p className="mt-6 text-[color:var(--lux-ivory)]/75 leading-relaxed whitespace-pre-line">{p.specifications}</p>
+                )}
+              </TabsContent>
+            )}
+            {hasFeatures && (
+              <TabsContent value="features" className="mt-6" data-testid="features-content">
+                <div className="grid sm:grid-cols-2 gap-8">
+                  {internalFeatures.length > 0 && (
+                    <div>
+                      <h3 className="font-display text-lg text-ivory mb-4">Internal Features</h3>
+                      <div className="space-y-3">
+                        {internalFeatures.map((f, i) => (
+                          <div key={i} className="flex items-start gap-3 text-sm text-[color:var(--lux-ivory)]/80">
+                            <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" /> {f}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {externalFeatures.length > 0 && (
+                    <div>
+                      <h3 className="font-display text-lg text-ivory mb-4">External Features &amp; Amenities</h3>
+                      <div className="space-y-3">
+                        {externalFeatures.map((f, i) => (
+                          <div key={i} className="flex items-start gap-3 text-sm text-[color:var(--lux-ivory)]/80">
+                            <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" /> {f}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            )}
             <TabsContent value="amenities" className="mt-6">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {(p.amenities || []).map((a, i) => (

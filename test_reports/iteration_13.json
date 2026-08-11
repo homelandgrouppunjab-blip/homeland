@@ -1,0 +1,68 @@
+{
+  "summary": "Completed comprehensive testing of Homeland Group project detail page bug fixes and new spec/feature fields. All requested features working correctly: (1) Hero video auto-play removed - static image used; (2) Logo left-aligned parallel to title; (3) Video accessible via thumbnail/lightbox; (4) New spec/feature fields added to Admin and render on public pages with auto-hide when empty.",
+  "backend_issues": {
+    "critical_bugs": [],
+    "flaky_endpoints": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "component": "EnquiryModal",
+        "issue": "Enquiry modal auto-opens on project detail page load, which can be intrusive and blocks initial interactions",
+        "affected_pages": ["/projects/*"],
+        "fix_priority": "LOW",
+        "note": "Not part of current bug fixes, but worth noting for future improvement"
+      }
+    ]
+  },
+  "passed_tests": [
+    "Backend: Admin login successful",
+    "Backend: GET /projects returns project list",
+    "Backend: GET /projects/homeland-regalia returns video_url and logo_image",
+    "Backend: POST /admin/projects with spec/feature fields - all 6 fields save correctly",
+    "Backend: GET /projects/:slug returns all spec/feature fields via public API",
+    "Backend: PUT /admin/projects/:id updates spec/feature fields correctly",
+    "Frontend (Homeland Regalia): Hero uses STATIC IMAGE - no video/iframe auto-playing in background (BUG FIX #1 CONFIRMED)",
+    "Frontend (Homeland Regalia): Logo positioned LEFT of title, horizontally parallel (BUG FIX #2 CONFIRMED)",
+    "Frontend (Homeland Regalia): Video thumbnail exists with data-testid='detail-video-thumb'",
+    "Frontend (Homeland Regalia): Video thumbnail opens lightbox with video iframe and autoplay=1",
+    "Frontend (Admin): All 6 spec/feature fields exist with correct data-testid attributes",
+    "Frontend (Admin): Land Area field (data-testid='admin-project-land-area') saves correctly",
+    "Frontend (Admin): Unit Area field (data-testid='admin-project-unit-area') saves correctly",
+    "Frontend (Admin): Floor Count field (data-testid='admin-project-floor-count') saves correctly",
+    "Frontend (Admin): Specifications field (data-testid='admin-project-specifications') saves correctly",
+    "Frontend (Admin): Internal Features field (data-testid='admin-project-internal-features') saves correctly",
+    "Frontend (Admin): External Features field (data-testid='admin-project-external-features') saves correctly",
+    "Frontend (Homeland Regalia - after Admin save): Specifications tab appears (data-testid='tab-specifications')",
+    "Frontend (Homeland Regalia - after Admin save): Features tab appears (data-testid='tab-features')",
+    "Frontend (Homeland Regalia - after Admin save): Specifications content renders with all data (data-testid='specifications-content')",
+    "Frontend (Homeland Regalia - after Admin save): Features content renders with Internal and External features (data-testid='features-content')",
+    "Frontend (Homeland Leisure Valley - no video): Hero uses static image, no video thumbnail",
+    "Frontend (Homeland Leisure Valley - no specs): Specifications and Features tabs auto-hide correctly",
+    "Frontend (Regression): Existing tabs (Overview, Amenities, Location) work correctly",
+    "Frontend (Regression): Enquiry form renders and functions correctly"
+  ],
+  "test_report_links": [
+    "/app/backend_test.py",
+    "/app/.screenshots/hero-static-image.png",
+    "/app/.screenshots/regalia-final.png",
+    "/app/.screenshots/admin-projects-table.png",
+    "/app/.screenshots/admin-specs-filled.png",
+    "/app/.screenshots/specs-tab-public.png",
+    "/app/.screenshots/features-tab-public.png",
+    "/app/.screenshots/leisure-valley-regression.png"
+  ],
+  "success_percentage": {
+    "backend": "100% (24/24 tests passed)",
+    "frontend": "100% (all critical features working)",
+    "overall": "100%"
+  },
+  "updated_files": [
+    "/app/backend_test.py"
+  ],
+  "action_item_for_main_agent": "",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_test_itself": false
+}

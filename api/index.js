@@ -257,6 +257,8 @@ const projectDefaults = (b) => ({
   highlights: b.highlights || [], hero_image: b.hero_image || "", logo_image: b.logo_image || "",
   gallery: b.gallery || [], video_url: b.video_url || "", brochure_url: b.brochure_url || "",
   map_lat: b.map_lat ?? null, map_lng: b.map_lng ?? null, landmarks: b.landmarks || [],
+  land_area: b.land_area || "", unit_area: b.unit_area || "", floor_count: b.floor_count || "",
+  specifications: b.specifications || "", internal_features: b.internal_features || [], external_features: b.external_features || [],
   featured: !!b.featured, hot_selling: !!b.hot_selling, order: b.order ?? 99,
 });
 

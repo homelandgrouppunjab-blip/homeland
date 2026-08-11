@@ -1,18 +1,22 @@
 [
   {
-    "content": "Enquiry dropdown: show project sector/city",
+    "content": "Add spec/feature fields to API projectDefaults in /app/api/index.js",
     "status": "completed"
   },
   {
-    "content": "AdminContent: add History paragraphs, Awards, Social, Site Logo editors",
+    "content": "Add editable fields + data-testids to AdminProjects.js (EMPTY + form controls)",
     "status": "completed"
   },
   {
-    "content": "Wire editable site logo into Navbar & Footer (with fallback)",
+    "content": "Render Specifications & Features sections/tabs in ProjectDetail.js (auto-hide when empty)",
     "status": "completed"
   },
   {
-    "content": "Verify via testing agent (admin content CRUD + enquiry dropdown)",
-    "status": "in_progress"
+    "content": "Restore background autoplay video (muted/looped) with logo on left; image fallback layer",
+    "status": "completed"
+  },
+  {
+    "content": "Verify via testing agent + screenshots; confirm video lightbox works (false-positive resolved)",
+    "status": "completed"
   }
 ]

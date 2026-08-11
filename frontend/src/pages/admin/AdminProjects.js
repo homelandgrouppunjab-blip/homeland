@@ -12,6 +12,7 @@ const EMPTY = {
   name: "", tagline: "", status: "UPCOMING", possession: "", delivery_year: "", location: "", full_address: "", city: "",
   type: "Residential", unit_types: [], key_units: "", price_range: "", rera_numbers: [], rera_registered_date: "",
   rera_certificate_url: "", amenities: [], description: "", highlights: [], hero_image: "", logo_image: "", gallery: [], video_url: "",
+  land_area: "", unit_area: "", floor_count: "", specifications: "", internal_features: [], external_features: [],
   brochure_url: "", map_lat: "", map_lng: "", landmarks: [], featured: false, hot_selling: false, order: 99,
 };
 
@@ -119,6 +120,16 @@ export default function AdminProjects() {
             <div><label className={lbl}>RERA Registered Date</label><input className={cls} value={form.rera_registered_date} onChange={(e) => set("rera_registered_date", e.target.value)} placeholder="YYYY-MM-DD" /></div>
             <div><label className={lbl}>Video URL (embed)</label><input className={cls} value={form.video_url} onChange={(e) => set("video_url", e.target.value)} /></div>
             <div className="sm:col-span-2"><label className={lbl}>Description</label><textarea rows={4} className={cls} value={form.description} onChange={(e) => set("description", e.target.value)} /></div>
+
+            {/* Specifications & Features */}
+            <div className="sm:col-span-2 mt-2 pt-2 border-t border-[color:var(--border-hairline)]"><div className="text-sm font-semibold text-gold">Specifications & Features</div></div>
+            <div><label className={lbl}>Land Area</label><input className={cls} value={form.land_area} onChange={(e) => set("land_area", e.target.value)} placeholder="e.g. 6.5 Acres" data-testid="admin-project-land-area" /></div>
+            <div><label className={lbl}>Unit Area</label><input className={cls} value={form.unit_area} onChange={(e) => set("unit_area", e.target.value)} placeholder="e.g. 1,800–3,200 sq. ft." data-testid="admin-project-unit-area" /></div>
+            <div><label className={lbl}>No. of Floors</label><input className={cls} value={form.floor_count} onChange={(e) => set("floor_count", e.target.value)} placeholder="e.g. G+18 Floors" data-testid="admin-project-floor-count" /></div>
+            <div className="sm:col-span-2"><label className={lbl}>Specifications (paragraph)</label><textarea rows={4} className={cls} value={form.specifications} onChange={(e) => set("specifications", e.target.value)} placeholder="Describe construction quality, structure, fittings, etc." data-testid="admin-project-specifications" /></div>
+            <div><label className={lbl}>Internal Features (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.internal_features)} onChange={(e) => set("internal_features", toArr(e.target.value))} placeholder="Modular kitchen&#10;VRV air-conditioning&#10;Imported marble flooring" data-testid="admin-project-internal-features" /></div>
+            <div><label className={lbl}>External Features & Amenities (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.external_features)} onChange={(e) => set("external_features", toArr(e.target.value))} placeholder="Landscaped gardens&#10;Swimming pool&#10;Clubhouse" data-testid="admin-project-external-features" /></div>
+
             <div><label className={lbl}>Highlights (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.highlights)} onChange={(e) => set("highlights", toArr(e.target.value))} /></div>
             <div><label className={lbl}>Amenities (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.amenities)} onChange={(e) => set("amenities", toArr(e.target.value))} /></div>
             <div className="sm:col-span-2"><FileUpload label="Hero Image (upload or URL)" value={form.hero_image} onChange={(v) => set("hero_image", v)} testid="admin-project-hero" /></div>

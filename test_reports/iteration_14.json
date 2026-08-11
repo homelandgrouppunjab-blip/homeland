@@ -1,0 +1,45 @@
+{
+  "summary": "Completed frontend testing for Homeland Regalia project detail page - background video autoplay, logo positioning, Specifications/Features tabs, and regression testing for Homeland Leisure Valley. All core features working except video lightbox.",
+  "backend_issues": {},
+  "frontend_issues": {
+    "critical_bugs": [
+      {
+        "component": "ProjectDetail.js - Video Lightbox",
+        "issue": "Clicking video thumbnail (data-testid='detail-video-thumb') opens lightbox with an IMAGE instead of VIDEO iframe. The lightbox dialog renders an img element instead of the expected iframe with video.",
+        "location": "/app/frontend/src/pages/ProjectDetail.js lines 303-324",
+        "impact": "Users cannot watch the project video in the lightbox. The video thumbnail is clickable but shows a static image instead of playing the video.",
+        "root_cause": "The media array or videoLightboxIndex calculation may be incorrect, causing media[lightbox]?.type to not equal 'video' when the video thumbnail is clicked. The conditional check at line 307 (media[lightbox]?.type === 'video') is failing.",
+        "fix_priority": "HIGH",
+        "reproduction_steps": [
+          "1. Visit /projects/homeland-regalia",
+          "2. Scroll to thumbnail strip below hero",
+          "3. Click the video thumbnail (has play icon and 'Video' label)",
+          "4. Lightbox opens but shows an image instead of video iframe"
+        ]
+      }
+    ],
+    "ui_bugs": [],
+    "integration_issues": []
+  },
+  "passed_tests": [
+    "✅ Background video autoplay on /projects/homeland-regalia - iframe with data-testid='detail-hero-video' exists with autoplay=1, mute=1, loop=1 parameters and pointer-events-none class",
+    "✅ Logo positioning - data-testid='detail-hero-logo' positioned to the LEFT and parallel to project title, no overlap",
+    "✅ Image thumbnails open lightbox dialog on click",
+    "✅ Specifications tab (data-testid='tab-specifications') renders with content (data-testid='specifications-content') showing land area, unit area, floor count, and specifications paragraph",
+    "✅ Features tab (data-testid='tab-features') renders with content (data-testid='features-content') showing Internal Features and External Features sections",
+    "✅ Enquiry form in sidebar renders with all fields (name, phone, email) and submit button, all fields are fillable",
+    "✅ Regression: /projects/homeland-leisure-valley has NO background video iframe (correct)",
+    "✅ Regression: homeland-leisure-valley has NO Specifications/Features tabs (auto-hidden, correct)",
+    "✅ Regression: homeland-leisure-valley shows static hero image with logo on left (correct)",
+    "✅ Regression: homeland-leisure-valley Overview/Amenities/Location tabs work correctly"
+  ],
+  "test_report_links": [],
+  "success_percentage": {
+    "frontend": "90%",
+    "note": "9 out of 10 test scenarios passed. Only video lightbox functionality failed."
+  },
+  "action_item_for_main_agent": "Fix video lightbox bug: When clicking video thumbnail (data-testid='detail-video-thumb'), the lightbox should display the video iframe but currently shows an image. Debug the media array construction and videoLightboxIndex calculation in ProjectDetail.js lines 29-42 and the conditional rendering at lines 307-310. Verify that media[videoLightboxIndex] has type='video' when the video thumbnail is clicked.",
+  "updated_files": [],
+  "should_call_test_agent_after_fix": "true",
+  "should_main_agent_test_itself": "false"
+}
