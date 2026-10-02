@@ -75,6 +75,17 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
         <input data-testid="enquiry-email-input" className={inputCls} value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@email.com" />
       </div>
       <div>
+        <label className="text-xs text-platinum mb-1.5 block">Requirement</label>
+        <Select value={form.requirement} onValueChange={(v) => set("requirement", v)}>
+          <SelectTrigger data-testid="enquiry-requirement-select" className={inputCls}><SelectValue /></SelectTrigger>
+          <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
+            <SelectItem value="Residential">Residential</SelectItem>
+            <SelectItem value="Commercial">Commercial</SelectItem>
+            <SelectItem value="Investment">Investment</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
         <label className="text-xs text-platinum mb-1.5 block">Project of Interest</label>
         <Select value={form.project} onValueChange={(v) => set("project", v)}>
           <SelectTrigger data-testid="enquiry-project-select" className={inputCls}><SelectValue /></SelectTrigger>
@@ -91,17 +102,6 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
                 </SelectItem>
               );
             })}
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <label className="text-xs text-platinum mb-1.5 block">Requirement</label>
-        <Select value={form.requirement} onValueChange={(v) => set("requirement", v)}>
-          <SelectTrigger data-testid="enquiry-requirement-select" className={inputCls}><SelectValue /></SelectTrigger>
-          <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
-            <SelectItem value="Residential">Residential</SelectItem>
-            <SelectItem value="Commercial">Commercial</SelectItem>
-            <SelectItem value="Investment">Investment</SelectItem>
           </SelectContent>
         </Select>
       </div>

@@ -1,22 +1,42 @@
 [
   {
-    "content": "Add spec/feature fields to API projectDefaults in /app/api/index.js",
+    "content": "#5 YouTube any-link auto-embed (youtu.be/watch/shorts/embed) in ProjectDetail + admin label",
     "status": "completed"
   },
   {
-    "content": "Add editable fields + data-testids to AdminProjects.js (EMPTY + form controls)",
+    "content": "#8 Enquiry form: Requirement now before Project of Interest",
     "status": "completed"
   },
   {
-    "content": "Render Specifications & Features sections/tabs in ProjectDetail.js (auto-hide when empty)",
+    "content": "#6 Footer: Quality Real Estate channel-partner credit line",
     "status": "completed"
   },
   {
-    "content": "Restore background autoplay video (muted/looped) with logo on left; image fallback layer",
+    "content": "#7 Legal pages (Terms/Privacy/Refund) + header dropdown + footer links",
     "status": "completed"
   },
   {
-    "content": "Verify via testing agent + screenshots; confirm video lightbox works (false-positive resolved)",
+    "content": "#9 SEO on-page: meta/OG/Twitter/JSON-LD + favicon + robots.txt + sitemap.xml + noscript content",
     "status": "completed"
+  },
+  {
+    "content": "#1 Multi-category units (API + Admin repeater + ProjectDetail grouped rendering) — NEXT BATCH",
+    "status": "pending"
+  },
+  {
+    "content": "#2 Custom slider selection + ordering (show_in_slider/slider_order) — NEXT BATCH",
+    "status": "pending"
+  },
+  {
+    "content": "#3 'Send enquiry on WhatsApp' (click-to-chat, admin number) — NEXT BATCH",
+    "status": "pending"
+  },
+  {
+    "content": "#4 Unified Updates/Blog bar — NEXT BATCH",
+    "status": "pending"
+  },
+  {
+    "content": "Credential-dependent: WhatsApp API, HubSpot/Zoho CRM, Google PageSpeed/Reviews, social/news auto-pull, SEO pre-rendering — pending your keys/decision",
+    "status": "pending"
   }
 ]

@@ -1,0 +1,9 @@
+# Homeland Group Mohali
+User-agent: *
+Allow: /
+
+# Block admin area from indexing
+Disallow: /admin
+Disallow: /admin/
+
+Sitemap: https://www.homelandgroupindia.com/sitemap.xml

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
+import { Menu, Facebook, Instagram, Linkedin, Youtube, ChevronDown } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getContent } from "@/lib/api";
 
@@ -18,6 +18,12 @@ const SOCIAL_ICONS = [
   { key: "facebook", Icon: Facebook, label: "Facebook" },
   { key: "linkedin", Icon: Linkedin, label: "LinkedIn" },
   { key: "youtube", Icon: Youtube, label: "YouTube" },
+];
+
+const LEGAL_LINKS = [
+  { label: "Terms & Conditions", to: "/legal/terms" },
+  { label: "Privacy Policy", to: "/legal/privacy" },
+  { label: "Payment, Cancellation & Refund", to: "/legal/refund" },
 ];
 
 export const Navbar = () => {
@@ -63,6 +69,28 @@ export const Navbar = () => {
               {l.label}
             </Link>
           ))}
+          <div className="relative group" data-testid="nav-legal-dropdown">
+            <button
+              className="rounded-lg px-3 py-2 text-sm text-[color:var(--lux-ivory)]/80 hover:text-ivory hover:bg-white/5 transition-colors inline-flex items-center gap-1"
+              aria-haspopup="true"
+            >
+              Legal <ChevronDown className="h-3.5 w-3.5" />
+            </button>
+            <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity absolute right-0 top-full pt-2 w-64 z-50">
+              <div className="rounded-xl bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)] shadow-[0_18px_60px_rgba(0,0,0,0.5)] p-1.5">
+                {LEGAL_LINKS.map((l) => (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    data-testid={`nav-legal-${l.to.split("/").pop()}`}
+                    className="block rounded-lg px-3 py-2 text-sm text-[color:var(--lux-ivory)]/80 hover:text-gold hover:bg-white/5 transition-colors"
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
@@ -120,7 +148,20 @@ export const Navbar = () => {
                     {l.label}
                   </Link>
                 ))}
-                {socialLinks.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-[color:var(--border-hairline)]">
+                  <div className="px-3 pb-1 text-[11px] uppercase tracking-wider text-[color:var(--lux-ivory)]/40">Legal</div>
+                  {LEGAL_LINKS.map((l) => (
+                    <Link
+                      key={l.to}
+                      to={l.to}
+                      onClick={() => setOpen(false)}
+                      data-testid={`mobile-nav-legal-${l.to.split("/").pop()}`}
+                      className="block rounded-lg px-3 py-2.5 text-sm text-[color:var(--lux-ivory)]/75 hover:bg-white/5"
+                    >
+                      {l.label}
+                    </Link>
+                  ))}
+                </div>
                   <div className="flex items-center gap-2 mt-5 pt-4 border-t border-[color:var(--border-hairline)]">
                     {socialLinks.map(({ key, Icon, label }) => (
                       <a

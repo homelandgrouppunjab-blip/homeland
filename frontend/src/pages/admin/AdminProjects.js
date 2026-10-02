@@ -118,7 +118,7 @@ export default function AdminProjects() {
             <div><label className={lbl}>Unit Types (one per line)</label><textarea rows={3} className={cls} value={fromArr(form.unit_types)} onChange={(e) => set("unit_types", toArr(e.target.value))} /></div>
             <div><label className={lbl}>RERA Numbers (one per line)</label><textarea rows={3} className={cls} value={fromArr(form.rera_numbers)} onChange={(e) => set("rera_numbers", toArr(e.target.value))} /></div>
             <div><label className={lbl}>RERA Registered Date</label><input className={cls} value={form.rera_registered_date} onChange={(e) => set("rera_registered_date", e.target.value)} placeholder="YYYY-MM-DD" /></div>
-            <div><label className={lbl}>Video URL (embed)</label><input className={cls} value={form.video_url} onChange={(e) => set("video_url", e.target.value)} /></div>
+            <div><label className={lbl}>Video URL (paste any YouTube link)</label><input className={cls} value={form.video_url} onChange={(e) => set("video_url", e.target.value)} placeholder="https://youtu.be/… or https://www.youtube.com/watch?v=…" /></div>
             <div className="sm:col-span-2"><label className={lbl}>Description</label><textarea rows={4} className={cls} value={form.description} onChange={(e) => set("description", e.target.value)} /></div>
 
             {/* Specifications & Features */}

@@ -64,10 +64,20 @@ export const Footer = () => {
         </div>
 
         <div className="gold-divider my-10" />
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs mb-6">
+          <Link to="/legal/terms" className="text-[color:var(--lux-ivory)]/60 hover:text-gold transition-colors" data-testid="footer-terms-link">Terms &amp; Conditions</Link>
+          <span className="text-[color:var(--lux-ivory)]/20">·</span>
+          <Link to="/legal/privacy" className="text-[color:var(--lux-ivory)]/60 hover:text-gold transition-colors" data-testid="footer-privacy-link">Privacy Policy</Link>
+          <span className="text-[color:var(--lux-ivory)]/20">·</span>
+          <Link to="/legal/refund" className="text-[color:var(--lux-ivory)]/60 hover:text-gold transition-colors" data-testid="footer-refund-link">Payment, Cancellation &amp; Refund Policy</Link>
+        </div>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[color:var(--lux-ivory)]/45">
           <p>© {new Date().getFullYear()} Homeland Group Mohali. All rights reserved.</p>
           <p>RERA-compliant developer · Punjab RERA Registered</p>
         </div>
+        <p className="mt-6 text-center text-[11px] leading-relaxed text-[color:var(--lux-ivory)]/45" data-testid="footer-channel-partner">
+          This website is designed, published and managed by <span className="text-gold font-medium">Quality Real Estate</span>, an authorised channel partner with Homeland Group for marketing, branding and promotional purposes.
+        </p>
       </div>
     </footer>
   );

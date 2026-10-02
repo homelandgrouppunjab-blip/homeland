@@ -74,9 +74,12 @@ export default function ProjectDetail() {
     ...(hasVideo ? [{ type: "video", src: p.video_url }] : []),
   ];
   const videoLightboxIndex = images.length; // video sits after images in the lightbox
-  const ytId = hasVideo ? ((p.video_url.match(/(?:embed\/|watch\?v=|youtu\.be\/|shorts\/)([A-Za-z0-9_-]{6,})/) || [])[1] || "") : "";
-  const videoEmbedSrc = hasVideo ? `${p.video_url}?autoplay=1&rel=0` : ""; // lightbox: with sound
-  const videoBgSrc = hasVideo ? `${p.video_url}?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1${ytId ? `&playlist=${ytId}` : ""}` : ""; // hero bg: muted loop
+  // Accept ANY YouTube link (youtu.be/…, watch?v=…, shorts/…, or embed/…) and
+  // normalize to a proper embed URL so admins can paste a plain share link.
+  const ytId = hasVideo ? ((p.video_url.match(/(?:youtu\.be\/|watch\?v=|embed\/|shorts\/|[?&]v=)([A-Za-z0-9_-]{6,})/) || [])[1] || "") : "";
+  const ytBase = ytId ? `https://www.youtube.com/embed/${ytId}` : p.video_url;
+  const videoEmbedSrc = hasVideo ? `${ytBase}?autoplay=1&rel=0` : ""; // lightbox: with sound
+  const videoBgSrc = hasVideo ? `${ytBase}?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1${ytId ? `&playlist=${ytId}` : ""}` : ""; // hero bg: muted loop
   const heroImage = images[active] || images[0];
   const copyRera = (r) => { navigator.clipboard.writeText(r); toast.success("RERA number copied"); };
 
