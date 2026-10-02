@@ -14,11 +14,13 @@ export const ProjectMap = ({ points = [], center, zoom = 11, height = "420px", o
   const c = center || (valid.length ? [valid[0].map_lat, valid[0].map_lng] : [30.7046, 76.7179]);
 
   return (
-    <div className="rounded-2xl overflow-hidden hairline shadow-[var(--shadow-soft)]" style={{ height }} data-testid="project-map">
+    <div className="map-dark rounded-2xl overflow-hidden hairline shadow-[var(--shadow-soft)]" style={{ height }} data-testid="project-map">
       <MapContainer center={c} zoom={zoom} style={{ height: "100%", width: "100%" }} scrollWheelZoom={false}>
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; OpenStreetMap &copy; CARTO'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          subdomains={["a", "b", "c"]}
+          attribution='&copy; OpenStreetMap contributors'
+          maxZoom={19}
         />
         {valid.map((p, i) => (
           <Marker key={i} position={[p.map_lat, p.map_lng]} icon={goldIcon}

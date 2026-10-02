@@ -108,6 +108,13 @@
     }
     .hairline { border: 1px solid var(--border-hairline); }
     .gold-line { border-color: var(--border-gold); }
+    /* Dark-themed map using free OpenStreetMap tiles (no API key).
+       Filter is applied only to the tile pane so gold pins, popups and
+       attribution remain unaffected. */
+    .map-dark .leaflet-tile-pane {
+        filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.95) saturate(0.55);
+    }
+    .map-dark .leaflet-container { background: #0b0b0b; }
     .hero-atmosphere {
         background:
             radial-gradient(900px circle at 20% 10%, rgba(212,175,55,0.14), transparent 55%),
