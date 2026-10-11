@@ -45,7 +45,7 @@ export default function AdminProjects() {
     Residential: ["2 BHK", "3 BHK", "4 BHK", "5 BHK", "Service Suite", "Penthouse", "Villa", "Studio"],
     Commercial: ["Showroom", "Office Space", "Virtual Space", "Hotel Room", "Retail Unit", "SCO", "Food Court"],
   };
-  const addCategory = () => set("unit_categories", [...(form.unit_categories || []), { segment: "Residential", type: "", area: "", dimensions: "", price: "", availability: "Available", description: "" }]);
+  const addCategory = () => set("unit_categories", [...(form.unit_categories || []), { segment: "Residential", type: "", area: "", dimensions: "", price: "", availability: "Available", total_units: "", units_left: "", floor_plan: "", description: "" }]);
   const updateCategory = (i, k, v) => set("unit_categories", (form.unit_categories || []).map((c, idx) => (idx === i ? { ...c, [k]: v } : c)));
   const removeCategory = (i) => set("unit_categories", (form.unit_categories || []).filter((_, idx) => idx !== i));
 
@@ -184,6 +184,9 @@ export default function AdminProjects() {
                       </Select>
                     </div>
                     <div className="sm:col-span-3"><label className={lbl}>Short Description</label><input className={cls} value={c.description} onChange={(e) => updateCategory(i, "description", e.target.value)} placeholder="Optional short note about this unit" /></div>
+                    <div><label className={lbl}>Total Units</label><input type="number" className={cls} value={c.total_units} onChange={(e) => updateCategory(i, "total_units", e.target.value)} placeholder="e.g. 48" /></div>
+                    <div><label className={lbl}>Units Left</label><input type="number" className={cls} value={c.units_left} onChange={(e) => updateCategory(i, "units_left", e.target.value)} placeholder="e.g. 7" /></div>
+                    <div className="sm:col-span-3"><FileUpload label="Floor Plan Image (optional)" value={c.floor_plan} onChange={(v) => updateCategory(i, "floor_plan", v)} testid={`admin-unit-floorplan-${i}`} /></div>
                   </div>
                   <div className="flex justify-end mt-2">
                     <button type="button" onClick={() => removeCategory(i)} data-testid={`admin-remove-unit-category-${i}`} className="inline-flex items-center gap-1.5 text-xs text-[color:var(--lux-ivory)]/60 hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /> Remove</button>

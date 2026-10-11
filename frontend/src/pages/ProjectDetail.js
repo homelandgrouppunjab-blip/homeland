@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2, Layers, Waves, Dumbbell, Car, Trees, Utensils, ArrowUpDown, Baby, Sparkles, Users, Zap, BatteryCharging, Droplets, Sun, Snowflake, Briefcase, Film, ShoppingBag, Compass, Wind, Trophy, ChefHat, BellRing, Store } from "lucide-react";
+import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2, Layers, Waves, Dumbbell, Car, Trees, Utensils, ArrowUpDown, Baby, Sparkles, Users, Zap, BatteryCharging, Droplets, Sun, Snowflake, Briefcase, Film, ShoppingBag, Compass, Wind, Trophy, ChefHat, BellRing, Store, Maximize2 } from "lucide-react";
 import { toast } from "sonner";
 import { getProject, getProjects } from "@/lib/api";
 import StatusBadge from "@/components/StatusBadge";
@@ -47,6 +47,7 @@ export default function ProjectDetail() {
   const [all, setAll] = useState([]);
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(-1);
+  const [floorPlan, setFloorPlan] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -324,6 +325,31 @@ export default function ProjectDetail() {
                                   </div>
                                 )}
                                 {c.description && <p className="mt-3 text-sm text-[color:var(--lux-ivory)]/65 leading-relaxed">{c.description}</p>}
+                                {(() => {
+                                  const total = parseInt(c.total_units);
+                                  const left = parseInt(c.units_left);
+                                  if (!Number.isNaN(total) && !Number.isNaN(left) && total > 0) {
+                                    const pct = Math.max(0, Math.min(100, Math.round((left / total) * 100)));
+                                    const low = left <= Math.max(1, Math.ceil(total * 0.2));
+                                    return (
+                                      <div className="mt-4" data-testid={`unit-inventory-${seg.toLowerCase()}-${i}`}>
+                                        <div className="flex items-center justify-between text-xs mb-1.5">
+                                          <span className="text-[color:var(--lux-ivory)]/60">Availability</span>
+                                          <span className={low ? "text-gold font-semibold" : "text-[color:var(--lux-ivory)]/80"}>{left} of {total} units left</span>
+                                        </div>
+                                        <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                          <div className="h-full rounded-full" style={{ width: `${100 - pct}%`, background: low ? "var(--lux-gold)" : "rgba(212,175,55,0.55)" }} />
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                  return null;
+                                })()}
+                                {c.floor_plan && (
+                                  <button onClick={() => setFloorPlan(c.floor_plan)} data-testid={`unit-floorplan-btn-${seg.toLowerCase()}-${i}`} className="mt-4 inline-flex items-center gap-2 rounded-lg bg-glass hairline px-3.5 py-2 text-xs font-semibold text-ivory hover:border-[color:var(--border-gold)] transition-colors">
+                                    <Maximize2 className="h-3.5 w-3.5 text-gold" /> View Floor Plan
+                                  </button>
+                                )}
                               </div>
                             );
                           })}
@@ -458,6 +484,13 @@ export default function ProjectDetail() {
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-ivory/80 bg-black/60 rounded-full px-3 py-1">{media[lightbox]?.type === "video" ? "Video" : `${lightbox + 1} / ${media.length}`}</div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Floor plan viewer */}
+      <Dialog open={!!floorPlan} onOpenChange={(o) => !o && setFloorPlan(null)}>
+        <DialogContent className="max-w-4xl bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] p-2" data-testid="floorplan-dialog">
+          {floorPlan && <img src={floorPlan} alt="Floor plan" className="w-full max-h-[82vh] object-contain rounded-lg bg-white" />}
         </DialogContent>
       </Dialog>
 
