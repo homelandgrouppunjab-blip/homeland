@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -56,36 +57,36 @@
         --foreground: 40 20% 96%;
     }
     html.light {
-        --background: 40 33% 97%;
-        --foreground: 20 14% 12%;
-        --card: 0 0% 100%;
-        --card-foreground: 20 14% 12%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 20 14% 12%;
-        --secondary: 40 20% 92%;
-        --secondary-foreground: 20 14% 12%;
-        --muted: 40 15% 90%;
-        --muted-foreground: 20 8% 38%;
-        --accent: 40 20% 92%;
-        --accent-foreground: 20 14% 12%;
-        --border: 30 12% 84%;
-        --input: 30 12% 84%;
+        --background: 40 30% 93%;
+        --foreground: 30 16% 11%;
+        --card: 40 29% 97%;
+        --card-foreground: 30 16% 11%;
+        --popover: 40 29% 97%;
+        --popover-foreground: 30 16% 11%;
+        --secondary: 40 22% 89%;
+        --secondary-foreground: 30 16% 11%;
+        --muted: 40 18% 87%;
+        --muted-foreground: 30 10% 32%;
+        --accent: 40 22% 89%;
+        --accent-foreground: 30 16% 11%;
+        --border: 36 14% 80%;
+        --input: 36 14% 80%;
 
-        --lux-black: #F6F3ED;
-        --lux-obsidian: #FFFFFF;
-        --lux-charcoal: #FFFFFF;
-        --lux-graphite: #F0ECE4;
-        --lux-platinum: #4A463F;
-        --lux-ivory: #1C1A17;
-        --lux-gold: #A9842A;
+        --lux-black: #EDE7DC;
+        --lux-obsidian: #FBF9F4;
+        --lux-charcoal: #FBF9F4;
+        --lux-graphite: #E6DFD2;
+        --lux-platinum: #585248;
+        --lux-ivory: #201C16;
+        --lux-gold: #9A7B28;
 
-        --surface-glass: rgba(255,255,255,0.72);
-        --surface-glass-strong: rgba(255,255,255,0.92);
-        --border-hairline: rgba(20,18,15,0.12);
-        --border-gold: rgba(169,132,42,0.40);
-        --shadow-soft: 0 10px 30px rgba(20,18,15,0.10);
-        --shadow-glass: 0 12px 40px rgba(20,18,15,0.14);
-        --noise-opacity: 0.02;
+        --surface-glass: rgba(251,249,244,0.80);
+        --surface-glass-strong: rgba(251,249,244,0.95);
+        --border-hairline: rgba(32,28,22,0.14);
+        --border-gold: rgba(154,123,40,0.42);
+        --shadow-soft: 0 10px 30px rgba(32,28,22,0.10);
+        --shadow-glass: 0 12px 40px rgba(32,28,22,0.12);
+        --noise-opacity: 0.015;
     }
 }
 
@@ -100,7 +101,7 @@
         margin: 0;
         background: var(--lux-black);
         color: var(--lux-ivory);
-        font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
@@ -116,7 +117,7 @@
         mix-blend-mode: overlay;
     }
     h1, h2, h3, .font-display {
-        font-family: "Gloock", ui-serif, Georgia, serif;
+        font-family: "Playfair Display", ui-serif, Georgia, serif;
         letter-spacing: -0.01em;
         font-weight: 400;
     }
@@ -127,7 +128,7 @@
 }
 
 @layer utilities {
-    .font-display { font-family: "Gloock", ui-serif, Georgia, serif; }
+    .font-display { font-family: "Playfair Display", ui-serif, Georgia, serif; }
     .container-lux { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
     .section-pad { @apply py-16 sm:py-20 lg:py-28; }
     .text-gold { color: var(--lux-gold); }
@@ -157,7 +158,7 @@
         background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent);
     }
     .kicker {
-        font-family: "Manrope", sans-serif;
+        font-family: "Montserrat", sans-serif;
         text-transform: uppercase;
         letter-spacing: 0.28em;
         font-size: 0.72rem;
@@ -178,7 +179,7 @@
 /* Leaflet dark theme adjustments */
 .leaflet-container {
     background: #0F1012;
-    font-family: "Manrope", sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
     background: #15171A;
@@ -209,6 +210,8 @@ html.light ::-webkit-scrollbar-track { background: #efece6; }
 html.light ::-webkit-scrollbar-thumb { background: #d2ccc2; }
 html.light ::-webkit-scrollbar-thumb:hover { background: #bdb6aa; }
 html.light .map-dark .leaflet-tile-pane { filter: none; }
+/* Theme-aware hero overlay: lighter + warmer in day mode so photos stay vivid */
+html.light .hero-overlay { background: linear-gradient(to top, rgba(20,16,10,0.55), rgba(20,16,10,0.10) 42%, rgba(255,255,255,0) 72%) !important; }
 html.light .leaflet-container { background: #e8eef2; }
 html.light .leaflet-tile { filter: none; }
 html.light .leaflet-popup-content-wrapper, html.light .leaflet-popup-tip { background: #fff; color: #1c1a17; }

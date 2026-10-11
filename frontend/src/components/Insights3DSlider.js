@@ -23,7 +23,7 @@ export const Insights3DSlider = () => {
   if (n === 0) return null;
 
   const step = 360 / n;
-  const radius = n <= 2 ? 300 : Math.round(300 / Math.tan(Math.PI / n));
+  const radius = n <= 2 ? 240 : Math.round(230 / Math.tan(Math.PI / n));
   const go = (d) => setIndex((i) => (i + d + n) % n);
 
   return (
@@ -35,7 +35,7 @@ export const Insights3DSlider = () => {
         </div>
 
         <div
-          className="scene-3d relative h-[440px]"
+          className="scene-3d relative h-[340px]"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
@@ -50,23 +50,24 @@ export const Insights3DSlider = () => {
                   to={`/insights/${p.slug}`}
                   key={p.slug || i}
                   data-testid={`insight-card-${i}`}
-                  className="ring-card absolute left-1/2 top-1/2 block w-[300px] -ml-[150px] -mt-[190px] rounded-2xl overflow-hidden bg-glass hairline"
+                  className="ring-card absolute left-1/2 top-1/2 block w-[230px] -ml-[115px] -mt-[140px] rounded-2xl overflow-hidden bg-glass"
                   style={{
                     transform: `rotateY(${i * step}deg) translateZ(${radius}px)`,
-                    opacity: active ? 1 : 0.5,
-                    boxShadow: active ? "var(--shadow-glass)" : "none",
-                    outline: active ? "1px solid var(--border-gold)" : "none",
-                    transition: "opacity 0.6s ease, box-shadow 0.6s ease",
+                    opacity: active ? 1 : 0.42,
+                    boxShadow: active ? "0 20px 50px rgba(0,0,0,0.45)" : "none",
+                    outline: `1.5px solid ${active ? "var(--lux-gold)" : "var(--border-gold)"}`,
+                    outlineOffset: "0px",
+                    transition: "opacity 0.6s ease, box-shadow 0.6s ease, outline-color 0.6s ease",
                   }}
                 >
-                  <div className="h-44 w-full bg-[color:var(--lux-graphite)] overflow-hidden">
+                  <div className="h-28 w-full bg-[color:var(--lux-graphite)] overflow-hidden border-b border-[color:var(--border-gold)]">
                     {p.cover_image && <img src={p.cover_image} alt={p.title} className="h-full w-full object-cover" draggable={false} />}
                   </div>
-                  <div className="p-5">
-                    {p.category && <div className="kicker text-[0.6rem] mb-2">{p.category}</div>}
-                    <h3 className="font-display text-lg text-ivory leading-snug line-clamp-2">{p.title}</h3>
-                    {p.excerpt && <p className="mt-2 text-sm text-[color:var(--lux-ivory)]/60 line-clamp-2">{p.excerpt}</p>}
-                    <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-gold">Read more <ArrowRight className="h-3.5 w-3.5" /></span>
+                  <div className="p-4">
+                    {p.category && <div className="kicker text-[0.55rem] mb-1.5">{p.category}</div>}
+                    <h3 className="font-display text-base text-ivory leading-snug line-clamp-2">{p.title}</h3>
+                    {p.excerpt && <p className="mt-1.5 text-xs text-[color:var(--lux-ivory)]/60 line-clamp-2">{p.excerpt}</p>}
+                    <span className="mt-2.5 inline-flex items-center gap-1.5 text-[11px] font-semibold text-gold">Read more <ArrowRight className="h-3 w-3" /></span>
                   </div>
                 </Link>
               );

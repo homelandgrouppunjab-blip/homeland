@@ -51,12 +51,29 @@ export default function ProjectDetail() {
   const [fpScale, setFpScale] = useState(1);
   const [fpPos, setFpPos] = useState({ x: 0, y: 0 });
   const fpDrag = useRef(null);
-  useEffect(() => { setFpScale(1); setFpPos({ x: 0, y: 0 }); }, [floorPlan]);
+  const fpPts = useRef(new Map());
+  const fpDist = useRef(0);
+  useEffect(() => { setFpScale(1); setFpPos({ x: 0, y: 0 }); fpPts.current.clear(); fpDist.current = 0; }, [floorPlan]);
   const fpZoom = (d) => setFpScale((s) => Math.min(5, Math.max(1, +(s + d).toFixed(2))));
   const fpWheel = (e) => { e.preventDefault(); fpZoom(e.deltaY < 0 ? 0.2 : -0.2); };
-  const fpDown = (e) => { fpDrag.current = { x: e.clientX - fpPos.x, y: e.clientY - fpPos.y }; };
-  const fpMove = (e) => { if (fpDrag.current && fpScale > 1) setFpPos({ x: e.clientX - fpDrag.current.x, y: e.clientY - fpDrag.current.y }); };
-  const fpUp = () => { fpDrag.current = null; };
+  const fpDown = (e) => {
+    fpPts.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (fpPts.current.size === 1) fpDrag.current = { x: e.clientX - fpPos.x, y: e.clientY - fpPos.y };
+    else fpDrag.current = null;
+  };
+  const fpMove = (e) => {
+    if (!fpPts.current.has(e.pointerId)) return;
+    fpPts.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const pts = [...fpPts.current.values()];
+    if (pts.length >= 2) {
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      if (fpDist.current) fpZoom((dist - fpDist.current) / 200);
+      fpDist.current = dist;
+    } else if (fpDrag.current && fpScale > 1) {
+      setFpPos({ x: e.clientX - fpDrag.current.x, y: e.clientY - fpDrag.current.y });
+    }
+  };
+  const fpUp = (e) => { if (e) fpPts.current.delete(e.pointerId); if (fpPts.current.size < 2) fpDist.current = 0; if (fpPts.current.size === 0) fpDrag.current = null; };
 
   useEffect(() => {
     window.scrollTo(0, 0);
