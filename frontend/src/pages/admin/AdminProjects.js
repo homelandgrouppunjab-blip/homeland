@@ -45,7 +45,7 @@ export default function AdminProjects() {
     Residential: ["2 BHK", "3 BHK", "4 BHK", "5 BHK", "Service Suite", "Penthouse", "Villa", "Studio"],
     Commercial: ["Showroom", "Office Space", "Virtual Space", "Hotel Room", "Retail Unit", "SCO", "Food Court"],
   };
-  const addCategory = () => set("unit_categories", [...(form.unit_categories || []), { segment: "Residential", type: "", area: "", dimensions: "", price: "", description: "" }]);
+  const addCategory = () => set("unit_categories", [...(form.unit_categories || []), { segment: "Residential", type: "", area: "", dimensions: "", price: "", availability: "Available", description: "" }]);
   const updateCategory = (i, k, v) => set("unit_categories", (form.unit_categories || []).map((c, idx) => (idx === i ? { ...c, [k]: v } : c)));
   const removeCategory = (i) => set("unit_categories", (form.unit_categories || []).filter((_, idx) => idx !== i));
 
@@ -174,6 +174,15 @@ export default function AdminProjects() {
                     <div><label className={lbl}>Area (sq.ft)</label><input className={cls} value={c.area} onChange={(e) => updateCategory(i, "area", e.target.value)} placeholder="e.g. 1,850 sq. ft." /></div>
                     <div className="sm:col-span-2"><label className={lbl}>Room Sizes & Dimensions</label><input className={cls} value={c.dimensions} onChange={(e) => updateCategory(i, "dimensions", e.target.value)} placeholder="e.g. Living 16'x20', Master 14'x16', Kitchen 10'x12'" /></div>
                     <div><label className={lbl}>Price</label><input className={cls} value={c.price} onChange={(e) => updateCategory(i, "price", e.target.value)} placeholder="e.g. ₹1.85 Cr onwards" /></div>
+                    <div>
+                      <label className={lbl}>Availability</label>
+                      <Select value={c.availability || undefined} onValueChange={(v) => updateCategory(i, "availability", v)}>
+                        <SelectTrigger className={cls}><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
+                          {["Available", "Few Left", "Limited", "Sold Out", "On Request"].map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <div className="sm:col-span-3"><label className={lbl}>Short Description</label><input className={cls} value={c.description} onChange={(e) => updateCategory(i, "description", e.target.value)} placeholder="Optional short note about this unit" /></div>
                   </div>
                   <div className="flex justify-end mt-2">

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2, Layers, Waves, Dumbbell, Car, Trees, Utensils, ArrowUpDown, Baby, Sparkles, Users, Zap, BatteryCharging, Droplets, Sun, Snowflake, Briefcase, Film, ShoppingBag, Compass, Wind, Trophy, ChefHat, BellRing } from "lucide-react";
+import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2, Layers, Waves, Dumbbell, Car, Trees, Utensils, ArrowUpDown, Baby, Sparkles, Users, Zap, BatteryCharging, Droplets, Sun, Snowflake, Briefcase, Film, ShoppingBag, Compass, Wind, Trophy, ChefHat, BellRing, Store } from "lucide-react";
 import { toast } from "sonner";
 import { getProject, getProjects } from "@/lib/api";
 import StatusBadge from "@/components/StatusBadge";
@@ -272,37 +272,65 @@ export default function ProjectDetail() {
             </TabsContent>
             {hasUnits && (
               <TabsContent value="units" className="mt-6" data-testid="units-content">
-                <div className="space-y-8">
-                  {Object.entries(unitsBySegment).map(([seg, items]) => (
-                    <div key={seg}>
-                      <div className="flex items-center gap-3 mb-4">
-                        <h3 className="font-display text-lg text-ivory">{seg}</h3>
-                        <span className="text-xs rounded-full bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)] text-gold px-2.5 py-0.5">{items.length} {items.length === 1 ? "option" : "options"}</span>
-                      </div>
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        {items.map((c, i) => (
-                          <div key={`${seg}-${i}`} className="rounded-xl bg-glass hairline p-5" data-testid={`unit-card-${seg.toLowerCase()}-${i}`}>
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="font-display text-lg text-ivory">{c.type || "Unit"}</div>
-                              {c.price && <div className="text-sm font-semibold text-gold text-right shrink-0">{c.price}</div>}
-                            </div>
-                            <div className="mt-3 flex flex-wrap gap-4 text-sm">
-                              {c.area && (
-                                <div className="flex items-center gap-2 text-[color:var(--lux-ivory)]/80"><Ruler className="h-4 w-4 text-gold" /> {c.area}</div>
-                              )}
-                            </div>
-                            {c.dimensions && (
-                              <div className="mt-3">
-                                <div className="text-[10px] uppercase tracking-wider text-[color:var(--lux-ivory)]/45 mb-1">Room Sizes & Dimensions</div>
-                                <p className="text-sm text-[color:var(--lux-ivory)]/75 leading-relaxed">{c.dimensions}</p>
-                              </div>
-                            )}
-                            {c.description && <p className="mt-3 text-sm text-[color:var(--lux-ivory)]/65 leading-relaxed">{c.description}</p>}
+                <p className="text-sm text-[color:var(--lux-ivory)]/60 mb-6">Available inventory and unit configurations. Residential and commercial options are listed separately for clarity.</p>
+                <div className="space-y-10">
+                  {Object.entries(unitsBySegment).map(([seg, items]) => {
+                    const SegIcon = seg === "Commercial" ? Store : Building2;
+                    const segTint = seg === "Commercial" ? "rgba(92,138,168,0.14)" : "rgba(212,175,55,0.12)";
+                    const segBorder = seg === "Commercial" ? "rgba(92,138,168,0.3)" : "rgba(212,175,55,0.25)";
+                    return (
+                      <div key={seg} data-testid={`unit-segment-${seg.toLowerCase()}`}>
+                        <div className="flex items-center gap-3 mb-5 pb-3 border-b border-[color:var(--border-hairline)]">
+                          <span className="h-10 w-10 grid place-items-center rounded-xl" style={{ background: segTint, border: `1px solid ${segBorder}` }}><SegIcon className="h-5 w-5 text-gold" /></span>
+                          <div>
+                            <h3 className="font-display text-xl text-ivory leading-tight">{seg}</h3>
+                            <div className="text-xs text-[color:var(--lux-ivory)]/50">{items.length} {items.length === 1 ? "configuration" : "configurations"} available</div>
                           </div>
-                        ))}
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          {items.map((c, i) => {
+                            const a = (c.availability || "").toLowerCase();
+                            const badge = a.includes("sold") ? "bg-[rgba(220,80,80,0.14)] border-[rgba(220,80,80,0.35)] text-[#e58b8b]"
+                              : (a.includes("few") || a.includes("limited")) ? "bg-[rgba(212,175,55,0.14)] border-[rgba(212,175,55,0.35)] text-gold"
+                              : a.includes("available") ? "bg-[rgba(90,180,120,0.14)] border-[rgba(90,180,120,0.35)] text-[#86d0a1]"
+                              : "bg-white/5 border-white/15 text-[color:var(--lux-ivory)]/70";
+                            return (
+                              <div key={`${seg}-${i}`} className="rounded-2xl bg-glass hairline p-5 transition-colors hover:border-[color:var(--border-gold)]" data-testid={`unit-card-${seg.toLowerCase()}-${i}`}>
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="min-w-0">
+                                    <div className="text-[10px] uppercase tracking-wider text-[color:var(--lux-ivory)]/45">{seg}</div>
+                                    <div className="font-display text-xl text-ivory truncate">{c.type || "Unit"}</div>
+                                  </div>
+                                  {c.availability && <span className={`shrink-0 text-[10px] uppercase tracking-wider rounded-full border px-2.5 py-1 ${badge}`}>{c.availability}</span>}
+                                </div>
+                                <div className="mt-4 grid grid-cols-2 gap-3">
+                                  {c.area && (
+                                    <div className="rounded-lg bg-black/20 p-3">
+                                      <div className="text-[10px] uppercase tracking-wider text-[color:var(--lux-ivory)]/45 flex items-center gap-1"><Ruler className="h-3 w-3 text-gold" /> Size</div>
+                                      <div className="text-sm text-ivory font-semibold mt-1">{c.area}</div>
+                                    </div>
+                                  )}
+                                  {c.price && (
+                                    <div className="rounded-lg bg-black/20 p-3">
+                                      <div className="text-[10px] uppercase tracking-wider text-[color:var(--lux-ivory)]/45">Price</div>
+                                      <div className="text-sm text-gold font-semibold mt-1">{c.price}</div>
+                                    </div>
+                                  )}
+                                </div>
+                                {c.dimensions && (
+                                  <div className="mt-3">
+                                    <div className="text-[10px] uppercase tracking-wider text-[color:var(--lux-ivory)]/45 mb-1">Room Sizes &amp; Dimensions</div>
+                                    <p className="text-sm text-[color:var(--lux-ivory)]/75 leading-relaxed">{c.dimensions}</p>
+                                  </div>
+                                )}
+                                {c.description && <p className="mt-3 text-sm text-[color:var(--lux-ivory)]/65 leading-relaxed">{c.description}</p>}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </TabsContent>
             )}
