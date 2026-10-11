@@ -72,7 +72,7 @@ export const Footer = () => {
           <Link to="/legal/refund" className="text-[color:var(--lux-ivory)]/60 hover:text-gold transition-colors" data-testid="footer-refund-link">Payment, Cancellation &amp; Refund Policy</Link>
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[color:var(--lux-ivory)]/45">
-          <p>© {new Date().getFullYear()} Homeland Group Mohali. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Homeland Group Mohali. All rights reserved with <span className="text-gold font-medium">Quality Real Estate</span>.</p>
           <p>RERA-compliant developer · Punjab RERA Registered</p>
         </div>
         <p className="mt-6 text-center text-[11px] leading-relaxed text-[color:var(--lux-ivory)]/45" data-testid="footer-channel-partner">

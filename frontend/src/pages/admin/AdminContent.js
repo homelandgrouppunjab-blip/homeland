@@ -3,10 +3,14 @@ import { Loader2, Plus, Trash2, Save } from "lucide-react";
 import { toast } from "sonner";
 import { getContent, adminUpdateContent } from "@/lib/api";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FileUpload from "@/components/FileUpload";
 
 const cls = "w-full rounded-lg bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)] px-3 py-2.5 text-sm text-ivory placeholder:text-[color:var(--lux-ivory)]/40 focus:outline-none focus:ring-2 focus:ring-[rgba(212,175,55,0.35)]";
 const lbl = "text-xs text-platinum mb-1 block";
+const FONTS = ["Playfair Display", "Crimson Text", "Montserrat", "Figtree", "Fredoka", "Source Code Pro", "Roboto Mono"];
+const SIZES = [{ label: "Compact", value: 0.92 }, { label: "Default", value: 1 }, { label: "Comfortable", value: 1.06 }, { label: "Large", value: 1.12 }];
+const THEME_DEFAULTS = { font_display: "Playfair Display", font_body: "Montserrat", font_scale: 1, gold: "#D4AF37", bg_dark: "#0F1012", bg_light: "#FBF9F4", hero_text: "#F7F3EE" };
 
 export default function AdminContent() {
   const [c, setC] = useState(null);
@@ -25,6 +29,10 @@ export default function AdminContent() {
   const delStr = (key, idx) => setC((p) => ({ ...p, [key]: p[key].filter((_, i) => i !== idx) }));
   // nested object helpers (e.g. social links)
   const setObj = (key, field, v) => setC((p) => ({ ...p, [key]: { ...(p[key] || {}), [field]: v } }));
+  // appearance / theme helpers
+  const t = { ...THEME_DEFAULTS, ...(c.theme || {}) };
+  const setTheme = (k, v) => setC((p) => ({ ...p, theme: { ...THEME_DEFAULTS, ...(p.theme || {}), [k]: v } }));
+  const resetTheme = () => setC((p) => ({ ...p, theme: { ...THEME_DEFAULTS } }));
 
   const save = async () => {
     setSaving(true);
@@ -47,6 +55,7 @@ export default function AdminContent() {
           <TabsTrigger value="benchmarks">Benchmarks</TabsTrigger>
           <TabsTrigger value="vision">Vision</TabsTrigger>
           <TabsTrigger value="awards">Awards</TabsTrigger>
+          <TabsTrigger value="appearance" data-testid="admin-content-tab-appearance">Appearance</TabsTrigger>
           <TabsTrigger value="contact">Contact & Social</TabsTrigger>
         </TabsList>
 
@@ -55,6 +64,7 @@ export default function AdminContent() {
           <div><label className={lbl}>Brand Tagline</label><input className={cls} value={c.brand_tagline || ""} onChange={(e) => set("brand_tagline", e.target.value)} /></div>
           <div><label className={lbl}>Founding Year</label><input className={cls} value={c.founding_year || ""} onChange={(e) => set("founding_year", e.target.value)} /></div>
           <div><FileUpload label="Site Logo (header & footer)" value={c.site_logo || ""} onChange={(v) => set("site_logo", v)} testid="admin-content-logo" /><p className="text-xs text-[color:var(--lux-ivory)]/40 mt-1">Leave empty to use the default Homeland logo.</p></div>
+          <div><FileUpload label="Light-mode Logo (dark ink, for day mode)" value={c.site_logo_light || ""} onChange={(v) => set("site_logo_light", v)} testid="admin-content-logo-light" /><p className="text-xs text-[color:var(--lux-ivory)]/40 mt-1">Shown automatically in day mode. Leave empty to use the auto-generated dark-ink logo.</p></div>
           <div><label className={lbl}>Short Intro (one-liner)</label><textarea rows={3} className={cls} value={c.history_intro || ""} onChange={(e) => set("history_intro", e.target.value)} /></div>
         </TabsContent>
 
@@ -119,6 +129,77 @@ export default function AdminContent() {
             </div>
           ))}
           <button onClick={() => addRow("awards", { title: "", year: "" })} data-testid="admin-content-award-add" className="inline-flex items-center gap-2 text-sm text-gold"><Plus className="h-4 w-4" /> Add Award</button>
+        </TabsContent>
+
+        <TabsContent value="appearance" className="mt-6 space-y-6 max-w-2xl">
+          <p className="text-xs text-[color:var(--lux-ivory)]/50">Customise the site's premium fonts, text size and colours. Changes apply across the whole website after you save.</p>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className={lbl}>Heading Font</label>
+              <Select value={t.font_display} onValueChange={(v) => setTheme("font_display", v)}>
+                <SelectTrigger className={cls} data-testid="admin-theme-font-display"><SelectValue /></SelectTrigger>
+                <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">{FONTS.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className={lbl}>Body Font</label>
+              <Select value={t.font_body} onValueChange={(v) => setTheme("font_body", v)}>
+                <SelectTrigger className={cls} data-testid="admin-theme-font-body"><SelectValue /></SelectTrigger>
+                <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">{FONTS.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <label className={lbl}>Text Size</label>
+            <Select value={String(t.font_scale)} onValueChange={(v) => setTheme("font_scale", parseFloat(v))}>
+              <SelectTrigger className={cls} data-testid="admin-theme-font-scale"><SelectValue /></SelectTrigger>
+              <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">{SIZES.map((s) => <SelectItem key={s.value} value={String(s.value)}>{s.label}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div>
+              <label className={lbl}>Accent / Gold</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={t.gold} onChange={(e) => setTheme("gold", e.target.value)} className="h-10 w-12 rounded-lg bg-transparent border border-[color:var(--border-hairline)] cursor-pointer" data-testid="admin-theme-gold" />
+                <input className={cls} value={t.gold} onChange={(e) => setTheme("gold", e.target.value)} />
+              </div>
+            </div>
+            <div>
+              <label className={lbl}>Dark Background</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={t.bg_dark} onChange={(e) => setTheme("bg_dark", e.target.value)} className="h-10 w-12 rounded-lg bg-transparent border border-[color:var(--border-hairline)] cursor-pointer" data-testid="admin-theme-bg-dark" />
+                <input className={cls} value={t.bg_dark} onChange={(e) => setTheme("bg_dark", e.target.value)} />
+              </div>
+            </div>
+            <div>
+              <label className={lbl}>Light Background</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={t.bg_light} onChange={(e) => setTheme("bg_light", e.target.value)} className="h-10 w-12 rounded-lg bg-transparent border border-[color:var(--border-hairline)] cursor-pointer" data-testid="admin-theme-bg-light" />
+                <input className={cls} value={t.bg_light} onChange={(e) => setTheme("bg_light", e.target.value)} />
+              </div>
+            </div>
+          </div>
+
+          <div className="max-w-xs">
+            <label className={lbl}>Hero Text Colour (over slider photos)</label>
+            <div className="flex items-center gap-2">
+              <input type="color" value={t.hero_text} onChange={(e) => setTheme("hero_text", e.target.value)} className="h-10 w-12 rounded-lg bg-transparent border border-[color:var(--border-hairline)] cursor-pointer" data-testid="admin-theme-hero-text" />
+              <input className={cls} value={t.hero_text} onChange={(e) => setTheme("hero_text", e.target.value)} />
+            </div>
+            <p className="text-[11px] text-[color:var(--lux-ivory)]/40 mt-1">Used for the big headline and tagline over the home hero images. Keep it light for best contrast over photos.</p>
+          </div>
+
+          <div className="rounded-xl bg-glass hairline p-5">
+            <div className="kicker mb-2">Preview</div>
+            <div style={{ fontFamily: `var(--font-display)` }} className="text-2xl text-ivory">{t.font_display} heading</div>
+            <p style={{ fontFamily: `var(--font-body)` }} className="text-sm text-[color:var(--lux-ivory)]/70 mt-1">Body text in {t.font_body}. The accent colour appears on <span style={{ color: t.gold }} className="font-semibold">buttons and links</span>.</p>
+            <p className="text-[11px] text-[color:var(--lux-ivory)]/40 mt-2">Live preview updates fully across the site after you press Save Changes.</p>
+          </div>
+
+          <button onClick={resetTheme} data-testid="admin-theme-reset" className="text-sm text-[color:var(--lux-ivory)]/70 hover:text-gold underline underline-offset-4">Reset to default theme</button>
         </TabsContent>
 
         <TabsContent value="contact" className="mt-6 space-y-4 max-w-2xl">

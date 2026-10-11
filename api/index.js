@@ -63,6 +63,7 @@ async function ensureSeed(db) {
   await seedIfEmpty("faqs", seed.faqs);
   await seedIfEmpty("team", seed.team);
   await seedIfEmpty("posts", seed.posts);
+  await seedIfEmpty("updates", seed.updates);
 }
 
 // ---- Auth ----
@@ -100,7 +101,7 @@ r.get("/", (req, res) => res.json({ message: "Homeland Group Mohali API", status
 
 r.get("/projects", wrap(async (req, res) => {
   const db = await getDb();
-  const q = {};
+  const q = { visible: { $ne: false } };
   const { status, type, city, featured, hot_selling, search, sort = "order" } = req.query;
   if (status) q.status = status;
   if (type) q.type = type;
@@ -162,6 +163,14 @@ r.get("/posts/:slug", wrap(async (req, res) => {
   const doc = await db.collection("posts").findOne({ slug: req.params.slug }, { projection: { _id: 0 } });
   if (!doc) return res.status(404).json({ detail: "Post not found" });
   res.json(doc);
+}));
+
+r.get("/updates", wrap(async (req, res) => {
+  const db = await getDb();
+  const q = { published: true };
+  const docs = await db.collection("updates").find(q, { projection: { _id: 0 } }).toArray();
+  docs.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.date || "").localeCompare(a.date || ""));
+  res.json(docs);
 }));
 
 r.get("/uploads/:filename", wrap(async (req, res) => {
@@ -264,6 +273,7 @@ const projectDefaults = (b) => ({
   unit_categories: b.unit_categories || [],
   show_in_slider: !!b.show_in_slider, slider_order: b.slider_order ?? 99,
   featured: !!b.featured, hot_selling: !!b.hot_selling, order: b.order ?? 99,
+  visible: b.visible !== false,
 });
 
 r.post("/admin/projects", requireAdmin, wrap(async (req, res) => {
@@ -441,6 +451,42 @@ r.delete("/admin/posts/:id", requireAdmin, wrap(async (req, res) => {
   const db = await getDb();
   const del = await db.collection("posts").deleteOne({ id: req.params.id });
   if (!del.deletedCount) return res.status(404).json({ detail: "Post not found" });
+  res.json({ success: true });
+}));
+
+// -------- Admin: updates (daily feed) --------
+r.get("/admin/updates", requireAdmin, wrap(async (req, res) => {
+  const db = await getDb();
+  const docs = await db.collection("updates").find({}, { projection: { _id: 0 } }).toArray();
+  docs.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.date || "").localeCompare(a.date || ""));
+  res.json(docs);
+}));
+const updateDefaults = (b) => ({
+  title: b.title, category: b.category || "Update", excerpt: b.excerpt || "", body: b.body || "",
+  image: b.image || "", link_type: b.link_type || "none", project_slug: b.project_slug || "",
+  external_url: b.external_url || "", social_platform: b.social_platform || "",
+  date: b.date || nowIso().slice(0, 10), pinned: !!b.pinned, published: b.published !== false,
+});
+r.post("/admin/updates", requireAdmin, wrap(async (req, res) => {
+  const db = await getDb();
+  const data = updateDefaults(req.body || {});
+  const doc = { ...data, id: uuid(), created_at: nowIso(), updated_at: nowIso() };
+  await db.collection("updates").insertOne({ ...doc });
+  res.json(doc);
+}));
+r.put("/admin/updates/:id", requireAdmin, wrap(async (req, res) => {
+  const db = await getDb();
+  const existing = await db.collection("updates").findOne({ id: req.params.id }, { projection: { _id: 0 } });
+  if (!existing) return res.status(404).json({ detail: "Update not found" });
+  const data = updateDefaults(req.body || {});
+  const doc = { ...data, id: req.params.id, created_at: existing.created_at || nowIso(), updated_at: nowIso() };
+  await db.collection("updates").replaceOne({ id: req.params.id }, { ...doc });
+  res.json(doc);
+}));
+r.delete("/admin/updates/:id", requireAdmin, wrap(async (req, res) => {
+  const db = await getDb();
+  const del = await db.collection("updates").deleteOne({ id: req.params.id });
+  if (!del.deletedCount) return res.status(404).json({ detail: "Update not found" });
   res.json({ success: true });
 }));
 

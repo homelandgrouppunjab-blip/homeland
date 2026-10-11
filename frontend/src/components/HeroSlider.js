@@ -55,20 +55,20 @@ export const HeroSlider = ({ projects = [] }) => {
             {p.logo_image ? (
               <LogoPlaque src={p.logo_image} alt={p.name} size="lg" />
             ) : (
-              <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl leading-[1.02] text-ivory">{p.name}</h1>
+              <h1 className="hero-text font-display text-4xl sm:text-6xl lg:text-7xl leading-[1.02]">{p.name}</h1>
             )}
-            <p className="mt-4 text-base sm:text-lg text-[color:var(--lux-ivory)]/80 max-w-2xl">{p.tagline}</p>
+            <p className="hero-text mt-4 text-base sm:text-lg opacity-90 max-w-2xl">{p.tagline}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link to={`/projects/${p.slug}`} data-testid="hero-explore-button" className="inline-flex items-center gap-2 rounded-xl border gold-line bg-[rgba(212,175,55,0.08)] px-6 py-3.5 text-sm font-semibold tracking-wide text-gold hover:bg-[rgba(212,175,55,0.16)] transition-colors">
                 Explore Project <ArrowRight className="h-4 w-4" />
               </Link>
               {p.status !== "DELIVERED" && (
-                <Link to="/contact" data-testid="hero-schedule-visit-button" className="inline-flex items-center gap-2 rounded-xl bg-glass hairline px-6 py-3.5 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors">
+                <Link to="/contact" data-testid="hero-schedule-visit-button" className="hero-text inline-flex items-center gap-2 rounded-xl bg-black/30 border border-white/25 backdrop-blur-sm px-6 py-3.5 text-sm font-semibold hover:bg-black/45 transition-colors">
                   Schedule a Visit
                 </Link>
               )}
               {p.status !== "DELIVERED" && (
-                <Link to="/brochures" data-testid="hero-brochure-button" className="inline-flex items-center gap-2 rounded-xl px-4 py-3.5 text-sm font-semibold text-[color:var(--lux-ivory)]/80 hover:text-gold transition-colors">
+                <Link to="/brochures" data-testid="hero-brochure-button" className="hero-text inline-flex items-center gap-2 rounded-xl px-4 py-3.5 text-sm font-semibold opacity-85 hover:opacity-100 hover:text-gold transition-colors">
                   <FileText className="h-4 w-4" /> Download Brochure
                 </Link>
               )}

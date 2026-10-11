@@ -32,6 +32,7 @@ export const createLead = (payload) => client.post("/leads", payload).then((r) =
 export const createSiteVisit = (payload) => client.post("/site-visits", payload).then((r) => r.data);
 export const getPosts = (category) => client.get("/posts", { params: category ? { category } : {} }).then((r) => r.data);
 export const getPost = (slug) => client.get(`/posts/${slug}`).then((r) => r.data);
+export const getUpdates = () => client.get("/updates").then((r) => r.data);
 
 // ---- Admin ----
 export const adminLogin = (payload) => client.post("/admin/login", payload).then((r) => r.data);
@@ -56,6 +57,11 @@ export const adminGetPosts = () => client.get("/admin/posts").then((r) => r.data
 export const adminCreatePost = (p) => client.post("/admin/posts", p).then((r) => r.data);
 export const adminUpdatePost = (id, p) => client.put(`/admin/posts/${id}`, p).then((r) => r.data);
 export const adminDeletePost = (id) => client.delete(`/admin/posts/${id}`).then((r) => r.data);
+
+export const adminGetUpdates = () => client.get("/admin/updates").then((r) => r.data);
+export const adminCreateUpdate = (p) => client.post("/admin/updates", p).then((r) => r.data);
+export const adminUpdateUpdate = (id, p) => client.put(`/admin/updates/${id}`, p).then((r) => r.data);
+export const adminDeleteUpdate = (id) => client.delete(`/admin/updates/${id}`).then((r) => r.data);
 
 export const uploadFile = (file) => {
   const fd = new FormData();

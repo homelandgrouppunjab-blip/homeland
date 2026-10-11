@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, ChevronUp, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { adminGetProjects, adminCreateProject, adminUpdateProject, adminDeleteProject } from "@/lib/api";
 import StatusBadge from "@/components/StatusBadge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import FileUpload from "@/components/FileUpload";
 
 const EMPTY = {
@@ -14,7 +15,7 @@ const EMPTY = {
   rera_certificate_url: "", amenities: [], description: "", highlights: [], hero_image: "", logo_image: "", gallery: [], video_url: "",
   land_area: "", unit_area: "", floor_count: "", specifications: "", internal_features: [], external_features: [],
   unit_categories: [], show_in_slider: false, slider_order: 99,
-  brochure_url: "", map_lat: "", map_lng: "", landmarks: [], featured: false, hot_selling: false, order: 99,
+  brochure_url: "", map_lat: "", map_lng: "", landmarks: [], featured: false, hot_selling: false, visible: true, order: 99,
 };
 
 const cls = "w-full rounded-lg bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)] px-3 py-2.5 text-sm text-ivory placeholder:text-[color:var(--lux-ivory)]/40 focus:outline-none focus:ring-2 focus:ring-[rgba(212,175,55,0.35)]";
@@ -71,6 +72,40 @@ export default function AdminProjects() {
     setDelId(null);
   };
 
+  // Instant on/off toggles for a project's visibility and home-slider presence.
+  const quickToggle = async (p, key) => {
+    const next = !p[key];
+    setList((l) => l.map((x) => (x.id === p.id ? { ...x, [key]: next } : x)));
+    try {
+      await adminUpdateProject(p.id, {
+        ...p, [key]: next,
+        map_lat: p.map_lat ?? null, map_lng: p.map_lng ?? null,
+        order: parseInt(p.order) || 99, slider_order: parseInt(p.slider_order) || 99,
+      });
+      toast.success(next ? "Shown" : "Hidden");
+    } catch { toast.error("Update failed"); load(); }
+  };
+
+  // Custom display order: move a project up/down and persist sequential order.
+  const persistOrder = async (ordered) => {
+    const withOrder = ordered.map((p, i) => ({ ...p, order: i }));
+    setList(withOrder);
+    try {
+      await Promise.all(withOrder.map((p) => adminUpdateProject(p.id, {
+        ...p, map_lat: p.map_lat ?? null, map_lng: p.map_lng ?? null,
+        order: p.order, slider_order: parseInt(p.slider_order) || 99,
+      })));
+      toast.success("Order updated");
+    } catch { toast.error("Reorder failed"); load(); }
+  };
+  const move = (index, dir) => {
+    const target = index + dir;
+    if (target < 0 || target >= list.length) return;
+    const copy = [...list];
+    [copy[index], copy[target]] = [copy[target], copy[index]];
+    persistOrder(copy);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -82,16 +117,22 @@ export default function AdminProjects() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px]" data-testid="admin-projects-table">
             <thead><tr className="border-b border-[color:var(--border-hairline)] text-left text-xs uppercase tracking-wider text-[color:var(--lux-ivory)]/60">
-              <th className="p-4">Project</th><th className="p-4">Status</th><th className="p-4">Type</th><th className="p-4">Location</th><th className="p-4">Flags</th><th className="p-4 text-right">Actions</th>
+              <th className="p-4">Order</th><th className="p-4">Project</th><th className="p-4">Status</th><th className="p-4">Type</th><th className="p-4">Visible</th><th className="p-4">In Slider</th><th className="p-4 text-right">Actions</th>
             </tr></thead>
             <tbody>
-              {list.map((p) => (
+              {list.map((p, idx) => (
                 <tr key={p.id} className="border-b border-[color:var(--border-hairline)]">
+                  <td className="p-4">
+                    <div className="flex flex-col gap-0.5">
+                      <button onClick={() => move(idx, -1)} disabled={idx === 0} aria-label="Move up" data-testid={`admin-project-move-up-${p.slug}`} className="h-6 w-6 grid place-items-center rounded bg-white/5 text-ivory hover:text-gold disabled:opacity-30 disabled:cursor-not-allowed"><ChevronUp className="h-4 w-4" /></button>
+                      <button onClick={() => move(idx, 1)} disabled={idx === list.length - 1} aria-label="Move down" data-testid={`admin-project-move-down-${p.slug}`} className="h-6 w-6 grid place-items-center rounded bg-white/5 text-ivory hover:text-gold disabled:opacity-30 disabled:cursor-not-allowed"><ChevronDown className="h-4 w-4" /></button>
+                    </div>
+                  </td>
                   <td className="p-4"><div className="flex items-center gap-3"><img src={p.hero_image} alt="" className="h-10 w-14 rounded object-cover" /><span className="text-ivory font-medium text-sm">{p.name}</span></div></td>
                   <td className="p-4"><StatusBadge status={p.status} /></td>
                   <td className="p-4 text-sm text-[color:var(--lux-ivory)]/70">{p.type}</td>
-                  <td className="p-4 text-sm text-[color:var(--lux-ivory)]/70">{p.location}</td>
-                  <td className="p-4 text-xs">{p.featured && <span className="text-platinum mr-2">Featured</span>}{p.hot_selling && <span className="text-gold">Hot</span>}</td>
+                  <td className="p-4"><Switch checked={p.visible !== false} onCheckedChange={() => quickToggle(p, "visible")} data-testid={`admin-project-toggle-visible-${p.slug}`} /></td>
+                  <td className="p-4"><Switch checked={!!p.show_in_slider} onCheckedChange={() => quickToggle(p, "show_in_slider")} data-testid={`admin-project-toggle-slider-${p.slug}`} /></td>
                   <td className="p-4"><div className="flex items-center justify-end gap-2">
                     <button onClick={() => openEdit(p)} data-testid={`admin-project-edit-${p.slug}`} className="h-8 w-8 grid place-items-center rounded-lg bg-white/5 text-ivory hover:text-gold"><Pencil className="h-4 w-4" /></button>
                     <button onClick={() => setDelId(p.id)} className="h-8 w-8 grid place-items-center rounded-lg bg-white/5 text-ivory hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
@@ -209,6 +250,7 @@ export default function AdminProjects() {
             <div><label className={lbl}>Map Latitude</label><input className={cls} value={form.map_lat} onChange={(e) => set("map_lat", e.target.value)} placeholder="30.6788" /></div>
             <div><label className={lbl}>Map Longitude</label><input className={cls} value={form.map_lng} onChange={(e) => set("map_lng", e.target.value)} placeholder="76.7369" /></div>
             <div className="flex flex-wrap items-center gap-6 sm:col-span-2 pt-1">
+              <label className="flex items-center gap-2 text-sm text-ivory cursor-pointer"><input type="checkbox" checked={form.visible !== false} onChange={(e) => set("visible", e.target.checked)} className="accent-[color:var(--lux-gold)]" data-testid="admin-project-visible" /> Visible on site</label>
               <label className="flex items-center gap-2 text-sm text-ivory cursor-pointer"><input type="checkbox" checked={form.featured} onChange={(e) => set("featured", e.target.checked)} className="accent-[color:var(--lux-gold)]" /> Featured</label>
               <label className="flex items-center gap-2 text-sm text-ivory cursor-pointer"><input type="checkbox" checked={form.hot_selling} onChange={(e) => set("hot_selling", e.target.checked)} className="accent-[color:var(--lux-gold)]" /> Hot Selling</label>
               <label className="flex items-center gap-2 text-sm text-ivory cursor-pointer"><input type="checkbox" checked={form.show_in_slider} onChange={(e) => set("show_in_slider", e.target.checked)} className="accent-[color:var(--lux-gold)]" data-testid="admin-project-show-in-slider" /> Show in Home Slider</label>

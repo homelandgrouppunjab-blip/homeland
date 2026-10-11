@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate, Link } from "react-router-dom";
-import { LayoutDashboard, Building2, Inbox, FileText, Users, LogOut, ExternalLink, CalendarClock, Newspaper } from "lucide-react";
+import { LayoutDashboard, Building2, Inbox, FileText, Users, LogOut, ExternalLink, CalendarClock, Newspaper, Megaphone } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV = [
@@ -11,6 +11,7 @@ const NAV = [
   { to: "/admin/content", label: "Content", icon: FileText },
   { to: "/admin/team", label: "Team", icon: Users },
   { to: "/admin/blog", label: "Blog", icon: Newspaper },
+  { to: "/admin/updates", label: "Updates", icon: Megaphone },
 ];
 
 export default function AdminLayout() {

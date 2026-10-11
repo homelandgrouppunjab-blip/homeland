@@ -4,6 +4,7 @@ import { Menu, Facebook, Instagram, Linkedin, Youtube, ChevronDown } from "lucid
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getContent } from "@/lib/api";
 import ThemeToggle from "@/components/ThemeToggle";
+import Logo from "@/components/Logo";
 
 const LINKS = [
   { label: "Home", to: "/" },
@@ -11,7 +12,7 @@ const LINKS = [
   { label: "Compare", to: "/compare" },
   { label: "About", to: "/about" },
   { label: "Locations", to: "/locations" },
-  { label: "Insights", to: "/insights" },
+  { label: "Insights", to: "/updates" },
 ];
 
 const SOCIAL_ICONS = [
@@ -32,6 +33,7 @@ export const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [social, setSocial] = useState({});
   const [siteLogo, setSiteLogo] = useState("");
+  const [siteLogoLight, setSiteLogoLight] = useState("");
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    getContent().then((c) => { setSocial(c?.social || {}); setSiteLogo(c?.site_logo || ""); }).catch(() => {});
+    getContent().then((c) => { setSocial(c?.social || {}); setSiteLogo(c?.site_logo || ""); setSiteLogoLight(c?.site_logo_light || ""); }).catch(() => {});
   }, []);
 
   const socialLinks = SOCIAL_ICONS.filter((s) => social[s.key]);
@@ -54,7 +56,7 @@ export const Navbar = () => {
     >
       <div className="container-lux flex h-20 items-center justify-between">
         <Link to="/" data-testid="nav-logo" className="flex items-center">
-          <img src={siteLogo || "/homeland-logo.webp"} alt="Homeland Group" className="h-[19px] sm:h-[22px] w-auto" />
+          <Logo dark={siteLogo} light={siteLogoLight} className="h-[19px] sm:h-[22px] w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
@@ -114,16 +116,9 @@ export const Navbar = () => {
           )}
           <ThemeToggle />
           <Link
-            to="/book-visit"
-            data-testid="nav-book-visit-button"
-            className="rounded-xl bg-glass hairline px-4 py-2.5 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors"
-          >
-            Book Visit
-          </Link>
-          <Link
             to="/contact"
             data-testid="nav-enquire-button"
-            className="rounded-xl border gold-line px-5 py-2.5 text-sm font-semibold tracking-wide text-gold hover:bg-[rgba(212,175,55,0.08)] transition-colors"
+            className="rounded-xl border gold-line bg-[rgba(212,175,55,0.08)] px-5 py-2.5 text-sm font-semibold tracking-wide text-gold hover:bg-[rgba(212,175,55,0.16)] transition-colors"
           >
             Enquire Now
           </Link>
@@ -139,7 +134,7 @@ export const Navbar = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-[color:var(--lux-charcoal)] border-l border-[color:var(--border-hairline)] text-ivory">
               <div className="flex flex-col gap-1 mt-8">
-                <img src="/homeland-logo.webp" alt="Homeland Group" className="h-8 w-auto mb-6" />
+                <Logo dark={siteLogo} light={siteLogoLight} className="h-8 w-auto mb-6" />
                 {LINKS.map((l) => (
                   <Link
                     key={l.to}
@@ -165,6 +160,7 @@ export const Navbar = () => {
                     </Link>
                   ))}
                 </div>
+                {socialLinks.length > 0 && (
                   <div className="flex items-center gap-2 mt-5 pt-4 border-t border-[color:var(--border-hairline)]">
                     {socialLinks.map(({ key, Icon, label }) => (
                       <a
@@ -182,16 +178,10 @@ export const Navbar = () => {
                   </div>
                 )}
                 <Link
-                  to="/book-visit"
-                  onClick={() => setOpen(false)}
-                  className="mt-4 rounded-xl bg-glass hairline px-5 py-3 text-center text-sm font-semibold text-ivory"
-                >
-                  Book a Site Visit
-                </Link>
-                <Link
                   to="/contact"
                   onClick={() => setOpen(false)}
-                  className="mt-2 rounded-xl border gold-line px-5 py-3 text-center text-sm font-semibold text-gold"
+                  data-testid="mobile-nav-enquire-button"
+                  className="mt-4 rounded-xl border gold-line bg-[rgba(212,175,55,0.08)] px-5 py-3 text-center text-sm font-semibold text-gold"
                 >
                   Enquire Now
                 </Link>

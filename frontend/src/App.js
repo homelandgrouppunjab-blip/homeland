@@ -19,6 +19,7 @@ import Locations from "@/pages/Locations";
 import BookVisit from "@/pages/BookVisit";
 import Insights from "@/pages/Insights";
 import PostDetail from "@/pages/PostDetail";
+import Updates from "@/pages/Updates";
 import Legal from "@/pages/Legal";
 import NotFound from "@/pages/NotFound";
 
@@ -32,12 +33,15 @@ import AdminVisits from "@/pages/admin/AdminVisits";
 import AdminContent from "@/pages/admin/AdminContent";
 import AdminTeam from "@/pages/admin/AdminTeam";
 import AdminBlog from "@/pages/admin/AdminBlog";
+import AdminUpdates from "@/pages/admin/AdminUpdates";
+import ThemeApplier from "@/components/ThemeApplier";
 
 function App() {
   return (
     <div className="App">
       <AuthProvider>
         <BrowserRouter>
+          <ThemeApplier />
           <Routes>
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
@@ -55,6 +59,7 @@ function App() {
               <Route path="/book-visit" element={<BookVisit />} />
               <Route path="/insights" element={<Insights />} />
               <Route path="/insights/:slug" element={<PostDetail />} />
+              <Route path="/updates" element={<Updates />} />
               <Route path="/legal/:doc" element={<Legal />} />
             </Route>
 
@@ -68,6 +73,7 @@ function App() {
                 <Route path="/admin/content" element={<AdminContent />} />
                 <Route path="/admin/team" element={<AdminTeam />} />
                 <Route path="/admin/blog" element={<AdminBlog />} />
+                <Route path="/admin/updates" element={<AdminUpdates />} />
               </Route>
             </Route>
 

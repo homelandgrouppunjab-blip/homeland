@@ -41,6 +41,11 @@
         --lux-platinum: #E5E4E2;
         --lux-ivory: #F7F3EE;
 
+        --font-display: "Playfair Display", ui-serif, Georgia, serif;
+        --font-body: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        --font-scale: 1;
+        --hero-text: #F7F3EE;
+
         --shadow-soft: 0 10px 30px rgba(0,0,0,0.35);
         --shadow-glass: 0 12px 40px rgba(0,0,0,0.45);
         --shadow-hairline: 0 0 0 1px rgba(229,228,226,0.10);
@@ -96,12 +101,13 @@
     }
     html {
         scroll-behavior: smooth;
+        font-size: calc(100% * var(--font-scale));
     }
     body {
         margin: 0;
         background: var(--lux-black);
         color: var(--lux-ivory);
-        font-family: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-body);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
@@ -117,7 +123,7 @@
         mix-blend-mode: overlay;
     }
     h1, h2, h3, .font-display {
-        font-family: "Playfair Display", ui-serif, Georgia, serif;
+        font-family: var(--font-display);
         letter-spacing: -0.01em;
         font-weight: 400;
     }
@@ -128,10 +134,11 @@
 }
 
 @layer utilities {
-    .font-display { font-family: "Playfair Display", ui-serif, Georgia, serif; }
+    .font-display { font-family: var(--font-display); }
     .container-lux { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
     .section-pad { @apply py-16 sm:py-20 lg:py-28; }
     .text-gold { color: var(--lux-gold); }
+    .hero-text { color: var(--hero-text); }
     .text-platinum { color: var(--lux-platinum); }
     .text-ivory { color: var(--lux-ivory); }
     .bg-glass {
@@ -158,7 +165,7 @@
         background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent);
     }
     .kicker {
-        font-family: "Montserrat", sans-serif;
+        font-family: var(--font-body);
         text-transform: uppercase;
         letter-spacing: 0.28em;
         font-size: 0.72rem;
@@ -210,8 +217,9 @@ html.light ::-webkit-scrollbar-track { background: #efece6; }
 html.light ::-webkit-scrollbar-thumb { background: #d2ccc2; }
 html.light ::-webkit-scrollbar-thumb:hover { background: #bdb6aa; }
 html.light .map-dark .leaflet-tile-pane { filter: none; }
-/* Theme-aware hero overlay: lighter + warmer in day mode so photos stay vivid */
-html.light .hero-overlay { background: linear-gradient(to top, rgba(20,16,10,0.55), rgba(20,16,10,0.10) 42%, rgba(255,255,255,0) 72%) !important; }
+/* Theme-aware hero overlay: keeps the top of the photo bright while darkening
+   the lower area so hero text stays legible over any image in day mode. */
+html.light .hero-overlay { background: linear-gradient(to top, rgba(10,8,5,0.74), rgba(10,8,5,0.30) 40%, rgba(10,8,5,0) 72%) !important; }
 html.light .leaflet-container { background: #e8eef2; }
 html.light .leaflet-tile { filter: none; }
 html.light .leaflet-popup-content-wrapper, html.light .leaflet-popup-tip { background: #fff; color: #1c1a17; }

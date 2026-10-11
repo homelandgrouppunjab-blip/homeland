@@ -1,42 +1,30 @@
 [
   {
-    "content": "#5 YouTube any-link auto-embed (youtu.be/watch/shorts/embed) in ProjectDetail + admin label",
+    "content": "Insights slider redesign + play/pause (posts+updates)",
     "status": "completed"
   },
   {
-    "content": "#8 Enquiry form: Requirement now before Project of Interest",
+    "content": "Admin Updates feed + public /updates combined page + merged Insights nav",
     "status": "completed"
   },
   {
-    "content": "#6 Footer: Quality Real Estate channel-partner credit line",
+    "content": "Theme-aware dark-ink logo + admin light logo",
     "status": "completed"
   },
   {
-    "content": "#7 Legal pages (Terms/Privacy/Refund) + header dropdown + footer links",
+    "content": "Project on/off visibility switches + custom reorder",
     "status": "completed"
   },
   {
-    "content": "#9 SEO on-page: meta/OG/Twitter/JSON-LD + favicon + robots.txt + sitemap.xml + noscript content",
+    "content": "Appearance admin (fonts, text size, colours, hero-text) + day-mode hero legibility fix",
     "status": "completed"
   },
   {
-    "content": "#1 Multi-category units (API + Admin repeater + ProjectDetail grouped rendering) — NEXT BATCH",
-    "status": "pending"
+    "content": "Merge nav CTAs into single Enquire Now",
+    "status": "completed"
   },
   {
-    "content": "#2 Custom slider selection + ordering (show_in_slider/slider_order) — NEXT BATCH",
-    "status": "pending"
-  },
-  {
-    "content": "#3 'Send enquiry on WhatsApp' (click-to-chat, admin number) — NEXT BATCH",
-    "status": "pending"
-  },
-  {
-    "content": "#4 Unified Updates/Blog bar — NEXT BATCH",
-    "status": "pending"
-  },
-  {
-    "content": "Credential-dependent: WhatsApp API, HubSpot/Zoho CRM, Google PageSpeed/Reviews, social/news auto-pull, SEO pre-rendering — pending your keys/decision",
-    "status": "pending"
+    "content": "Social media update type + paste-link + Social filter; footer 'Quality Real Estate'",
+    "status": "completed"
   }
 ]
