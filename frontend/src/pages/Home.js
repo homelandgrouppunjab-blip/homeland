@@ -24,9 +24,17 @@ export default function Home() {
     getTeam().then(setTeam).catch(() => {});
   }, []);
 
+  // Custom home slider: show admin-selected projects (ordered); fall back to all.
+  const sliderProjects = (() => {
+    const chosen = projects
+      .filter((p) => p.show_in_slider)
+      .sort((a, b) => (a.slider_order ?? 99) - (b.slider_order ?? 99));
+    return chosen.length ? chosen : projects;
+  })();
+
   return (
     <div>
-      <HeroSlider projects={projects} />
+      <HeroSlider projects={sliderProjects} />
 
       {/* Intro / History */}
       <section className="section-pad container-lux">

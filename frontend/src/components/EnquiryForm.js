@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, CheckCircle2 } from "lucide-react";
-import { createLead } from "@/lib/api";
+import { Loader2, CheckCircle2, MessageCircle } from "lucide-react";
+import { createLead, getContent } from "@/lib/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const inputCls =
@@ -14,8 +14,31 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
   });
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [waNumber, setWaNumber] = useState("");
+
+  useEffect(() => {
+    getContent().then((c) => { if (c?.contact_whatsapp) setWaNumber(c.contact_whatsapp); }).catch(() => {});
+  }, []);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  const sendWhatsApp = () => {
+    if (!form.name || !form.phone) { toast.error("Please add your name and phone first."); return; }
+    const digits = (waNumber || "").replace(/[^0-9]/g, "");
+    if (!digits) { toast.error("WhatsApp number not configured yet."); return; }
+    const lines = [
+      "Hi Homeland Group, I'd like to enquire.",
+      `Name: ${form.name}`,
+      form.phone ? `Phone: ${form.phone}` : "",
+      form.email ? `Email: ${form.email}` : "",
+      `Requirement: ${form.requirement}`,
+      `Project of Interest: ${form.project}`,
+      form.budget ? `Budget: ${form.budget}` : "",
+      form.message ? `Message: ${form.message}` : "",
+    ].filter(Boolean);
+    window.open(`https://wa.me/${digits}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener");
+    if (onSuccess) onSuccess();
+  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -126,6 +149,14 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
           style={{ background: "rgba(212,175,55,0.06)" }}
         >
           {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Submitting…</> : "Submit Enquiry"}
+        </button>
+        <button
+          type="button"
+          onClick={sendWhatsApp}
+          data-testid="enquiry-whatsapp-button"
+          className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-[rgba(37,211,102,0.4)] bg-[rgba(37,211,102,0.08)] px-6 py-3 text-sm font-semibold tracking-wide text-[#25D366] hover:bg-[rgba(37,211,102,0.16)] transition-colors"
+        >
+          <MessageCircle className="h-4 w-4" /> Send enquiry on WhatsApp
         </button>
       </div>
     </form>

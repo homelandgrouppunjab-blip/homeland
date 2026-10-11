@@ -98,6 +98,13 @@ export default function ProjectDetail() {
   const internalFeatures = p.internal_features || [];
   const externalFeatures = p.external_features || [];
   const hasFeatures = internalFeatures.length > 0 || externalFeatures.length > 0;
+  const unitCategories = p.unit_categories || [];
+  const hasUnits = unitCategories.length > 0;
+  const unitsBySegment = unitCategories.reduce((acc, c) => {
+    const seg = c.segment || "Residential";
+    (acc[seg] = acc[seg] || []).push(c);
+    return acc;
+  }, {});
   const stats = [
     { icon: Building2, label: "Type", value: p.type },
     { icon: Home, label: "Configurations", value: (p.unit_types || []).join(", ") || "—" },
@@ -245,6 +252,7 @@ export default function ProjectDetail() {
           <Tabs defaultValue="overview" className="mt-10">
             <TabsList className="bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)]">
               <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
+              {hasUnits && <TabsTrigger value="units" data-testid="tab-units">Unit Plans</TabsTrigger>}
               {hasSpecs && <TabsTrigger value="specifications" data-testid="tab-specifications">Specifications</TabsTrigger>}
               {hasFeatures && <TabsTrigger value="features" data-testid="tab-features">Features</TabsTrigger>}
               <TabsTrigger value="amenities" data-testid="tab-amenities">Amenities</TabsTrigger>
@@ -262,6 +270,42 @@ export default function ProjectDetail() {
                 </div>
               )}
             </TabsContent>
+            {hasUnits && (
+              <TabsContent value="units" className="mt-6" data-testid="units-content">
+                <div className="space-y-8">
+                  {Object.entries(unitsBySegment).map(([seg, items]) => (
+                    <div key={seg}>
+                      <div className="flex items-center gap-3 mb-4">
+                        <h3 className="font-display text-lg text-ivory">{seg}</h3>
+                        <span className="text-xs rounded-full bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)] text-gold px-2.5 py-0.5">{items.length} {items.length === 1 ? "option" : "options"}</span>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {items.map((c, i) => (
+                          <div key={`${seg}-${i}`} className="rounded-xl bg-glass hairline p-5" data-testid={`unit-card-${seg.toLowerCase()}-${i}`}>
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="font-display text-lg text-ivory">{c.type || "Unit"}</div>
+                              {c.price && <div className="text-sm font-semibold text-gold text-right shrink-0">{c.price}</div>}
+                            </div>
+                            <div className="mt-3 flex flex-wrap gap-4 text-sm">
+                              {c.area && (
+                                <div className="flex items-center gap-2 text-[color:var(--lux-ivory)]/80"><Ruler className="h-4 w-4 text-gold" /> {c.area}</div>
+                              )}
+                            </div>
+                            {c.dimensions && (
+                              <div className="mt-3">
+                                <div className="text-[10px] uppercase tracking-wider text-[color:var(--lux-ivory)]/45 mb-1">Room Sizes & Dimensions</div>
+                                <p className="text-sm text-[color:var(--lux-ivory)]/75 leading-relaxed">{c.dimensions}</p>
+                              </div>
+                            )}
+                            {c.description && <p className="mt-3 text-sm text-[color:var(--lux-ivory)]/65 leading-relaxed">{c.description}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+            )}
             {hasSpecs && (
               <TabsContent value="specifications" className="mt-6" data-testid="specifications-content">
                 {specItems.length > 0 && (

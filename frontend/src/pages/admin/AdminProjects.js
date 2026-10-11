@@ -13,6 +13,7 @@ const EMPTY = {
   type: "Residential", unit_types: [], key_units: "", price_range: "", rera_numbers: [], rera_registered_date: "",
   rera_certificate_url: "", amenities: [], description: "", highlights: [], hero_image: "", logo_image: "", gallery: [], video_url: "",
   land_area: "", unit_area: "", floor_count: "", specifications: "", internal_features: [], external_features: [],
+  unit_categories: [], show_in_slider: false, slider_order: 99,
   brochure_url: "", map_lat: "", map_lng: "", landmarks: [], featured: false, hot_selling: false, order: 99,
 };
 
@@ -40,6 +41,14 @@ export default function AdminProjects() {
   };
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
+  const UNIT_TYPE_OPTIONS = {
+    Residential: ["2 BHK", "3 BHK", "4 BHK", "5 BHK", "Service Suite", "Penthouse", "Villa", "Studio"],
+    Commercial: ["Showroom", "Office Space", "Virtual Space", "Hotel Room", "Retail Unit", "SCO", "Food Court"],
+  };
+  const addCategory = () => set("unit_categories", [...(form.unit_categories || []), { segment: "Residential", type: "", area: "", dimensions: "", price: "", description: "" }]);
+  const updateCategory = (i, k, v) => set("unit_categories", (form.unit_categories || []).map((c, idx) => (idx === i ? { ...c, [k]: v } : c)));
+  const removeCategory = (i) => set("unit_categories", (form.unit_categories || []).filter((_, idx) => idx !== i));
+
   const save = async () => {
     if (!form.name) { toast.error("Project name is required"); return; }
     setSaving(true);
@@ -48,6 +57,7 @@ export default function AdminProjects() {
       map_lat: form.map_lat === "" ? null : parseFloat(form.map_lat),
       map_lng: form.map_lng === "" ? null : parseFloat(form.map_lng),
       order: parseInt(form.order) || 99,
+      slider_order: parseInt(form.slider_order) || 99,
     };
     try {
       if (editing) { await adminUpdateProject(editing.id, payload); toast.success("Project updated"); }
@@ -130,6 +140,49 @@ export default function AdminProjects() {
             <div><label className={lbl}>Internal Features (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.internal_features)} onChange={(e) => set("internal_features", toArr(e.target.value))} placeholder="Modular kitchen&#10;VRV air-conditioning&#10;Imported marble flooring" data-testid="admin-project-internal-features" /></div>
             <div><label className={lbl}>External Features & Amenities (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.external_features)} onChange={(e) => set("external_features", toArr(e.target.value))} placeholder="Landscaped gardens&#10;Swimming pool&#10;Clubhouse" data-testid="admin-project-external-features" /></div>
 
+            {/* Unit Categories (multi-category: residential + commercial in one project) */}
+            <div className="sm:col-span-2 mt-2 pt-2 border-t border-[color:var(--border-hairline)] flex items-center justify-between">
+              <div className="text-sm font-semibold text-gold">Unit Categories & Plans</div>
+              <button type="button" onClick={addCategory} data-testid="admin-add-unit-category" className="inline-flex items-center gap-1.5 rounded-lg border gold-line bg-[rgba(212,175,55,0.08)] px-3 py-1.5 text-xs font-semibold text-gold hover:bg-[rgba(212,175,55,0.16)]"><Plus className="h-3.5 w-3.5" /> Add Category</button>
+            </div>
+            <div className="sm:col-span-2 space-y-3">
+              {(form.unit_categories || []).length === 0 && (
+                <p className="text-xs text-[color:var(--lux-ivory)]/45">No unit categories yet. Add 2BHK/3BHK/Service Suites (Residential) or Showroom/Office/Hotel Rooms (Commercial) with sizes & dimensions.</p>
+              )}
+              {(form.unit_categories || []).map((c, i) => (
+                <div key={i} className="rounded-xl bg-[color:var(--lux-obsidian)] border border-[color:var(--border-hairline)] p-3" data-testid={`admin-unit-category-${i}`}>
+                  <div className="grid sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className={lbl}>Segment</label>
+                      <Select value={c.segment} onValueChange={(v) => { updateCategory(i, "segment", v); }}>
+                        <SelectTrigger className={cls}><SelectValue /></SelectTrigger>
+                        <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
+                          <SelectItem value="Residential">Residential</SelectItem>
+                          <SelectItem value="Commercial">Commercial</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className={lbl}>Type</label>
+                      <Select value={c.type || undefined} onValueChange={(v) => updateCategory(i, "type", v)}>
+                        <SelectTrigger className={cls}><SelectValue placeholder="Select type" /></SelectTrigger>
+                        <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
+                          {(UNIT_TYPE_OPTIONS[c.segment] || UNIT_TYPE_OPTIONS.Residential).map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div><label className={lbl}>Area (sq.ft)</label><input className={cls} value={c.area} onChange={(e) => updateCategory(i, "area", e.target.value)} placeholder="e.g. 1,850 sq. ft." /></div>
+                    <div className="sm:col-span-2"><label className={lbl}>Room Sizes & Dimensions</label><input className={cls} value={c.dimensions} onChange={(e) => updateCategory(i, "dimensions", e.target.value)} placeholder="e.g. Living 16'x20', Master 14'x16', Kitchen 10'x12'" /></div>
+                    <div><label className={lbl}>Price</label><input className={cls} value={c.price} onChange={(e) => updateCategory(i, "price", e.target.value)} placeholder="e.g. ₹1.85 Cr onwards" /></div>
+                    <div className="sm:col-span-3"><label className={lbl}>Short Description</label><input className={cls} value={c.description} onChange={(e) => updateCategory(i, "description", e.target.value)} placeholder="Optional short note about this unit" /></div>
+                  </div>
+                  <div className="flex justify-end mt-2">
+                    <button type="button" onClick={() => removeCategory(i)} data-testid={`admin-remove-unit-category-${i}`} className="inline-flex items-center gap-1.5 text-xs text-[color:var(--lux-ivory)]/60 hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /> Remove</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             <div><label className={lbl}>Highlights (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.highlights)} onChange={(e) => set("highlights", toArr(e.target.value))} /></div>
             <div><label className={lbl}>Amenities (one per line)</label><textarea rows={4} className={cls} value={fromArr(form.amenities)} onChange={(e) => set("amenities", toArr(e.target.value))} /></div>
             <div className="sm:col-span-2"><FileUpload label="Hero Image (upload or URL)" value={form.hero_image} onChange={(v) => set("hero_image", v)} testid="admin-project-hero" /></div>
@@ -143,9 +196,14 @@ export default function AdminProjects() {
             <div><label className={lbl}>Landmarks (one per line)</label><textarea rows={3} className={cls} value={fromArr(form.landmarks)} onChange={(e) => set("landmarks", toArr(e.target.value))} /></div>
             <div><label className={lbl}>Map Latitude</label><input className={cls} value={form.map_lat} onChange={(e) => set("map_lat", e.target.value)} placeholder="30.6788" /></div>
             <div><label className={lbl}>Map Longitude</label><input className={cls} value={form.map_lng} onChange={(e) => set("map_lng", e.target.value)} placeholder="76.7369" /></div>
-            <div className="flex items-center gap-6 sm:col-span-2 pt-1">
+            <div className="flex flex-wrap items-center gap-6 sm:col-span-2 pt-1">
               <label className="flex items-center gap-2 text-sm text-ivory cursor-pointer"><input type="checkbox" checked={form.featured} onChange={(e) => set("featured", e.target.checked)} className="accent-[color:var(--lux-gold)]" /> Featured</label>
               <label className="flex items-center gap-2 text-sm text-ivory cursor-pointer"><input type="checkbox" checked={form.hot_selling} onChange={(e) => set("hot_selling", e.target.checked)} className="accent-[color:var(--lux-gold)]" /> Hot Selling</label>
+              <label className="flex items-center gap-2 text-sm text-ivory cursor-pointer"><input type="checkbox" checked={form.show_in_slider} onChange={(e) => set("show_in_slider", e.target.checked)} className="accent-[color:var(--lux-gold)]" data-testid="admin-project-show-in-slider" /> Show in Home Slider</label>
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-[color:var(--lux-ivory)]/70">Slider Order</label>
+                <input type="number" className="w-20 rounded-lg bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)] px-2 py-1.5 text-sm text-ivory" value={form.slider_order} onChange={(e) => set("slider_order", e.target.value)} data-testid="admin-project-slider-order" />
+              </div>
             </div>
           </div>
           <div className="flex justify-end gap-3 mt-6">

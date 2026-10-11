@@ -8,6 +8,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const { MongoClient } = require("mongodb");
+const fs = require("fs");
+const path = require("path");
 const seed = require("./seed-data.json");
 
 const MONGO_URL = process.env.MONGO_URL;
@@ -259,6 +261,8 @@ const projectDefaults = (b) => ({
   map_lat: b.map_lat ?? null, map_lng: b.map_lng ?? null, landmarks: b.landmarks || [],
   land_area: b.land_area || "", unit_area: b.unit_area || "", floor_count: b.floor_count || "",
   specifications: b.specifications || "", internal_features: b.internal_features || [], external_features: b.external_features || [],
+  unit_categories: b.unit_categories || [],
+  show_in_slider: !!b.show_in_slider, slider_order: b.slider_order ?? 99,
   featured: !!b.featured, hot_selling: !!b.hot_selling, order: b.order ?? 99,
 });
 
@@ -442,7 +446,21 @@ r.delete("/admin/posts/:id", requireAdmin, wrap(async (req, res) => {
 
 // Mount router at both /api and / so it works with any Vercel rewrite target.
 app.use("/api", r);
-app.use("/", r);
+
+// When a built frontend is present (e.g. a single-process Hostinger/VPS deploy),
+// serve it and fall back to index.html for client-side routes. API stays under /api.
+// On Vercel the function bundle has no build dir, so we keep the root router mount
+// (Vercel serves the static frontend itself).
+const FRONTEND_BUILD = process.env.FRONTEND_BUILD_DIR || path.join(__dirname, "..", "frontend", "build");
+if (fs.existsSync(path.join(FRONTEND_BUILD, "index.html"))) {
+  app.use(express.static(FRONTEND_BUILD));
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) return next();
+    res.sendFile(path.join(FRONTEND_BUILD, "index.html"));
+  });
+} else {
+  app.use("/", r);
+}
 
 module.exports = app;
 
