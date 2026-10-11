@@ -107,6 +107,9 @@ export default function ProjectDetail() {
   const ytBase = ytId ? `https://www.youtube.com/embed/${ytId}` : p.video_url;
   const videoEmbedSrc = hasVideo ? `${ytBase}?autoplay=1&rel=0` : ""; // lightbox: with sound
   const videoBgSrc = hasVideo ? `${ytBase}?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1${ytId ? `&playlist=${ytId}` : ""}` : ""; // hero bg: muted loop
+  const isYouTube = !!ytId;
+  // A pasted direct video file (mp4/webm/mov/ogg) plays via a native <video> element.
+  const isFileVideo = hasVideo && !isYouTube && /\.(mp4|webm|ogg|mov|m4v)(\?|#|$)/i.test(p.video_url);
   const heroImage = images[active] || images[0];
   const copyRera = (r) => { navigator.clipboard.writeText(r); toast.success("RERA number copied"); };
 
@@ -148,14 +151,26 @@ export default function ProjectDetail() {
         {hasVideo ? (
           <div className="absolute inset-0 overflow-hidden" data-testid="detail-hero-video">
             {heroImage && <img src={heroImage} alt={p.name} className="absolute inset-0 h-full w-full object-cover" />}
-            <iframe
-              title={`${p.name} video`}
-              src={videoBgSrc}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen h-[56.25vw] min-h-full min-w-[177.78vh] pointer-events-none"
-              allow="autoplay; encrypted-media; picture-in-picture"
-              frameBorder="0"
-              aria-hidden="true"
-            />
+            {isFileVideo ? (
+              <video
+                src={p.video_url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 h-full w-full object-cover pointer-events-none"
+                aria-hidden="true"
+              />
+            ) : (
+              <iframe
+                title={`${p.name} video`}
+                src={videoBgSrc}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen h-[56.25vw] min-h-full min-w-[177.78vh] pointer-events-none"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                frameBorder="0"
+                aria-hidden="true"
+              />
+            )}
           </div>
         ) : (
           <img src={heroImage} alt={p.name} className="h-full w-full object-cover" />
@@ -503,7 +518,11 @@ export default function ProjectDetail() {
             <div className="relative">
               {media[lightbox]?.type === "video" ? (
                 <div className="w-full aspect-video rounded-lg overflow-hidden bg-black">
-                  <iframe title="Project video" src={videoEmbedSrc} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                  {isFileVideo ? (
+                    <video src={p.video_url} controls autoPlay className="w-full h-full" />
+                  ) : (
+                    <iframe title="Project video" src={videoEmbedSrc} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                  )}
                 </div>
               ) : (
                 <img src={media[lightbox]?.src} alt="" className="w-full max-h-[80vh] object-contain rounded-lg" />

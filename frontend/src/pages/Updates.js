@@ -1,16 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CalendarDays, Pin, Instagram, Facebook, Linkedin, Youtube, Twitter, Share2, ExternalLink } from "lucide-react";
-import { getPosts, getUpdates } from "@/lib/api";
+import { getPosts, getUpdates, getContent } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import FadeUp from "@/components/FadeUp";
+import SocialEmbed from "@/components/SocialEmbed";
 
-const FILTERS = ["All", "Updates", "Social", "News", "Media", "Blog"];
+const FILTERS = ["All", "Updates", "Events", "Social", "News", "Media", "Blog"];
 const PLATFORM_ICON = { Instagram, Facebook, LinkedIn: Linkedin, YouTube: Youtube, "Twitter/X": Twitter, Other: Share2 };
 
 export default function Updates() {
   const [posts, setPosts] = useState([]);
   const [updates, setUpdates] = useState([]);
+  const [embed, setEmbed] = useState("");
   const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(true);
 
@@ -19,12 +21,13 @@ export default function Updates() {
     Promise.all([getUpdates().catch(() => []), getPosts().catch(() => [])])
       .then(([u, p]) => { setUpdates(u || []); setPosts(p || []); })
       .finally(() => setLoading(false));
+    getContent().then((c) => setEmbed(c?.instagram_embed || "")).catch(() => {});
   }, []);
 
   const items = useMemo(() => {
     const u = (updates || []).map((x) => ({
       key: `upd-${x.id}`,
-      kind: x.link_type === "social" ? "Social" : "Updates",
+      kind: x.link_type === "social" ? "Social" : (x.category === "Event" ? "Events" : "Updates"),
       title: x.title,
       excerpt: x.excerpt || x.body,
       image: x.image,
@@ -109,6 +112,13 @@ export default function Updates() {
             {items.map((it) => (
               <FadeUp key={it.key}><Card it={it} /></FadeUp>
             ))}
+          </div>
+        )}
+
+        {embed && (
+          <div className="mt-20 pt-12 border-t border-[color:var(--border-hairline)]" data-testid="updates-instagram-section">
+            <SectionHeading kicker="Instagram" title="Follow Our Journey" subtitle="Live from @homelandgroup — our latest reels, launches and site moments." />
+            <div className="mt-8"><SocialEmbed code={embed} /></div>
           </div>
         )}
       </div>

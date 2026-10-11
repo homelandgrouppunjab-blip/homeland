@@ -11,6 +11,13 @@ const lbl = "text-xs text-platinum mb-1 block";
 const FONTS = ["Playfair Display", "Crimson Text", "Montserrat", "Figtree", "Fredoka", "Source Code Pro", "Roboto Mono"];
 const SIZES = [{ label: "Compact", value: 0.92 }, { label: "Default", value: 1 }, { label: "Comfortable", value: 1.06 }, { label: "Large", value: 1.12 }];
 const THEME_DEFAULTS = { font_display: "Playfair Display", font_body: "Montserrat", font_scale: 1, gold: "#D4AF37", bg_dark: "#0F1012", bg_light: "#FBF9F4", hero_text: "#F7F3EE" };
+const PRESETS = [
+  { name: "Classic Gold", theme: { font_display: "Playfair Display", font_body: "Montserrat", font_scale: 1, gold: "#D4AF37", bg_dark: "#0F1012", bg_light: "#FBF9F4", hero_text: "#F7F3EE" } },
+  { name: "Emerald Luxe", theme: { font_display: "Playfair Display", font_body: "Figtree", font_scale: 1, gold: "#2E8B6F", bg_dark: "#0E1413", bg_light: "#F4F8F5", hero_text: "#F4FBF7" } },
+  { name: "Sapphire Night", theme: { font_display: "Crimson Text", font_body: "Montserrat", font_scale: 1, gold: "#4F7FC4", bg_dark: "#0D1017", bg_light: "#F4F7FC", hero_text: "#EEF3FB" } },
+  { name: "Terracotta Warm", theme: { font_display: "Playfair Display", font_body: "Montserrat", font_scale: 1.02, gold: "#C06A3B", bg_dark: "#141010", bg_light: "#FBF5F0", hero_text: "#FBF2EA" } },
+  { name: "Mono Minimal", theme: { font_display: "Figtree", font_body: "Figtree", font_scale: 1, gold: "#9A8C6F", bg_dark: "#101011", bg_light: "#F6F5F2", hero_text: "#F5F3EF" } },
+];
 
 export default function AdminContent() {
   const [c, setC] = useState(null);
@@ -33,6 +40,7 @@ export default function AdminContent() {
   const t = { ...THEME_DEFAULTS, ...(c.theme || {}) };
   const setTheme = (k, v) => setC((p) => ({ ...p, theme: { ...THEME_DEFAULTS, ...(p.theme || {}), [k]: v } }));
   const resetTheme = () => setC((p) => ({ ...p, theme: { ...THEME_DEFAULTS } }));
+  const applyPreset = (preset) => setC((p) => ({ ...p, theme: { ...THEME_DEFAULTS, ...preset.theme } }));
 
   const save = async () => {
     setSaving(true);
@@ -134,6 +142,27 @@ export default function AdminContent() {
         <TabsContent value="appearance" className="mt-6 space-y-6 max-w-2xl">
           <p className="text-xs text-[color:var(--lux-ivory)]/50">Customise the site's premium fonts, text size and colours. Changes apply across the whole website after you save.</p>
 
+          <div>
+            <div className="kicker mb-3">One-tap Presets</div>
+            <div className="flex flex-wrap gap-2.5">
+              {PRESETS.map((pr) => (
+                <button
+                  key={pr.name}
+                  onClick={() => applyPreset(pr)}
+                  data-testid={`admin-theme-preset-${pr.name.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="group inline-flex items-center gap-2.5 rounded-xl bg-glass hairline px-3.5 py-2.5 text-sm text-ivory hover:border-[color:var(--border-gold)] transition-colors"
+                >
+                  <span className="flex -space-x-1">
+                    <span className="h-4 w-4 rounded-full border border-black/20" style={{ background: pr.theme.gold }} />
+                    <span className="h-4 w-4 rounded-full border border-black/20" style={{ background: pr.theme.bg_dark }} />
+                  </span>
+                  {pr.name}
+                </button>
+              ))}
+            </div>
+            <p className="text-[11px] text-[color:var(--lux-ivory)]/40 mt-2">Tap a preset to fill the fonts and colours below, then press Save Changes to apply it site-wide.</p>
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className={lbl}>Heading Font</label>
@@ -217,6 +246,11 @@ export default function AdminContent() {
                 </div>
               ))}
             </div>
+          </div>
+          <div className="pt-4 border-t border-[color:var(--border-hairline)]">
+            <h3 className="text-sm font-semibold text-ivory mb-1">Instagram Feed (auto-updating)</h3>
+            <p className="text-xs text-[color:var(--lux-ivory)]/50 mb-3">Paste the embed code from a free widget service (Behold, SnapWidget or EmbedSocial). Your latest posts then appear automatically on the Updates page. Leave empty to hide the feed.</p>
+            <textarea rows={5} className={cls} value={c.instagram_embed || ""} onChange={(e) => set("instagram_embed", e.target.value)} placeholder="<script>…</script> or <iframe…> widget code" data-testid="admin-content-instagram-embed" />
           </div>
         </TabsContent>
       </Tabs>
