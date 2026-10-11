@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2, Layers, Waves, Dumbbell, Car, Trees, Utensils, ArrowUpDown, Baby, Sparkles, Users, Zap, BatteryCharging, Droplets, Sun, Snowflake, Briefcase, Film, ShoppingBag, Compass, Wind, Trophy, ChefHat, BellRing, Store, Maximize2 } from "lucide-react";
+import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2, Layers, Waves, Dumbbell, Car, Trees, Utensils, ArrowUpDown, Baby, Sparkles, Users, Zap, BatteryCharging, Droplets, Sun, Snowflake, Briefcase, Film, ShoppingBag, Compass, Wind, Trophy, ChefHat, BellRing, Store, Maximize2, Plus, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { getProject, getProjects } from "@/lib/api";
 import StatusBadge from "@/components/StatusBadge";
@@ -48,6 +48,15 @@ export default function ProjectDetail() {
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(-1);
   const [floorPlan, setFloorPlan] = useState(null);
+  const [fpScale, setFpScale] = useState(1);
+  const [fpPos, setFpPos] = useState({ x: 0, y: 0 });
+  const fpDrag = useRef(null);
+  useEffect(() => { setFpScale(1); setFpPos({ x: 0, y: 0 }); }, [floorPlan]);
+  const fpZoom = (d) => setFpScale((s) => Math.min(5, Math.max(1, +(s + d).toFixed(2))));
+  const fpWheel = (e) => { e.preventDefault(); fpZoom(e.deltaY < 0 ? 0.2 : -0.2); };
+  const fpDown = (e) => { fpDrag.current = { x: e.clientX - fpPos.x, y: e.clientY - fpPos.y }; };
+  const fpMove = (e) => { if (fpDrag.current && fpScale > 1) setFpPos({ x: e.clientX - fpDrag.current.x, y: e.clientY - fpDrag.current.y }); };
+  const fpUp = () => { fpDrag.current = null; };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -290,7 +299,14 @@ export default function ProjectDetail() {
                         </div>
                         <div className="grid sm:grid-cols-2 gap-4">
                           {items.map((c, i) => {
-                            const a = (c.availability || "").toLowerCase();
+                            const leftN = parseInt(c.units_left);
+                            const totalN = parseInt(c.total_units);
+                            let effAvail = c.availability || "";
+                            if (!Number.isNaN(leftN)) {
+                              if (leftN <= 0) effAvail = "Sold Out";
+                              else if (!Number.isNaN(totalN) && totalN > 0 && leftN <= Math.max(1, Math.ceil(totalN * 0.2)) && !effAvail.toLowerCase().includes("sold")) effAvail = "Few Left";
+                            }
+                            const a = effAvail.toLowerCase();
                             const badge = a.includes("sold") ? "bg-[rgba(220,80,80,0.14)] border-[rgba(220,80,80,0.35)] text-[#e58b8b]"
                               : (a.includes("few") || a.includes("limited")) ? "bg-[rgba(212,175,55,0.14)] border-[rgba(212,175,55,0.35)] text-gold"
                               : a.includes("available") ? "bg-[rgba(90,180,120,0.14)] border-[rgba(90,180,120,0.35)] text-[#86d0a1]"
@@ -302,7 +318,7 @@ export default function ProjectDetail() {
                                     <div className="text-[10px] uppercase tracking-wider text-[color:var(--lux-ivory)]/45">{seg}</div>
                                     <div className="font-display text-xl text-ivory truncate">{c.type || "Unit"}</div>
                                   </div>
-                                  {c.availability && <span className={`shrink-0 text-[10px] uppercase tracking-wider rounded-full border px-2.5 py-1 ${badge}`}>{c.availability}</span>}
+                                  {effAvail && <span className={`shrink-0 text-[10px] uppercase tracking-wider rounded-full border px-2.5 py-1 ${badge}`}>{effAvail}</span>}
                                 </div>
                                 <div className="mt-4 grid grid-cols-2 gap-3">
                                   {c.area && (
@@ -487,10 +503,34 @@ export default function ProjectDetail() {
         </DialogContent>
       </Dialog>
 
-      {/* Floor plan viewer */}
+      {/* Floor plan viewer (zoom & pan) */}
       <Dialog open={!!floorPlan} onOpenChange={(o) => !o && setFloorPlan(null)}>
         <DialogContent className="max-w-4xl bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] p-2" data-testid="floorplan-dialog">
-          {floorPlan && <img src={floorPlan} alt="Floor plan" className="w-full max-h-[82vh] object-contain rounded-lg bg-white" />}
+          {floorPlan && (
+            <div
+              className="relative w-full h-[80vh] overflow-hidden rounded-lg bg-white"
+              style={{ touchAction: "none", cursor: fpScale > 1 ? "grab" : "default" }}
+              onWheel={fpWheel}
+              onPointerDown={fpDown}
+              onPointerMove={fpMove}
+              onPointerUp={fpUp}
+              onPointerLeave={fpUp}
+            >
+              <img
+                src={floorPlan}
+                alt="Floor plan"
+                draggable={false}
+                className="absolute top-1/2 left-1/2 max-w-none select-none"
+                style={{ transform: `translate(-50%, -50%) translate(${fpPos.x}px, ${fpPos.y}px) scale(${fpScale})`, transformOrigin: "center", maxHeight: "80vh", transition: fpDrag.current ? "none" : "transform 0.15s ease" }}
+              />
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full bg-black/70 backdrop-blur px-2 py-1" data-testid="floorplan-zoom-controls">
+                <button onClick={() => fpZoom(-0.3)} aria-label="Zoom out" className="h-8 w-8 grid place-items-center rounded-full text-ivory hover:text-gold"><Minus className="h-4 w-4" /></button>
+                <span className="text-xs text-ivory/80 w-10 text-center tabular-nums">{Math.round(fpScale * 100)}%</span>
+                <button onClick={() => fpZoom(0.3)} aria-label="Zoom in" className="h-8 w-8 grid place-items-center rounded-full text-ivory hover:text-gold"><Plus className="h-4 w-4" /></button>
+                <button onClick={() => { setFpScale(1); setFpPos({ x: 0, y: 0 }); }} aria-label="Reset" className="h-8 w-8 grid place-items-center rounded-full text-ivory hover:text-gold"><Maximize2 className="h-4 w-4" /></button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

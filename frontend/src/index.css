@@ -55,6 +55,38 @@
         --background: 0 0% 4%;
         --foreground: 40 20% 96%;
     }
+    html.light {
+        --background: 40 33% 97%;
+        --foreground: 20 14% 12%;
+        --card: 0 0% 100%;
+        --card-foreground: 20 14% 12%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 20 14% 12%;
+        --secondary: 40 20% 92%;
+        --secondary-foreground: 20 14% 12%;
+        --muted: 40 15% 90%;
+        --muted-foreground: 20 8% 38%;
+        --accent: 40 20% 92%;
+        --accent-foreground: 20 14% 12%;
+        --border: 30 12% 84%;
+        --input: 30 12% 84%;
+
+        --lux-black: #F6F3ED;
+        --lux-obsidian: #FFFFFF;
+        --lux-charcoal: #FFFFFF;
+        --lux-graphite: #F0ECE4;
+        --lux-platinum: #4A463F;
+        --lux-ivory: #1C1A17;
+        --lux-gold: #A9842A;
+
+        --surface-glass: rgba(255,255,255,0.72);
+        --surface-glass-strong: rgba(255,255,255,0.92);
+        --border-hairline: rgba(20,18,15,0.12);
+        --border-gold: rgba(169,132,42,0.40);
+        --shadow-soft: 0 10px 30px rgba(20,18,15,0.10);
+        --shadow-glass: 0 12px 40px rgba(20,18,15,0.14);
+        --noise-opacity: 0.02;
+    }
 }
 
 @layer base {
@@ -170,3 +202,18 @@
     * { animation: none !important; transition: none !important; }
     html { scroll-behavior: auto; }
 }
+
+/* Light-mode overrides for hardcoded dark surfaces */
+html.light ::selection { background: rgba(169,132,42,0.22); color: #1c1a17; }
+html.light ::-webkit-scrollbar-track { background: #efece6; }
+html.light ::-webkit-scrollbar-thumb { background: #d2ccc2; }
+html.light ::-webkit-scrollbar-thumb:hover { background: #bdb6aa; }
+html.light .map-dark .leaflet-tile-pane { filter: none; }
+html.light .leaflet-container { background: #e8eef2; }
+html.light .leaflet-tile { filter: none; }
+html.light .leaflet-popup-content-wrapper, html.light .leaflet-popup-tip { background: #fff; color: #1c1a17; }
+
+/* 3D revolving insights slider */
+.scene-3d { perspective: 1400px; }
+.ring-3d { transform-style: preserve-3d; will-change: transform; transition: transform 0.8s cubic-bezier(0.22,1,0.36,1); }
+.ring-card { backface-visibility: hidden; }

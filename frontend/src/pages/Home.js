@@ -7,6 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 import FadeUp from "@/components/FadeUp";
 import ProjectMap from "@/components/ProjectMap";
 import EnquiryForm from "@/components/EnquiryForm";
+import Insights3DSlider from "@/components/Insights3DSlider";
 import { getProjects, getContent, getTeam } from "@/lib/api";
 
 const ICONS = { award: Award, users: Users, "building-2": Building2, clock: Clock, ruler: Ruler, "shield-check": ShieldCheck };
@@ -150,6 +151,9 @@ export default function Home() {
           <ProjectMap points={projects} height="460px" />
         </div>
       </section>
+
+      {/* Insights 3D revolving slider */}
+      <Insights3DSlider />
 
       {/* Vision + Team preview */}
       <section className="section-pad container-lux">

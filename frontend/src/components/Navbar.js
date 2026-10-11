@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, Facebook, Instagram, Linkedin, Youtube, ChevronDown } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getContent } from "@/lib/api";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const LINKS = [
   { label: "Home", to: "/" },
@@ -111,6 +112,7 @@ export const Navbar = () => {
               ))}
             </div>
           )}
+          <ThemeToggle />
           <Link
             to="/book-visit"
             data-testid="nav-book-visit-button"
@@ -127,7 +129,8 @@ export const Navbar = () => {
           </Link>
         </div>
 
-        <div className="lg:hidden">
+        <div className="lg:hidden flex items-center gap-2">
+          <ThemeToggle />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button data-testid="mobile-nav-open-button" aria-label="Open menu" className="p-2 text-ivory">

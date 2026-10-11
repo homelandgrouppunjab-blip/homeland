@@ -14,14 +14,21 @@ export default function Projects() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [type, setType] = useState("All");
+  const [city, setCity] = useState("All");
   const [sort, setSort] = useState("order");
 
   useEffect(() => { getProjects().then(setAll).catch(() => {}); }, []);
+
+  const cities = useMemo(
+    () => ["All", ...Array.from(new Set(all.map((p) => p.city).filter(Boolean))).sort()],
+    [all]
+  );
 
   const filtered = useMemo(() => {
     let list = [...all];
     if (status !== "All") list = list.filter((p) => p.status === status);
     if (type !== "All") list = list.filter((p) => p.type === type);
+    if (city !== "All") list = list.filter((p) => p.city === city);
     if (search) {
       const q = search.toLowerCase();
       list = list.filter((p) => `${p.name} ${p.location} ${p.city} ${p.type}`.toLowerCase().includes(q));
@@ -29,7 +36,7 @@ export default function Projects() {
     if (sort === "name") list.sort((a, b) => a.name.localeCompare(b.name));
     else list.sort((a, b) => (a.order || 99) - (b.order || 99));
     return list;
-  }, [all, status, type, search, sort]);
+  }, [all, status, type, city, search, sort]);
 
   return (
     <div className="pt-10">
@@ -37,7 +44,7 @@ export default function Projects() {
         <SectionHeading kicker="Portfolio" title="Our Projects" subtitle="Discover premium residential, commercial and mixed-use developments across Punjab and the Tricity." />
 
         <div className="mt-10 rounded-2xl bg-glass hairline p-4 sm:p-5 sticky top-24 z-30">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div className="relative md:col-span-2">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--lux-ivory)]/50" />
               <input
@@ -58,6 +65,12 @@ export default function Projects() {
               <SelectTrigger data-testid="projects-type-filter" className="rounded-xl bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory py-3"><SelectValue placeholder="Type" /></SelectTrigger>
               <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
                 {TYPES.map((t) => <SelectItem key={t} value={t}>{t === "All" ? "All Types" : t}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={city} onValueChange={setCity}>
+              <SelectTrigger data-testid="projects-city-filter" className="rounded-xl bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory py-3"><SelectValue placeholder="City" /></SelectTrigger>
+              <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
+                {cities.map((cc) => <SelectItem key={cc} value={cc}>{cc === "All" ? "All Cities" : cc}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
