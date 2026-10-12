@@ -120,13 +120,29 @@ if (!cached) cached = global._mongo = { client: null, db: null, seeded: false };
 
 async function getDb() {
   if (cached.db) return cached.db;
-  if (!cached.client) {
-    cached.client = new MongoClient(MONGO_URL, { maxPoolSize: 10 });
-    await cached.client.connect();
+  if (!MONGO_URL) {
+    console.error("[mongo] MONGO_URL is not set — set it in your hosting environment variables.");
+    throw new Error("MONGO_URL not configured");
   }
-  cached.db = cached.client.db(DB_NAME);
-  await ensureSeed(cached.db);
-  return cached.db;
+  try {
+    if (!cached.client) {
+      // serverSelectionTimeoutMS: fail fast with a clear error instead of hanging
+      cached.client = new MongoClient(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 8000 });
+      await cached.client.connect();
+      await cached.client.db(DB_NAME).command({ ping: 1 });
+      console.log("[mongo] connected to", DB_NAME);
+    }
+    cached.db = cached.client.db(DB_NAME);
+    await ensureSeed(cached.db);
+    return cached.db;
+  } catch (e) {
+    console.error("[mongo] connection FAILED:", (e && e.message) || e,
+      "\n[mongo] Check: (1) MONGO_URL is correct & password URL-encoded, (2) MongoDB Atlas Network Access allows this server's IP (or 0.0.0.0/0), (3) the database user has read/write.");
+    // Reset so the next request retries a fresh connection (e.g. after fixing the Atlas IP allowlist) — no redeploy needed.
+    try { if (cached.client) await cached.client.close(); } catch { /* ignore */ }
+    cached.client = null; cached.db = null; cached.seeded = false;
+    throw e;
+  }
 }
 
 const nowIso = () => new Date().toISOString();
