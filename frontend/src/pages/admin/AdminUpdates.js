@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import FileUpload from "@/components/FileUpload";
 
-const EMPTY = { title: "", category: "Update", excerpt: "", body: "", image: "", link_type: "none", project_slug: "", external_url: "", social_platform: "Instagram", date: "", pinned: false, published: true };
+const EMPTY = { title: "", category: "Update", excerpt: "", body: "", image: "", link_type: "none", project_slug: "", external_url: "", social_platform: "Instagram", venue: "", date: "", pinned: false, published: true };
 const CATEGORIES = ["Update", "Launch", "Milestone", "Price", "Event", "News", "Social"];
 const PLATFORMS = ["Instagram", "Facebook", "LinkedIn", "YouTube", "Twitter/X", "Other"];
 const cls = "w-full rounded-lg bg-[color:var(--lux-charcoal)] border border-[color:var(--border-hairline)] px-3 py-2.5 text-sm text-ivory placeholder:text-[color:var(--lux-ivory)]/40 focus:outline-none focus:ring-2 focus:ring-[rgba(212,175,55,0.35)]";
@@ -101,6 +101,9 @@ export default function AdminUpdates() {
               <div><label className={lbl}>Date</label><input className={cls} value={form.date} onChange={(e) => set("date", e.target.value)} placeholder="YYYY-MM-DD" /></div>
             </div>
             <FileUpload label="Image (upload or URL)" value={form.image} onChange={(v) => set("image", v)} testid="admin-update-image" />
+            {form.category === "Event" && (
+              <div><label className={lbl}>Venue / Location</label><input className={cls} value={form.venue} onChange={(e) => set("venue", e.target.value)} placeholder="e.g. Homeland Regalia Experience Centre, Mohali" data-testid="admin-update-venue" /><p className="text-xs text-[color:var(--lux-ivory)]/40 mt-1">Shown on the Events spotlight banner with the date and an RSVP button. Pin the event to feature it.</p></div>
+            )}
             <div><label className={lbl}>Short summary</label><textarea rows={2} className={cls} value={form.excerpt} onChange={(e) => set("excerpt", e.target.value)} /></div>
             <div><label className={lbl}>Full text (optional)</label><textarea rows={5} className={cls} value={form.body} onChange={(e) => set("body", e.target.value)} /></div>
             <div className="grid sm:grid-cols-2 gap-4">

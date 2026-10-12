@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Loader2, Plus, Trash2, Save } from "lucide-react";
+import { Loader2, Plus, Trash2, Save, Sparkles, Wand2 } from "lucide-react";
 import { toast } from "sonner";
-import { getContent, adminUpdateContent } from "@/lib/api";
+import { getContent, adminUpdateContent, adminAiDesign } from "@/lib/api";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FileUpload from "@/components/FileUpload";
@@ -22,6 +22,8 @@ const PRESETS = [
 export default function AdminContent() {
   const [c, setC] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiBusy, setAiBusy] = useState(false);
 
   useEffect(() => { getContent().then(setC).catch(() => {}); }, []);
   if (!c) return <div className="text-[color:var(--lux-ivory)]/50">Loading…</div>;
@@ -41,6 +43,18 @@ export default function AdminContent() {
   const setTheme = (k, v) => setC((p) => ({ ...p, theme: { ...THEME_DEFAULTS, ...(p.theme || {}), [k]: v } }));
   const resetTheme = () => setC((p) => ({ ...p, theme: { ...THEME_DEFAULTS } }));
   const applyPreset = (preset) => setC((p) => ({ ...p, theme: { ...THEME_DEFAULTS, ...preset.theme } }));
+  const setAi = (k, v) => setC((p) => ({ ...p, ai: { ...(p.ai || {}), [k]: v } }));
+  const genTheme = async () => {
+    if (!aiPrompt.trim()) { toast.error("Describe the look you want"); return; }
+    setAiBusy(true);
+    try {
+      const { theme } = await adminAiDesign(aiPrompt.trim());
+      if (theme && Object.keys(theme).length) {
+        setC((p) => ({ ...p, theme: { ...THEME_DEFAULTS, ...(p.theme || {}), ...theme } }));
+        toast.success("Theme generated — review below and press Save Changes");
+      } else { toast.error("No theme returned, try rephrasing"); }
+    } catch { toast.error("AI generation failed"); } finally { setAiBusy(false); }
+  };
 
   const save = async () => {
     setSaving(true);
@@ -141,6 +155,33 @@ export default function AdminContent() {
 
         <TabsContent value="appearance" className="mt-6 space-y-6 max-w-2xl">
           <p className="text-xs text-[color:var(--lux-ivory)]/50">Customise the site's premium fonts, text size and colours. Changes apply across the whole website after you save.</p>
+
+          <div className="rounded-2xl border border-[color:var(--border-gold)] bg-[rgba(212,175,55,0.05)] p-5">
+            <div className="flex items-center gap-2 mb-1"><Wand2 className="h-4 w-4 text-gold" /><h3 className="text-sm font-semibold text-ivory">AI Design Assistant</h3></div>
+            <p className="text-xs text-[color:var(--lux-ivory)]/55 mb-3">Describe the look you want and AI will fill the fonts and colours below. Then press Save Changes to apply.</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input className={cls} value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="e.g. warm, earthy and modern for a Goa beach project" data-testid="admin-ai-design-prompt" />
+              <button onClick={genTheme} disabled={aiBusy} data-testid="admin-ai-design-generate" className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl border gold-line bg-[rgba(212,175,55,0.12)] px-5 py-2.5 text-sm font-semibold text-gold hover:bg-[rgba(212,175,55,0.2)] disabled:opacity-60">{aiBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} Generate</button>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3 mt-4">
+              <div>
+                <label className={lbl}>AI Provider</label>
+                <Select value={(c.ai && c.ai.provider) || "openai"} onValueChange={(v) => setAi("provider", v)}>
+                  <SelectTrigger className={cls} data-testid="admin-ai-provider"><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
+                    <SelectItem value="openai">OpenAI (ChatGPT)</SelectItem>
+                    <SelectItem value="anthropic">Anthropic (Claude)</SelectItem>
+                    <SelectItem value="gemini">Google (Gemini)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className={lbl}>Model</label>
+                <input className={cls} value={(c.ai && c.ai.model) || ""} onChange={(e) => setAi("model", e.target.value)} placeholder="e.g. gpt-5.4 / claude-sonnet-5-5 / gemini-3.1-pro-preview" data-testid="admin-ai-model" />
+              </div>
+            </div>
+            <p className="text-[11px] text-[color:var(--lux-ivory)]/40 mt-2">Powers the AI assistant and the website chatbot. Leave the model blank to use the default (gpt-5.4).</p>
+          </div>
 
           <div>
             <div className="kicker mb-3">One-tap Presets</div>

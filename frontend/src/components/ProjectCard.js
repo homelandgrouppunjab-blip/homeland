@@ -17,7 +17,7 @@ export const ProjectCard = ({ project }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
         {p.logo_image && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="absolute bottom-4 right-4 z-10">
             <LogoPlaque src={p.logo_image} alt={`${p.name} logo`} size="sm" />
           </div>
         )}
@@ -37,7 +37,7 @@ export const ProjectCard = ({ project }) => {
             Hot Selling
           </div>
         )}
-        <div className="absolute bottom-4 left-4 right-4">
+        <div className="absolute bottom-4 left-4 right-28">
           <div className="flex items-center gap-1.5 text-xs text-[color:var(--lux-ivory)]/80">
             <MapPin className="h-3.5 w-3.5 text-gold" /> {p.location}
           </div>

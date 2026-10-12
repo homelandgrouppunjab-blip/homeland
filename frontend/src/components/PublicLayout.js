@@ -6,6 +6,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import EnquiryPopup from "@/components/EnquiryPopup";
 import ExitPopup from "@/components/ExitPopup";
+import Chatbot from "@/components/Chatbot";
 
 export const PublicLayout = () => (
   <div className="relative">
@@ -18,6 +19,7 @@ export const PublicLayout = () => (
     <WhatsAppButton />
     <EnquiryPopup />
     <ExitPopup />
+    <Chatbot />
   </div>
 );
 

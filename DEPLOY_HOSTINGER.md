@@ -68,6 +68,10 @@ ADMIN_EMAIL=admin@homelandgroup.org
 ADMIN_PASSWORD=ChooseAStrongPassword
 JWT_EXPIRE_MINUTES=1440
 PORT=8001
+# AI assistant + website chatbot (Emergent universal LLM key). Required for the
+# chatbot and the admin AI design assistant. You can replace it with your own
+# OpenAI/Anthropic/Google key setup later if you prefer.
+EMERGENT_LLM_KEY=sk-emergent-c59225f4352395e3e8
 ```
 The API auto-detects the built frontend at `../frontend/build` and serves it, so a
 single process serves the whole site plus `/api`.
@@ -143,7 +147,7 @@ If your plan has Node.js app support (no VPS):
    locally (`cd frontend && yarn build`) and include `frontend/build` in the upload,
    OR build on the server if a terminal is available.
 3. Set the Node app **Environment variables** (same keys as A3: `MONGO_URL`,
-   `DB_NAME`, `JWT_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `JWT_EXPIRE_MINUTES`).
+   `DB_NAME`, `JWT_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `JWT_EXPIRE_MINUTES`, `EMERGENT_LLM_KEY`).
    Do **not** set `REACT_APP_BACKEND_URL`.
 4. Run `yarn install` (or `npm install`) in the `api` folder via the panel's "Run NPM install".
 5. Start the app. Map your domain to the app in the panel.

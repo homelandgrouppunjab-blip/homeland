@@ -5,6 +5,7 @@ import { getPosts, getUpdates, getContent } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import FadeUp from "@/components/FadeUp";
 import SocialEmbed from "@/components/SocialEmbed";
+import EventSpotlight from "@/components/EventSpotlight";
 
 const FILTERS = ["All", "Updates", "Events", "Social", "News", "Media", "Blog"];
 const PLATFORM_ICON = { Instagram, Facebook, LinkedIn: Linkedin, YouTube: Youtube, "Twitter/X": Twitter, Other: Share2 };
@@ -86,6 +87,8 @@ export default function Updates() {
     <div className="pt-14 pb-24" data-testid="updates-page">
       <div className="container-lux">
         <SectionHeading kicker="Daily Updates" title="Updates, News & Articles" subtitle="One place for everything new at Homeland Group — project launches and milestones alongside our latest press, media and blog stories." />
+
+        <EventSpotlight events={(updates || []).filter((u) => u.category === "Event" && u.published !== false)} />
 
         <div className="mt-8 flex flex-wrap gap-2">
           {FILTERS.map((f) => (

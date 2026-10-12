@@ -19,6 +19,27 @@ const JWT_EXPIRE_MINUTES = parseInt(process.env.JWT_EXPIRE_MINUTES || "1440", 10
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@homelandgroup.org";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Homeland@2013";
 const ALLOWED_EXT = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif", ".pdf"];
+const EMERGENT_LLM_KEY = process.env.EMERGENT_LLM_KEY || "";
+const LLM_PROXY = (process.env.INTEGRATION_PROXY_URL || "https://integrations.emergentagent.com") + "/llm/chat/completions";
+
+// Call the Emergent LLM gateway (OpenAI-compatible). provider: openai|anthropic|gemini.
+async function callLLM(messages, { provider = "openai", model = "gpt-5.4", temperature } = {}) {
+  if (!EMERGENT_LLM_KEY) throw new Error("LLM key not configured");
+  const resolvedModel = provider === "gemini" ? `gemini/${model}` : model;
+  const body = { model: resolvedModel, messages };
+  if (temperature != null) body.temperature = temperature;
+  const r = await fetch(LLM_PROXY, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${EMERGENT_LLM_KEY}` },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    const txt = await r.text().catch(() => "");
+    throw new Error(`LLM gateway ${r.status}: ${txt.slice(0, 200)}`);
+  }
+  const data = await r.json();
+  return data?.choices?.[0]?.message?.content || "";
+}
 
 // ---- Cached connection (serverless-safe) ----
 let cached = global._mongo;
@@ -171,6 +192,26 @@ r.get("/updates", wrap(async (req, res) => {
   const docs = await db.collection("updates").find(q, { projection: { _id: 0 } }).toArray();
   docs.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.date || "").localeCompare(a.date || ""));
   res.json(docs);
+}));
+
+r.post("/chat", wrap(async (req, res) => {
+  const db = await getDb();
+  const b = req.body || {};
+  const history = Array.isArray(b.messages) ? b.messages.slice(-12) : [];
+  const content = await db.collection("site_content").findOne({ key: "main" }, { projection: { _id: 0 } });
+  const projects = await db.collection("projects").find({ visible: { $ne: false } }, { projection: { _id: 0 } }).toArray();
+  const projLines = projects.map((p) => `- ${p.name} (${p.status}, ${p.type}) in ${p.location || p.city || ""}; ${p.price_range || "price on request"}; config: ${(p.unit_types || []).join(", ")}`).join("\n");
+  const ai = content?.ai || {};
+  const sys = `You are the virtual concierge for ${content?.brand_name || "Homeland Group"}, a premium real-estate developer. Answer helpfully and concisely (2-5 sentences) about our projects, locations, pricing, amenities, and how to enquire or book a visit. If you are unsure, invite the visitor to enquire. Never invent specific prices, RERA numbers, dates, or figures that are not listed below. Contact: phone ${content?.contact_phone || "-"}, email ${content?.contact_email || "-"}, WhatsApp ${content?.contact_whatsapp || "-"}.\n\nProjects:\n${projLines || "(none listed)"}`;
+  const messages = [{ role: "system", content: sys }, ...history.filter((m) => m && (m.role === "user" || m.role === "assistant") && m.content).map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) }))];
+  if (!messages.some((m) => m.role === "user")) return res.status(400).json({ detail: "No user message" });
+  try {
+    const reply = await callLLM(messages, { provider: ai.provider || "openai", model: ai.model || "gpt-5.4" });
+    res.json({ reply });
+  } catch (e) {
+    console.error("chat error", e.message);
+    res.status(503).json({ detail: "The assistant is unavailable right now. Please try again or contact us directly." });
+  }
 }));
 
 r.get("/uploads/:filename", wrap(async (req, res) => {
@@ -464,7 +505,7 @@ r.get("/admin/updates", requireAdmin, wrap(async (req, res) => {
 const updateDefaults = (b) => ({
   title: b.title, category: b.category || "Update", excerpt: b.excerpt || "", body: b.body || "",
   image: b.image || "", link_type: b.link_type || "none", project_slug: b.project_slug || "",
-  external_url: b.external_url || "", social_platform: b.social_platform || "",
+  external_url: b.external_url || "", social_platform: b.social_platform || "", venue: b.venue || "",
   date: b.date || nowIso().slice(0, 10), pinned: !!b.pinned, published: b.published !== false,
 });
 r.post("/admin/updates", requireAdmin, wrap(async (req, res) => {
@@ -488,6 +529,33 @@ r.delete("/admin/updates/:id", requireAdmin, wrap(async (req, res) => {
   const del = await db.collection("updates").deleteOne({ id: req.params.id });
   if (!del.deletedCount) return res.status(404).json({ detail: "Update not found" });
   res.json({ success: true });
+}));
+
+// -------- Admin: AI design assistant --------
+r.post("/admin/ai/design", requireAdmin, wrap(async (req, res) => {
+  const db = await getDb();
+  const content = await db.collection("site_content").findOne({ key: "main" }, { projection: { _id: 0 } });
+  const ai = content?.ai || {};
+  const prompt = (req.body || {}).prompt || "";
+  if (!prompt) return res.status(400).json({ detail: "Prompt required" });
+  const allowedFonts = ["Playfair Display", "Crimson Text", "Montserrat", "Figtree", "Fredoka", "Source Code Pro", "Roboto Mono"];
+  const sys = `You are a senior brand and UI designer for a luxury real-estate website. Given a design request, output ONLY a compact JSON object (no markdown, no prose) with keys: font_display, font_body, font_scale, gold, bg_dark, bg_light, hero_text.\n- font_display and font_body MUST each be one of: ${allowedFonts.join(", ")}.\n- font_scale is a number between 0.9 and 1.12.\n- gold is the accent colour hex; bg_dark is the dark-mode page background hex; bg_light is the light-mode page background hex; hero_text is a light hex used over hero photos.\n- Use rich, premium shades. Avoid pure #000000 or #FFFFFF and garish primary colours. Ensure strong contrast.\nReturn JSON only.`;
+  try {
+    const raw = await callLLM([{ role: "system", content: sys }, { role: "user", content: String(prompt).slice(0, 500) }], { provider: ai.provider || "openai", model: ai.model || "gpt-5.4" });
+    const match = raw.match(/\{[\s\S]*\}/);
+    const theme = JSON.parse(match ? match[0] : raw);
+    const clean = {};
+    if (allowedFonts.includes(theme.font_display)) clean.font_display = theme.font_display;
+    if (allowedFonts.includes(theme.font_body)) clean.font_body = theme.font_body;
+    const fsv = parseFloat(theme.font_scale);
+    if (!Number.isNaN(fsv)) clean.font_scale = Math.min(1.12, Math.max(0.9, fsv));
+    const hex = (v) => (typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v) ? v : null);
+    for (const k of ["gold", "bg_dark", "bg_light", "hero_text"]) { const h = hex(theme[k]); if (h) clean[k] = h; }
+    res.json({ theme: clean, raw });
+  } catch (e) {
+    console.error("ai design error", e.message);
+    res.status(503).json({ detail: "Could not generate a theme. Please try again." });
+  }
 }));
 
 // Mount router at both /api and / so it works with any Vercel rewrite target.
