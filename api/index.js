@@ -637,6 +637,8 @@ module.exports = app;
 
 // Allow running as a standalone server locally (node api/index.js)
 if (require.main === module) {
-  const port = process.env.PORT || 8001;
+  // Hostinger managed Node.js hosting proxies to port 3000 by default; Emergent
+  // preview and VPS/PM2 inject PORT explicitly. So honor PORT, else default 3000.
+  const port = process.env.PORT || 3000;
   app.listen(port, () => console.log(`Homeland Node API listening on :${port}`));
 }
