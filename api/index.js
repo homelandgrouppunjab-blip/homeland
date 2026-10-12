@@ -132,6 +132,10 @@ async function currentUser(req) {
   if (exp && exp.getTime() < Date.now()) return null;
   return await db.collection("users").findOne({ user_id: s.user_id }, { projection: { _id: 0 } });
 }
+async function requireUser(req, res, next) {
+  try { const u = await currentUser(req); if (!u) return res.status(401).json({ detail: "Sign in required" }); req.user = u; next(); }
+  catch (e) { res.status(500).json({ detail: "Auth error" }); }
+}
 
 const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((e) => {
   console.error(e);
@@ -154,7 +158,7 @@ r.get("/projects", wrap(async (req, res) => {
     const rx = { $regex: search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" };
     q.$or = [{ name: rx }, { location: rx }, { city: rx }, { description: rx }, { type: rx }];
   }
-  let docs = await db.collection("projects").find(q, { projection: { _id: 0 } }).toArray();
+  let docs = await db.collection("projects").find(q, { projection: { _id: 0 } }).limit(300).toArray();
   const rank = { ONGOING: 0, DELIVERED: 1, UPCOMING: 2 };
   if (sort === "status") docs.sort((a, b) => (rank[a.status] ?? 9) - (rank[b.status] ?? 9) || (a.order ?? 99) - (b.order ?? 99));
   else if (sort === "name") docs.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
@@ -399,7 +403,7 @@ r.delete("/admin/projects/:id", requireAdmin, wrap(async (req, res) => {
 
 r.get("/admin/projects", requireAdmin, wrap(async (req, res) => {
   const db = await getDb();
-  const docs = await db.collection("projects").find({}, { projection: { _id: 0 } }).toArray();
+  const docs = await db.collection("projects").find({}, { projection: { _id: 0 } }).limit(500).toArray();
   docs.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   res.json(docs);
 }));
@@ -407,7 +411,7 @@ r.get("/admin/projects", requireAdmin, wrap(async (req, res) => {
 // -------- Admin: leads --------
 r.get("/admin/leads", requireAdmin, wrap(async (req, res) => {
   const db = await getDb();
-  const docs = await db.collection("leads").find({}, { projection: { _id: 0 } }).toArray();
+  const docs = await db.collection("leads").find({}, { projection: { _id: 0 } }).sort({ created_at: -1 }).limit(1000).toArray();
   docs.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
   res.json(docs);
 }));
@@ -633,6 +637,6 @@ module.exports = app;
 
 // Allow running as a standalone server locally (node api/index.js)
 if (require.main === module) {
-  const port = process.env.PORT || 8002;
+  const port = process.env.PORT || 8001;
   app.listen(port, () => console.log(`Homeland Node API listening on :${port}`));
 }
