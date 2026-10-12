@@ -1,5 +1,6 @@
-// Homeland Group — Vercel-native REST API (Node.js + native MongoDB driver)
-// No Python/FastAPI. Deploys as a Vercel serverless function.
+// Homeland Group — REST API (Node.js + Express + native MongoDB driver)
+// No Python/FastAPI. Runs as a single Node process that serves the built
+// React frontend and the /api routes (Hostinger managed Node.js or VPS).
 try { require("dotenv").config({ path: require("path").join(__dirname, ".env") }); } catch (e) { /* dotenv optional (host dashboard env) */ }
 const express = require("express");
 const cors = require("cors");
@@ -615,13 +616,12 @@ r.post("/admin/ai/design", requireAdmin, wrap(async (req, res) => {
   }
 }));
 
-// Mount router at both /api and / so it works with any Vercel rewrite target.
+// All REST routes live under /api.
 app.use("/api", r);
 
-// When a built frontend is present (e.g. a single-process Hostinger/VPS deploy),
-// serve it and fall back to index.html for client-side routes. API stays under /api.
-// On Vercel the function bundle has no build dir, so we keep the root router mount
-// (Vercel serves the static frontend itself).
+// Serve the built React frontend from the same Node process and fall back to
+// index.html for client-side (SPA) routes. The API stays under /api.
+// If no build is present yet, expose the API at the root as a safety net.
 const FRONTEND_BUILD = process.env.FRONTEND_BUILD_DIR || path.join(__dirname, "..", "frontend", "build");
 if (fs.existsSync(path.join(FRONTEND_BUILD, "index.html"))) {
   app.use(express.static(FRONTEND_BUILD));

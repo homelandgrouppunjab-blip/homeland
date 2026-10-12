@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // NOTE: The API is a stateless JWT bearer API (Vercel serverless friendly).
+    // NOTE: The API is a stateless JWT bearer API.
     // The token is kept in localStorage to attach as an Authorization header.
     // Migrating to httpOnly cookies would require server-side session/CSRF handling;
     // tracked as a separate hardening task. XSS risk is mitigated by React's default

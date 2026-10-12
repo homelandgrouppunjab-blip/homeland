@@ -2,7 +2,7 @@
   "name": "homeland-api",
   "version": "1.0.0",
   "private": true,
-  "description": "Homeland Group REST API (Node + native MongoDB driver) for Vercel",
+  "description": "Homeland Group REST API (Node + Express + native MongoDB driver) — serves the built frontend and /api from one process",
   "main": "index.js",
   "engines": {
     "node": ">=20.0.0"

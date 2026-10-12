@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// Same-origin by default (works on Vercel where the API is served under /api).
+// Same-origin by default (the Node API serves the site under /api on Hostinger).
 // If REACT_APP_BACKEND_URL is set (e.g. Emergent preview), it is used as the base.
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "";
 export const API = `${BACKEND_URL}/api`;
