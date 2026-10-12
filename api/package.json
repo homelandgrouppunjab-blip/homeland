@@ -4,6 +4,9 @@
   "private": true,
   "description": "Homeland Group REST API (Node + native MongoDB driver) for Vercel",
   "main": "index.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "start": "node index.js"
   },

@@ -71,7 +71,8 @@ PORT=8001
 # AI assistant + website chatbot (Emergent universal LLM key). Required for the
 # chatbot and the admin AI design assistant. You can replace it with your own
 # OpenAI/Anthropic/Google key setup later if you prefer.
-EMERGENT_LLM_KEY=sk-emergent-c59225f4352395e3e8
+# Paste your own key value here on the server — do NOT commit real keys to Git.
+EMERGENT_LLM_KEY=your-emergent-llm-key-here
 ```
 The API auto-detects the built frontend at `../frontend/build` and serves it, so a
 single process serves the whole site plus `/api`.
