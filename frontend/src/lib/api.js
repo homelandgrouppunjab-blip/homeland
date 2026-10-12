@@ -59,6 +59,7 @@ export const adminDeleteLead = (id) => client.delete(`/admin/leads/${id}`).then(
 export const adminGetVisits = () => client.get("/admin/site-visits").then((r) => r.data);
 export const adminUpdateVisit = (id, status) => client.put(`/admin/site-visits/${id}`, { status }).then((r) => r.data);
 export const adminDeleteVisit = (id) => client.delete(`/admin/site-visits/${id}`).then((r) => r.data);
+export const adminRunVisitReminders = (force = false) => client.post("/admin/visit-reminders/run", { force }).then((r) => r.data);
 export const adminUpdateContent = (body) => client.put("/admin/content", body).then((r) => r.data);
 export const adminCreateTeam = (m) => client.post("/admin/team", m).then((r) => r.data);
 export const adminUpdateTeam = (id, m) => client.put(`/admin/team/${id}`, m).then((r) => r.data);

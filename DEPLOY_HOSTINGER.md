@@ -73,6 +73,14 @@ PORT=8001
 # OpenAI/Anthropic/Google key setup later if you prefer.
 # Paste your own key value here on the server — do NOT commit real keys to Git.
 EMERGENT_LLM_KEY=your-emergent-llm-key-here
+# Site-visit reminder emails (Emergent Managed Email / Resend). The email key is
+# provisioned by Emergent — paste its value on the server; never commit it.
+EMERGENT_EMAIL_KEY=your-emergent-email-key-here
+EMAIL_FROM_NAME=Homeland Group
+# Inbox that receives the morning site-visit reminders (your sales team/admin).
+REMINDER_EMAIL=sales@yourdomain.com
+# Timezone used for the 7am reminder schedule.
+REMINDER_TZ=Asia/Kolkata
 ```
 The API auto-detects the built frontend at `../frontend/build` and serves it, so a
 single process serves the whole site plus `/api`.
@@ -159,6 +167,10 @@ This uses Hostinger's automated pipeline (it runs install + build + start for yo
    - `ADMIN_PASSWORD` = a strong password
    - `JWT_EXPIRE_MINUTES` = `1440`
    - `EMERGENT_LLM_KEY` = your key (for chatbot + AI design)
+   - `EMERGENT_EMAIL_KEY` = your Emergent email key (for site-visit reminders)
+   - `EMAIL_FROM_NAME` = `Homeland Group`
+   - `REMINDER_EMAIL` = your sales/admin inbox (receives the morning reminders)
+   - `REMINDER_TZ` = `Asia/Kolkata`
    - **Do NOT set `REACT_APP_BACKEND_URL`** (blank = same-origin `/api`).
    - You usually do **not** need to set `PORT` — the app defaults to **3000**, which is what
      Hostinger proxies to. If Hostinger injects a different `PORT`, the app honors it automatically.

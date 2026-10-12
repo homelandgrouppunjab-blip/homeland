@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Trash2, Mail, Phone, CalendarClock, Clock, Users } from "lucide-react";
+import { Trash2, Mail, Phone, CalendarClock, Clock, Users, BellRing, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
-import { adminGetVisits, adminUpdateVisit, adminDeleteVisit } from "@/lib/api";
+import { adminGetVisits, adminUpdateVisit, adminDeleteVisit, adminRunVisitReminders } from "@/lib/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const STATUS = ["new", "confirmed", "completed", "cancelled"];
@@ -15,6 +15,7 @@ const COLOR = {
 export default function AdminVisits() {
   const [visits, setVisits] = useState([]);
   const [filter, setFilter] = useState("all");
+  const [sending, setSending] = useState(false);
 
   const load = () => adminGetVisits().then(setVisits).catch(() => toast.error("Failed to load visits"));
   useEffect(() => { load(); }, []);
@@ -24,18 +25,40 @@ export default function AdminVisits() {
   };
   const del = async (id) => { try { await adminDeleteVisit(id); toast.success("Deleted"); load(); } catch { toast.error("Delete failed"); } };
 
+  const sendReminders = async () => {
+    setSending(true);
+    try {
+      const r = await adminRunVisitReminders(true);
+      if (r.sent) toast.success(`Reminder sent for ${r.count} visit(s) today`, { description: `Delivered to ${r.recipient}` });
+      else toast.info("No site visits scheduled for today");
+      load();
+    } catch (e) {
+      toast.error(e?.response?.data?.detail || "Could not send reminders");
+    } finally { setSending(false); }
+  };
+
   const shown = filter === "all" ? visits : visits.filter((v) => v.status === filter);
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <div><h1 className="font-display text-3xl text-ivory">Site Visits</h1><p className="text-sm text-[color:var(--lux-ivory)]/60 mt-1">{visits.length} booking{visits.length !== 1 ? "s" : ""}</p></div>
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-40 rounded-xl bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory"><SelectValue /></SelectTrigger>
-          <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
-            <SelectItem value="all">All</SelectItem>{STATUS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-          </SelectContent>
-        </Select>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div><h1 className="font-display text-3xl text-ivory">Site Visits</h1><p className="text-sm text-[color:var(--lux-ivory)]/60 mt-1">{visits.length} booking{visits.length !== 1 ? "s" : ""} · reminders auto-send at 7am (visit day)</p></div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={sendReminders}
+            disabled={sending}
+            data-testid="admin-send-reminders"
+            className="inline-flex items-center gap-2 rounded-xl border gold-line bg-[rgba(212,175,55,0.08)] px-4 py-2.5 text-sm font-semibold text-gold hover:bg-[rgba(212,175,55,0.16)] transition-colors disabled:opacity-50"
+          >
+            <BellRing className="h-4 w-4" /> {sending ? "Sending…" : "Send today's reminders"}
+          </button>
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-40 rounded-xl bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory"><SelectValue /></SelectTrigger>
+            <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
+              <SelectItem value="all">All</SelectItem>{STATUS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="mt-8 space-y-3" data-testid="admin-visits-list">
@@ -46,6 +69,11 @@ export default function AdminVisits() {
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="text-ivory font-semibold">{v.name}</span>
                   <span className={`text-xs rounded-full px-2.5 py-0.5 ${COLOR[v.status] || COLOR.new}`}>{v.status}</span>
+                  {v.reminder_sent && (
+                    <span className="inline-flex items-center gap-1 text-[11px] rounded-full px-2 py-0.5 bg-[rgba(46,125,91,0.15)] text-[#7fd3ad]" title={v.reminder_sent_at ? `Reminder sent ${new Date(v.reminder_sent_at).toLocaleString()}` : "Reminder sent"}>
+                      <CheckCircle2 className="h-3 w-3" /> Reminder sent
+                    </span>
+                  )}
                 </div>
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[color:var(--lux-ivory)]/70">
                   <span className="inline-flex items-center gap-1.5 text-gold"><CalendarClock className="h-3.5 w-3.5" /> {v.visit_date}</span>

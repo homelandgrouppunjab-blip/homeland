@@ -99,3 +99,4 @@ frontend/node_modules/.cache/default-development/6.pack
 # ...but DO track the safe templates (no real secrets inside)
 !.env.example
 !**/.env.example
+frontend/node_modules/.cache/default-development/6.pack_

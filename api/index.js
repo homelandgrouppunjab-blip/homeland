@@ -12,6 +12,7 @@ const { MongoClient } = require("mongodb");
 const fs = require("fs");
 const path = require("path");
 const seed = require("./seed-data.json");
+const { sendEmail } = require("./email");
 
 const MONGO_URL = process.env.MONGO_URL;
 const DB_NAME = process.env.DB_NAME || "homeland";
@@ -40,6 +41,77 @@ async function callLLM(messages, { provider = "openai", model = "gpt-5.4", tempe
   }
   const data = await r.json();
   return data?.choices?.[0]?.message?.content || "";
+}
+
+// ---- Site-visit reminders (email the sales team on the morning of each visit) ----
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+// Returns today's date as YYYY-MM-DD in the configured timezone (en-CA => ISO-like).
+function todayInTz(tz) {
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: tz || "UTC", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  } catch {
+    return new Date().toISOString().slice(0, 10);
+  }
+}
+
+// Find visits scheduled for today and email the sales team a single digest.
+// Idempotent: each visit is marked reminder_sent so it is never emailed twice.
+// Pass { force: true } to re-send during testing.
+async function runVisitReminders({ force = false } = {}) {
+  const db = await getDb();
+  const tz = process.env.REMINDER_TZ || "Asia/Kolkata";
+  const today = todayInTz(tz);
+  const q = { visit_date: today };
+  if (!force) q.reminder_sent = { $ne: true };
+  const visits = await db.collection("site_visits").find(q, { projection: { _id: 0 } }).sort({ time_slot: 1 }).toArray();
+  if (!visits.length) return { date: today, count: 0, sent: false };
+
+  const recipient = process.env.REMINDER_EMAIL || ADMIN_EMAIL;
+  const niceDate = (() => { try { return new Date(today).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); } catch { return today; } })();
+  const rows = visits.map((v) => `
+    <tr>
+      <td style="padding:10px 12px;border-bottom:1px solid #eee;font-family:Arial,sans-serif;font-size:14px;color:#111">${escapeHtml(v.time_slot || "—")}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #eee;font-family:Arial,sans-serif;font-size:14px;color:#111">${escapeHtml(v.name || "—")}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #eee;font-family:Arial,sans-serif;font-size:14px;color:#111">${escapeHtml(v.phone || "—")}<br><span style="color:#666;font-size:12px">${escapeHtml(v.email || "")}</span></td>
+      <td style="padding:10px 12px;border-bottom:1px solid #eee;font-family:Arial,sans-serif;font-size:14px;color:#111">${escapeHtml(v.project || "Any")}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #eee;font-family:Arial,sans-serif;font-size:14px;color:#111">${escapeHtml(v.guests || "—")}</td>
+    </tr>`).join("");
+  const html = `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf8f3;padding:24px">
+      <tr><td align="center">
+        <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #eee">
+          <tr><td style="background:#14110c;padding:20px 24px">
+            <span style="font-family:Arial,sans-serif;font-size:18px;color:#d4af37;font-weight:bold">Homeland Group</span>
+            <span style="font-family:Arial,sans-serif;font-size:13px;color:#cfc7b5;float:right">Site Visit Reminders</span>
+          </td></tr>
+          <tr><td style="padding:24px">
+            <p style="font-family:Arial,sans-serif;font-size:16px;color:#111;margin:0 0 4px">Site visits scheduled for today</p>
+            <p style="font-family:Arial,sans-serif;font-size:14px;color:#666;margin:0 0 18px">${escapeHtml(niceDate)} — <strong>${visits.length}</strong> visit(s)</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #eee;border-radius:8px;overflow:hidden">
+              <tr style="background:#f4f1ea">
+                <th align="left" style="padding:10px 12px;font-family:Arial,sans-serif;font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.5px">Time</th>
+                <th align="left" style="padding:10px 12px;font-family:Arial,sans-serif;font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.5px">Visitor</th>
+                <th align="left" style="padding:10px 12px;font-family:Arial,sans-serif;font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.5px">Contact</th>
+                <th align="left" style="padding:10px 12px;font-family:Arial,sans-serif;font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.5px">Project</th>
+                <th align="left" style="padding:10px 12px;font-family:Arial,sans-serif;font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.5px">Guests</th>
+              </tr>
+              ${rows}
+            </table>
+            <p style="font-family:Arial,sans-serif;font-size:12px;color:#999;margin:18px 0 0">Automated reminder from the Homeland Group website. We never ask for your password or card details by email.</p>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>`;
+  const subject = `Today's site visits — ${visits.length} scheduled (${today})`;
+  const id = await sendEmail({ to: recipient, subject, html });
+  const ids = visits.map((v) => v.id);
+  await db.collection("site_visits").updateMany({ id: { $in: ids } }, { $set: { reminder_sent: true, reminder_sent_at: nowIso() } });
+  return { date: today, count: visits.length, sent: true, recipient, email_id: id };
 }
 
 // ---- Cached connection (serverless-safe) ----
@@ -509,6 +581,19 @@ r.delete("/admin/site-visits/:id", requireAdmin, wrap(async (req, res) => {
   res.json({ success: true });
 }));
 
+// Manually run today's site-visit reminder digest (for testing / on-demand resend).
+r.post("/admin/visit-reminders/run", requireAdmin, wrap(async (req, res) => {
+  const force = !!(req.body || {}).force;
+  try {
+    const result = await runVisitReminders({ force });
+    res.json(result);
+  } catch (e) {
+    if (e.billing) return res.status(503).json({ detail: e.message });
+    console.error("visit reminder run failed", e.message);
+    res.status(502).json({ detail: "Could not send reminders: " + e.message });
+  }
+}));
+
 // -------- Admin: content --------
 r.put("/admin/content", requireAdmin, wrap(async (req, res) => {
   const db = await getDb();
@@ -701,4 +786,22 @@ if (require.main === module) {
   // preview and VPS/PM2 inject PORT explicitly. So honor PORT, else default 3000.
   const port = process.env.PORT || 3000;
   app.listen(port, () => console.log(`Homeland Node API listening on :${port}`));
+
+  // Morning site-visit reminders. Runs in-process (works on Hostinger's persistent
+  // Node app / PM2 — no external cron needed). Fires daily at 07:00 in REMINDER_TZ.
+  try {
+    const cron = require("node-cron");
+    const tz = process.env.REMINDER_TZ || "Asia/Kolkata";
+    cron.schedule("0 7 * * *", async () => {
+      try {
+        const r = await runVisitReminders();
+        if (r.sent) console.log(`[reminders] sent digest for ${r.date}: ${r.count} visit(s) -> ${r.recipient}`);
+      } catch (e) {
+        console.error("[reminders] failed:", e.message);
+      }
+    }, { timezone: tz });
+    console.log(`[reminders] scheduled daily at 07:00 ${tz}`);
+  } catch (e) {
+    console.error("[reminders] scheduler not started:", e.message);
+  }
 }

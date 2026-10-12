@@ -1,30 +1,22 @@
 [
   {
-    "content": "Backend: favorites routes + my-inquiries + attach user to leads/visits",
+    "content": "Email module (Emergent Managed Email/Resend) with guardrail gate",
     "status": "completed"
   },
   {
-    "content": "api.js: add favorites + my-inquiries helpers",
+    "content": "Reminder digest logic (timezone-aware today, template, idempotent mark)",
     "status": "completed"
   },
   {
-    "content": "UserAuthContext: load favorites, expose isFavorite/toggleFavorite",
+    "content": "In-process 7am scheduler (node-cron) + admin manual trigger endpoint",
     "status": "completed"
   },
   {
-    "content": "ProjectCard: add save/heart toggle (sign-in aware)",
+    "content": "Admin Visits UI: send-reminders button + reminder-sent indicator",
     "status": "completed"
   },
   {
-    "content": "Account page (/account): saved projects + enquiry history + profile",
-    "status": "completed"
-  },
-  {
-    "content": "App.js route + Navbar account link (desktop avatar + mobile)",
-    "status": "completed"
-  },
-  {
-    "content": "Compile check + screenshot + backend endpoint test",
+    "content": "Env vars + deploy docs updated; end-to-end tested",
     "status": "completed"
   }
 ]
