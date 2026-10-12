@@ -35,6 +35,7 @@ import AdminTeam from "@/pages/admin/AdminTeam";
 import AdminBlog from "@/pages/admin/AdminBlog";
 import AdminUpdates from "@/pages/admin/AdminUpdates";
 import ThemeApplier from "@/components/ThemeApplier";
+import { UserProvider } from "@/context/UserAuthContext";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <ThemeApplier />
+          <UserProvider>
           <Routes>
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
@@ -80,6 +82,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster position="top-right" richColors theme="dark" />
+          </UserProvider>
         </BrowserRouter>
       </AuthProvider>
     </div>

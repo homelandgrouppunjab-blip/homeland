@@ -34,6 +34,9 @@ export const getPosts = (category) => client.get("/posts", { params: category ? 
 export const getPost = (slug) => client.get(`/posts/${slug}`).then((r) => r.data);
 export const getUpdates = () => client.get("/updates").then((r) => r.data);
 export const sendChat = (messages) => client.post("/chat", { messages }).then((r) => r.data);
+export const authSession = (sessionId) => client.post("/auth/session", {}, { headers: { "X-Session-ID": sessionId }, withCredentials: true }).then((r) => r.data);
+export const authMe = () => client.get("/auth/me", { withCredentials: true }).then((r) => r.data);
+export const authLogout = () => client.post("/auth/logout", {}, { withCredentials: true }).then((r) => r.data);
 
 // ---- Admin ----
 export const adminLogin = (payload) => client.post("/admin/login", payload).then((r) => r.data);

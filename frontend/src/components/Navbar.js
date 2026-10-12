@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getContent } from "@/lib/api";
 import ThemeToggle from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
+import { useUser } from "@/context/UserAuthContext";
 
 const LINKS = [
   { label: "Home", to: "/" },
@@ -35,6 +36,8 @@ export const Navbar = () => {
   const [siteLogo, setSiteLogo] = useState("");
   const [siteLogoLight, setSiteLogoLight] = useState("");
   const { pathname } = useLocation();
+  const userCtx = useUser() || {};
+  const { user, login, logout } = userCtx;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -115,6 +118,14 @@ export const Navbar = () => {
             </div>
           )}
           <ThemeToggle />
+          {user ? (
+            <div className="flex items-center gap-2">
+              {user.picture ? <img src={user.picture} alt={user.name} className="h-9 w-9 rounded-full object-cover border border-[color:var(--border-gold)]" data-testid="nav-user-avatar" /> : <span className="h-9 w-9 grid place-items-center rounded-full bg-[rgba(212,175,55,0.15)] text-gold text-sm font-semibold">{(user.name || "U")[0]}</span>}
+              <button onClick={logout} data-testid="nav-logout" className="text-sm text-[color:var(--lux-ivory)]/70 hover:text-gold transition-colors">Logout</button>
+            </div>
+          ) : (
+            <button onClick={login} data-testid="nav-signin" className="rounded-xl bg-glass hairline px-4 py-2.5 text-sm font-semibold text-ivory hover:bg-[color:var(--surface-glass-strong)] transition-colors">Sign in</button>
+          )}
           <Link
             to="/contact"
             data-testid="nav-enquire-button"

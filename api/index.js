@@ -108,9 +108,30 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 
 
 // ---- App / Router ----
 const app = express();
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "2mb" }));
 const r = express.Router();
+
+// ---- Customer auth (Emergent managed Google sign-in) ----
+function parseCookies(req) {
+  const h = req.headers.cookie || "";
+  const o = {};
+  h.split(";").forEach((p) => { const i = p.indexOf("="); if (i > -1) o[p.slice(0, i).trim()] = decodeURIComponent(p.slice(i + 1).trim()); });
+  return o;
+}
+async function currentUser(req) {
+  const db = await getDb();
+  const cookies = parseCookies(req);
+  let token = cookies.session_token;
+  const ah = req.headers.authorization || "";
+  if (!token && ah.startsWith("Bearer ")) token = ah.slice(7);
+  if (!token) return null;
+  const s = await db.collection("user_sessions").findOne({ session_token: token });
+  if (!s) return null;
+  let exp = s.expires_at; if (typeof exp === "string") exp = new Date(exp);
+  if (exp && exp.getTime() < Date.now()) return null;
+  return await db.collection("users").findOne({ user_id: s.user_id }, { projection: { _id: 0 } });
+}
 
 const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((e) => {
   console.error(e);
@@ -192,6 +213,38 @@ r.get("/updates", wrap(async (req, res) => {
   const docs = await db.collection("updates").find(q, { projection: { _id: 0 } }).toArray();
   docs.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.date || "").localeCompare(a.date || ""));
   res.json(docs);
+}));
+
+r.post("/auth/session", wrap(async (req, res) => {
+  const sid = req.headers["x-session-id"] || (req.body || {}).session_id;
+  if (!sid) return res.status(400).json({ detail: "Missing session id" });
+  const resp = await fetch("https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data", { headers: { "X-Session-ID": sid } });
+  if (!resp.ok) return res.status(401).json({ detail: "Invalid session" });
+  const data = await resp.json();
+  const db = await getDb();
+  let user = await db.collection("users").findOne({ email: data.email }, { projection: { _id: 0 } });
+  if (!user) {
+    user = { user_id: `user_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`, email: data.email, name: data.name, picture: data.picture, created_at: nowIso() };
+    await db.collection("users").insertOne({ ...user });
+  } else {
+    await db.collection("users").updateOne({ email: data.email }, { $set: { name: data.name, picture: data.picture } });
+    user.name = data.name; user.picture = data.picture;
+  }
+  const token = data.session_token;
+  await db.collection("user_sessions").insertOne({ user_id: user.user_id, session_token: token, expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), created_at: nowIso() });
+  res.cookie("session_token", token, { httpOnly: true, secure: true, sameSite: "none", path: "/", maxAge: 7 * 24 * 60 * 60 * 1000 });
+  res.json({ user });
+}));
+r.get("/auth/me", wrap(async (req, res) => {
+  const u = await currentUser(req);
+  if (!u) return res.status(401).json({ detail: "Not authenticated" });
+  res.json(u);
+}));
+r.post("/auth/logout", wrap(async (req, res) => {
+  const t = parseCookies(req).session_token;
+  if (t) { const db = await getDb(); await db.collection("user_sessions").deleteOne({ session_token: t }); }
+  res.clearCookie("session_token", { path: "/", sameSite: "none", secure: true });
+  res.json({ success: true });
 }));
 
 r.post("/chat", wrap(async (req, res) => {
