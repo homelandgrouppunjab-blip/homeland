@@ -120,7 +120,9 @@ export const Navbar = () => {
           <ThemeToggle />
           {user ? (
             <div className="flex items-center gap-2">
-              {user.picture ? <img src={user.picture} alt={user.name} className="h-9 w-9 rounded-full object-cover border border-[color:var(--border-gold)]" data-testid="nav-user-avatar" /> : <span className="h-9 w-9 grid place-items-center rounded-full bg-[rgba(212,175,55,0.15)] text-gold text-sm font-semibold">{(user.name || "U")[0]}</span>}
+              <Link to="/account" data-testid="nav-account-link" aria-label="My account" className="inline-flex">
+                {user.picture ? <img src={user.picture} alt={user.name} className="h-9 w-9 rounded-full object-cover border border-[color:var(--border-gold)] hover:opacity-90 transition-opacity" data-testid="nav-user-avatar" /> : <span className="h-9 w-9 grid place-items-center rounded-full bg-[rgba(212,175,55,0.15)] text-gold text-sm font-semibold hover:bg-[rgba(212,175,55,0.25)] transition-colors">{(user.name || "U")[0]}</span>}
+              </Link>
               <button onClick={logout} data-testid="nav-logout" className="text-sm text-[color:var(--lux-ivory)]/70 hover:text-gold transition-colors">Logout</button>
             </div>
           ) : (
@@ -196,6 +198,30 @@ export const Navbar = () => {
                 >
                   Enquire Now
                 </Link>
+                <div className="mt-4 pt-4 border-t border-[color:var(--border-hairline)]">
+                  {user ? (
+                    <div className="flex items-center justify-between gap-3">
+                      <Link
+                        to="/account"
+                        onClick={() => setOpen(false)}
+                        data-testid="mobile-nav-account-link"
+                        className="flex items-center gap-3 min-w-0"
+                      >
+                        {user.picture ? <img src={user.picture} alt={user.name} className="h-9 w-9 rounded-full object-cover border border-[color:var(--border-gold)]" /> : <span className="h-9 w-9 grid place-items-center rounded-full bg-[rgba(212,175,55,0.15)] text-gold text-sm font-semibold">{(user.name || "U")[0]}</span>}
+                        <span className="text-sm text-ivory truncate">My Account</span>
+                      </Link>
+                      <button onClick={() => { setOpen(false); logout(); }} data-testid="mobile-nav-logout" className="text-sm text-[color:var(--lux-ivory)]/70 hover:text-gold">Logout</button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { setOpen(false); login(); }}
+                      data-testid="mobile-nav-signin"
+                      className="w-full rounded-xl bg-glass hairline px-5 py-3 text-sm font-semibold text-ivory"
+                    >
+                      Sign in
+                    </button>
+                  )}
+                </div>
               </div>
             </SheetContent>
           </Sheet>

@@ -38,6 +38,13 @@ export const authSession = (sessionId) => client.post("/auth/session", {}, { hea
 export const authMe = () => client.get("/auth/me", { withCredentials: true }).then((r) => r.data);
 export const authLogout = () => client.post("/auth/logout", {}, { withCredentials: true }).then((r) => r.data);
 
+// ---- Member area ----
+export const getFavoriteSlugs = () => client.get("/me/favorites", { withCredentials: true }).then((r) => r.data.slugs || []);
+export const getFavoriteProjects = () => client.get("/me/favorites/projects", { withCredentials: true }).then((r) => r.data);
+export const addFavorite = (slug) => client.post("/me/favorites", { slug }, { withCredentials: true }).then((r) => r.data.slugs || []);
+export const removeFavorite = (slug) => client.delete(`/me/favorites/${slug}`, { withCredentials: true }).then((r) => r.data.slugs || []);
+export const getMyInquiries = () => client.get("/me/inquiries", { withCredentials: true }).then((r) => r.data);
+
 // ---- Admin ----
 export const adminLogin = (payload) => client.post("/admin/login", payload).then((r) => r.data);
 export const adminMe = () => client.get("/admin/me").then((r) => r.data);

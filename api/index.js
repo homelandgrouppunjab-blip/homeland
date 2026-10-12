@@ -252,6 +252,60 @@ r.post("/auth/logout", wrap(async (req, res) => {
   res.json({ success: true });
 }));
 
+// ---- Member area: saved favourites ----
+// Favourite slugs are stored as an array on the user document.
+r.get("/me/favorites", requireUser, wrap(async (req, res) => {
+  const db = await getDb();
+  const slugs = Array.isArray(req.user.favorites) ? req.user.favorites : [];
+  res.json({ slugs });
+}));
+
+// Return the full (visible) project objects for the user's favourites, ordered
+// to match the public listing shape so <ProjectCard> can render them directly.
+r.get("/me/favorites/projects", requireUser, wrap(async (req, res) => {
+  const db = await getDb();
+  const slugs = Array.isArray(req.user.favorites) ? req.user.favorites : [];
+  if (!slugs.length) return res.json([]);
+  const docs = await db.collection("projects")
+    .find({ slug: { $in: slugs }, visible: { $ne: false } }, { projection: { _id: 0 } })
+    .toArray();
+  docs.sort((a, b) => slugs.indexOf(a.slug) - slugs.indexOf(b.slug));
+  res.json(docs);
+}));
+
+r.post("/me/favorites", requireUser, wrap(async (req, res) => {
+  const db = await getDb();
+  const slug = String((req.body || {}).slug || "").trim();
+  if (!slug) return res.status(400).json({ detail: "Missing project slug" });
+  const exists = await db.collection("projects").findOne({ slug }, { projection: { _id: 1 } });
+  if (!exists) return res.status(404).json({ detail: "Project not found" });
+  await db.collection("users").updateOne({ user_id: req.user.user_id }, { $addToSet: { favorites: slug } });
+  const u = await db.collection("users").findOne({ user_id: req.user.user_id }, { projection: { _id: 0, favorites: 1 } });
+  res.json({ slugs: (u && u.favorites) || [] });
+}));
+
+r.delete("/me/favorites/:slug", requireUser, wrap(async (req, res) => {
+  const db = await getDb();
+  await db.collection("users").updateOne({ user_id: req.user.user_id }, { $pull: { favorites: req.params.slug } });
+  const u = await db.collection("users").findOne({ user_id: req.user.user_id }, { projection: { _id: 0, favorites: 1 } });
+  res.json({ slugs: (u && u.favorites) || [] });
+}));
+
+// ---- Member area: my enquiry history (leads + site visits) ----
+r.get("/me/inquiries", requireUser, wrap(async (req, res) => {
+  const db = await getDb();
+  const email = (req.user.email || "").toLowerCase();
+  const matchByUser = { $or: [{ user_id: req.user.user_id }] };
+  if (email) matchByUser.$or.push({ email_lower: email });
+  const leads = await db.collection("leads").find(matchByUser, { projection: { _id: 0 } }).sort({ created_at: -1 }).limit(200).toArray();
+  const visits = await db.collection("site_visits").find(matchByUser, { projection: { _id: 0 } }).sort({ created_at: -1 }).limit(200).toArray();
+  const items = [
+    ...leads.map((l) => ({ ...l, kind: "enquiry" })),
+    ...visits.map((v) => ({ ...v, kind: "visit" })),
+  ].sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+  res.json(items);
+}));
+
 r.post("/chat", wrap(async (req, res) => {
   const db = await getDb();
   const b = req.body || {};
@@ -307,11 +361,14 @@ r.get("/brochures", wrap(async (req, res) => {
 r.post("/leads", wrap(async (req, res) => {
   const db = await getDb();
   const b = req.body || {};
+  const u = await currentUser(req);
   const lead = {
     id: uuid(), name: b.name, email: b.email, phone: b.phone,
     project: b.project || "Any", requirement: b.requirement || "Residential",
     budget: b.budget || "", message: b.message || "",
     preferred_contact_time: b.preferred_contact_time || "", status: "new", created_at: nowIso(),
+    email_lower: String(b.email || "").toLowerCase(),
+    user_id: u ? u.user_id : null,
   };
   if (!b.website) await db.collection("leads").insertOne({ ...lead });
   res.json(lead);
@@ -320,10 +377,13 @@ r.post("/leads", wrap(async (req, res) => {
 r.post("/site-visits", wrap(async (req, res) => {
   const db = await getDb();
   const b = req.body || {};
+  const u = await currentUser(req);
   const visit = {
     id: uuid(), name: b.name, email: b.email, phone: b.phone, project: b.project || "Any",
     visit_date: b.visit_date || "", time_slot: b.time_slot || "", guests: b.guests || "",
     notes: b.notes || "", status: "new", created_at: nowIso(),
+    email_lower: String(b.email || "").toLowerCase(),
+    user_id: u ? u.user_id : null,
   };
   if (!b.website) await db.collection("site_visits").insertOne({ ...visit });
   res.json(visit);

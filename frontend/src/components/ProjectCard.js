@@ -1,11 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { MapPin, ArrowRight, FileText, ShieldCheck } from "lucide-react";
+import { MapPin, ArrowRight, FileText, ShieldCheck, Heart } from "lucide-react";
 import StatusBadge from "@/components/StatusBadge";
 import LogoPlaque from "@/components/LogoPlaque";
+import { useUser } from "@/context/UserAuthContext";
 
 export const ProjectCard = ({ project }) => {
   const p = project;
+  const { isFavorite, toggleFavorite } = useUser() || {};
+  const saved = isFavorite ? isFavorite(p.slug) : false;
+  const onSave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavorite && toggleFavorite(p.slug);
+  };
   return (
     <div data-testid={`project-card-${p.slug}`} className="group rounded-2xl overflow-hidden bg-glass hairline lift flex flex-col">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -32,11 +40,27 @@ export const ProjectCard = ({ project }) => {
             </span>
           )}
         </div>
-        {p.hot_selling && (
-          <div className="absolute top-4 right-4 rounded-full bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold backdrop-blur-md">
-            Hot Selling
-          </div>
-        )}
+        <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
+          <button
+            type="button"
+            onClick={onSave}
+            aria-label={saved ? "Remove from saved projects" : "Save project"}
+            aria-pressed={saved}
+            data-testid={`project-save-${p.slug}`}
+            className={`h-10 w-10 grid place-items-center rounded-full border backdrop-blur-md transition-colors ${
+              saved
+                ? "bg-[rgba(212,175,55,0.9)] border-[color:var(--border-gold)] text-[color:var(--lux-charcoal)]"
+                : "bg-black/35 border-white/25 text-white hover:text-gold hover:border-[color:var(--border-gold)]"
+            }`}
+          >
+            <Heart className={`h-[18px] w-[18px] ${saved ? "fill-current" : ""}`} />
+          </button>
+          {p.hot_selling && (
+            <div className="rounded-full bg-[rgba(212,175,55,0.15)] border border-[rgba(212,175,55,0.4)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold backdrop-blur-md">
+              Hot Selling
+            </div>
+          )}
+        </div>
         <div className="absolute bottom-4 left-4 right-28">
           <div className="flex items-center gap-1.5 text-xs text-[color:var(--lux-ivory)]/80">
             <MapPin className="h-3.5 w-3.5 text-gold" /> {p.location}

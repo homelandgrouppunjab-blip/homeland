@@ -1,30 +1,30 @@
 [
   {
-    "content": "Insights slider redesign + play/pause (posts+updates)",
+    "content": "Backend: favorites routes + my-inquiries + attach user to leads/visits",
     "status": "completed"
   },
   {
-    "content": "Admin Updates feed + public /updates combined page + merged Insights nav",
+    "content": "api.js: add favorites + my-inquiries helpers",
     "status": "completed"
   },
   {
-    "content": "Theme-aware dark-ink logo + admin light logo",
+    "content": "UserAuthContext: load favorites, expose isFavorite/toggleFavorite",
     "status": "completed"
   },
   {
-    "content": "Project on/off visibility switches + custom reorder",
+    "content": "ProjectCard: add save/heart toggle (sign-in aware)",
     "status": "completed"
   },
   {
-    "content": "Appearance admin (fonts, text size, colours, hero-text) + day-mode hero legibility fix",
+    "content": "Account page (/account): saved projects + enquiry history + profile",
     "status": "completed"
   },
   {
-    "content": "Merge nav CTAs into single Enquire Now",
+    "content": "App.js route + Navbar account link (desktop avatar + mobile)",
     "status": "completed"
   },
   {
-    "content": "Social media update type + paste-link + Social filter; footer 'Quality Real Estate'",
+    "content": "Compile check + screenshot + backend endpoint test",
     "status": "completed"
   }
 ]
