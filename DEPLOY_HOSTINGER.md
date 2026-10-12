@@ -138,23 +138,35 @@ cd api && yarn install && pm2 restart homeland
 
 ---
 
-## OPTION B — Hostinger Cloud/Business "Node.js app" (hPanel)
-If your plan has Node.js app support (no VPS):
-1. In **hPanel → Advanced → Node.js**, create an app:
-   - **Application root:** the `api` folder of the repo
-   - **Startup file:** `index.js`
-   - **Node version:** 20.x
-2. Upload the repo (Git or File Manager). Before uploading, build the frontend
-   locally (`cd frontend && yarn build`) and include `frontend/build` in the upload,
-   OR build on the server if a terminal is available.
-3. Set the Node app **Environment variables** (same keys as A3: `MONGO_URL`,
-   `DB_NAME`, `JWT_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `JWT_EXPIRE_MINUTES`, `EMERGENT_LLM_KEY`).
-   Do **not** set `REACT_APP_BACKEND_URL`.
-4. Run `yarn install` (or `npm install`) in the `api` folder via the panel's "Run NPM install".
-5. Start the app. Map your domain to the app in the panel.
-6. Verify the same URLs as A8.
+## OPTION B — Hostinger Cloud/Business managed "Node.js app" (hPanel + GitHub)  ← recommended for Cloud Startup
+This uses Hostinger's automated pipeline (it runs install + build + start for you).
 
-> Shared/Web (PHP-only) hosting **cannot** run this Node app. Use VPS or a Node-capable plan.
+1. **Push to GitHub first** ("Save to GitHub" in Emergent). The pipeline deploys from the repo.
+2. In **hPanel → Websites → Add Website → Node.js Web App**, connect your **GitHub repo** and
+   branch **main**.
+3. On the **Deploy settings** screen set exactly:
+   - **Application root directory:** `/` (leave empty — the root `package.json` is here)
+   - **Package manager:** auto (it detects `yarn.lock` → Yarn). Do NOT upload `node_modules`.
+   - **Build command / script:** `build`  (root script builds the React app **and** installs the API)
+   - **Entry / startup file:** `api/index.js`
+   - **Output directory:** `frontend/build`
+   - **Node version:** **20** (or 22)
+4. Add **Environment variables** (hPanel → your Node app → Environment):
+   - `MONGO_URL` = your MongoDB connection string
+   - `DB_NAME` = `homeland`
+   - `JWT_SECRET` = a long random string
+   - `ADMIN_EMAIL` = your admin email
+   - `ADMIN_PASSWORD` = a strong password
+   - `JWT_EXPIRE_MINUTES` = `1440`
+   - `EMERGENT_LLM_KEY` = your key (for chatbot + AI design)
+   - **Do NOT set `REACT_APP_BACKEND_URL`** (blank = same-origin `/api`).
+   - You usually do **not** need to set `PORT` — the app defaults to **3000**, which is what
+     Hostinger proxies to. If Hostinger injects a different `PORT`, the app honors it automatically.
+5. Click **Deploy** and watch **Deployments → logs**.
+6. Map your domain to the app, then verify the same URLs as A8 (`/`, `/api/`, a deep link refresh,
+   `/admin/login`).
+
+> Shared/Web (PHP-only) hosting **cannot** run this Node app. Use a Node-capable plan (Cloud/Business) or VPS.
 
 ---
 
