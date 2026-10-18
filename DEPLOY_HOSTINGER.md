@@ -1,29 +1,31 @@
-## Deploy Homeland Group on Hostinger (React + Node API + MongoDB Atlas)
+## Deploy Homeland Group on Hostinger (React + Node API + MySQL)
 
 This hosts the **current** app (no rewrite): the Node/Express API in `/api` serves
 both the REST API (`/api/*`) **and** the built React frontend as a single process.
-Database is **MongoDB Atlas** (free cloud). Uploads are stored in MongoDB, so no
+Database is **MySQL** (your Hostinger MySQL). Uploads are stored in MySQL, so no
 persistent disk is required.
 
-> Next.js is NOT required to deploy this app. If you later want a full Next.js
-> rewrite for SSR, that is a separate project.
+> Admin login uses the `ADMIN_USERNAME` and `ADMIN_PASSWORD` environment variables.
 
 ---
 
 ## 0) Prerequisites
 - A **Hostinger VPS** (recommended) OR a Hostinger Cloud/Business plan with **Node.js app** support.
 - A domain (can be your Hostinger domain).
-- A **MongoDB Atlas** free cluster.
+- A **MySQL database** (every Hostinger plan includes MySQL).
 - Your code pushed to **GitHub** (use "Save to GitHub" in Emergent).
 
 ---
 
-## 1) Create the MongoDB Atlas database
-1. https://www.mongodb.com/atlas → create a free **M0** cluster.
-2. **Database Access** → add a user (username + password).
-3. **Network Access** → add IP `0.0.0.0/0` (or your VPS IP).
-4. **Connect → Drivers** → copy the connection string:
-   `mongodb+srv://USER:PASS@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority`
+## 1) Create the MySQL database
+1. hPanel → **Databases → MySQL Databases** → create a database + user (note the
+   **database name**, **username**, **password**).
+2. The app and MySQL live on the same Hostinger account, so the host is usually
+   **`localhost`** (port **3306**). No remote access needed.
+3. (Optional) To also bring over past leads/site-visit history, import the provided
+   `hostinger_mysql_import.sql` via **phpMyAdmin → Import**. Your projects, posts,
+   team, FAQs, site content, updates and uploads are seeded automatically on first
+   run even without this import.
 
 ---
 
@@ -61,10 +63,13 @@ cd ..
 ### A3. Configure the API environment
 Create `/var/www/homeland/api/.env`:
 ```
-MONGO_URL=mongodb+srv://USER:PASS@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
-DB_NAME=homeland
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=your_mysql_user
+MYSQL_PASSWORD=your_mysql_password
+MYSQL_DATABASE=your_mysql_database
 JWT_SECRET=PUT_A_LONG_RANDOM_STRING_HERE
-ADMIN_EMAIL=admin@homelandgroup.org
+ADMIN_USERNAME=admin
 ADMIN_PASSWORD=ChooseAStrongPassword
 JWT_EXPIRE_MINUTES=1440
 PORT=8001
@@ -160,10 +165,13 @@ This uses Hostinger's automated pipeline (it runs install + build + start for yo
    - **Output directory:** `frontend/build`
    - **Node version:** **20** (or 22)
 4. Add **Environment variables** (hPanel → your Node app → Environment):
-   - `MONGO_URL` = your MongoDB connection string
-   - `DB_NAME` = `homeland`
+   - `MYSQL_HOST` = `localhost`
+   - `MYSQL_PORT` = `3306`
+   - `MYSQL_USER` = your MySQL username
+   - `MYSQL_PASSWORD` = your MySQL password
+   - `MYSQL_DATABASE` = your MySQL database name
    - `JWT_SECRET` = a long random string
-   - `ADMIN_EMAIL` = your admin email
+   - `ADMIN_USERNAME` = your admin username (e.g. `admin`)
    - `ADMIN_PASSWORD` = a strong password
    - `JWT_EXPIRE_MINUTES` = `1440`
    - `EMERGENT_LLM_KEY` = your key (for chatbot + AI design)
@@ -183,12 +191,13 @@ This uses Hostinger's automated pipeline (it runs install + build + start for yo
 ---
 
 ## First run
-On the first request the API **auto-seeds** your empty Atlas database from
-`api/seed-data.json` (9 projects, content, team, FAQs, posts) and creates the admin
-account. Existing data is never overwritten.
+On the first request the API **auto-seeds** your empty MySQL database from
+`api/seed-data.json` (your 9 projects, site content, team, FAQs, posts, updates and
+uploads). It creates the tables automatically. Existing data is never overwritten.
+Admin login uses the `ADMIN_USERNAME` / `ADMIN_PASSWORD` you set in the environment.
 
 ## Notes
-- **Uploads** go into MongoDB and are served at `/api/uploads/<file>` — they survive
+- **Uploads** go into MySQL and are served at `/api/uploads/<file>` — they survive
   restarts and need no disk/object store. Keep `client_max_body_size` in Nginx ≥ your
   largest upload.
 - **Same-origin API:** the frontend calls `/api` on the same domain, so there is no

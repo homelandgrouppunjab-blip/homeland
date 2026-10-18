@@ -8,18 +8,18 @@ const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const { MongoClient } = require("mongodb");
 const fs = require("fs");
 const path = require("path");
 const seed = require("./seed-data.json");
 const { sendEmail } = require("./email");
+const mysqlDb = require("./db");
 
-const MONGO_URL = process.env.MONGO_URL;
-const DB_NAME = process.env.DB_NAME || "homeland";
 const JWT_SECRET = process.env.JWT_SECRET || "change-me";
 const JWT_EXPIRE_MINUTES = parseInt(process.env.JWT_EXPIRE_MINUTES || "1440", 10);
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@homelandgroup.org";
+// Admin login via env (preferred). ADMIN_EMAIL kept as a fallback username.
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Homeland@2013";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@homelandgroup.org";
 const ALLOWED_EXT = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif", ".pdf"];
 const EMERGENT_LLM_KEY = process.env.EMERGENT_LLM_KEY || "";
 const LLM_PROXY = (process.env.INTEGRATION_PROXY_URL || "https://integrations.emergentagent.com") + "/llm/chat/completions";
@@ -114,55 +114,32 @@ async function runVisitReminders({ force = false } = {}) {
   return { date: today, count: visits.length, sent: true, recipient, email_id: id };
 }
 
-// ---- Cached connection (serverless-safe) ----
-let cached = global._mongo;
-if (!cached) cached = global._mongo = { client: null, db: null, seeded: false };
-
-async function getDb() {
-  if (cached.db) return cached.db;
-  if (!MONGO_URL) {
-    console.error("[mongo] MONGO_URL is not set — set it in your hosting environment variables.");
-    throw new Error("MONGO_URL not configured");
-  }
-  try {
-    if (!cached.client) {
-      // serverSelectionTimeoutMS: fail fast with a clear error instead of hanging
-      cached.client = new MongoClient(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 8000 });
-      await cached.client.connect();
-      await cached.client.db(DB_NAME).command({ ping: 1 });
-      console.log("[mongo] connected to", DB_NAME);
-    }
-    cached.db = cached.client.db(DB_NAME);
-    await ensureSeed(cached.db);
-    return cached.db;
-  } catch (e) {
-    console.error("[mongo] connection FAILED:", (e && e.message) || e,
-      "\n[mongo] Check: (1) MONGO_URL is correct & password URL-encoded, (2) MongoDB Atlas Network Access allows this server's IP (or 0.0.0.0/0), (3) the database user has read/write.");
-    // Reset so the next request retries a fresh connection (e.g. after fixing the Atlas IP allowlist) — no redeploy needed.
-    try { if (cached.client) await cached.client.close(); } catch { /* ignore */ }
-    cached.client = null; cached.db = null; cached.seeded = false;
-    throw e;
-  }
-}
-
+// ---- MySQL-backed data layer (Mongo-compatible API via ./db.js) ----
 const nowIso = () => new Date().toISOString();
 const uuid = () => crypto.randomUUID();
 const slugify = (t) =>
   (t || "").toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/[\s_-]+/g, "-");
 
-async function ensureSeed(db) {
-  if (cached.seeded) return;
-  cached.seeded = true;
-  // Admin
-  const admin = await db.collection("admins").findOne({ email: ADMIN_EMAIL });
-  if (!admin) {
-    await db.collection("admins").insertOne({
-      id: uuid(),
-      email: ADMIN_EMAIL,
-      password_hash: bcrypt.hashSync(ADMIN_PASSWORD, 10),
-      created_at: nowIso(),
-    });
+let _seeded = false;
+async function getDb() {
+  let db;
+  try {
+    db = await mysqlDb.getDb(); // ensures connection + tables
+  } catch (e) {
+    console.error("[mysql] connection FAILED:", (e && e.message) || e,
+      "\n[mysql] Check: (1) MYSQL_HOST/PORT/USER/PASSWORD/DATABASE are set correctly, (2) on Hostinger the app and DB share the host so MYSQL_HOST is usually 'localhost', (3) the DB user has privileges on the database.");
+    throw e;
   }
+  if (!_seeded) {
+    _seeded = true;
+    try { await ensureSeed(db); }
+    catch (e) { _seeded = false; throw e; }
+  }
+  return db;
+}
+
+// Seed baseline content only into empty tables (admin login is env-based, no admin table needed).
+async function ensureSeed(db) {
   const seedIfEmpty = async (col, docs) => {
     if ((await db.collection(col).countDocuments({})) === 0 && (docs || []).length) {
       await db.collection(col).insertMany(docs.map((d) => ({ ...d })));
@@ -174,6 +151,7 @@ async function ensureSeed(db) {
   await seedIfEmpty("team", seed.team);
   await seedIfEmpty("posts", seed.posts);
   await seedIfEmpty("updates", seed.updates);
+  await seedIfEmpty("uploads", seed.uploads);
 }
 
 // ---- Auth ----
@@ -477,14 +455,15 @@ r.post("/site-visits", wrap(async (req, res) => {
   res.json(visit);
 }));
 
-// -------- Admin: auth --------
+// -------- Admin: auth (credentials come from ADMIN_USERNAME / ADMIN_PASSWORD env) --------
 r.post("/admin/login", wrap(async (req, res) => {
-  const db = await getDb();
-  const { email, password } = req.body || {};
-  const admin = await db.collection("admins").findOne({ email });
-  if (!admin || !bcrypt.compareSync(password || "", admin.password_hash || ""))
-    return res.status(401).json({ detail: "Invalid email or password" });
-  res.json({ access_token: signToken(email), token_type: "bearer", email });
+  const b = req.body || {};
+  const username = String(b.username || b.email || "").trim();
+  const password = String(b.password || "");
+  const okUser = username.toLowerCase() === String(ADMIN_USERNAME).toLowerCase();
+  const okPass = password === String(ADMIN_PASSWORD);
+  if (!okUser || !okPass) return res.status(401).json({ detail: "Invalid username or password" });
+  res.json({ access_token: signToken(ADMIN_USERNAME), token_type: "bearer", username: ADMIN_USERNAME, email: ADMIN_EMAIL });
 }));
 
 r.get("/admin/me", requireAdmin, (req, res) => res.json(req.admin));

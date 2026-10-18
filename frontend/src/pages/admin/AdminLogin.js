@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function AdminLogin() {
   const { login } = useAuth();
   const nav = useNavigate();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,7 +15,7 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
     try {
-      await login({ email, password });
+      await login({ username, password });
       toast.success("Welcome back");
       nav("/admin");
     } catch (err) {
@@ -36,10 +36,10 @@ export default function AdminLogin() {
         </div>
         <form onSubmit={submit} className="rounded-2xl bg-glass hairline p-8">
           <div className="flex items-center gap-2 text-gold mb-6"><Lock className="h-5 w-5" /><span className="font-semibold">Sign in to continue</span></div>
-          <label className="text-xs text-platinum mb-1.5 block">Email</label>
-          <input data-testid="admin-email-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={cls} placeholder="admin@homelandgroup.org" />
+          <label className="text-xs text-platinum mb-1.5 block">Username</label>
+          <input data-testid="admin-username-input" type="text" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} className={cls} placeholder="admin" />
           <label className="text-xs text-platinum mb-1.5 block mt-4">Password</label>
-          <input data-testid="admin-password-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className={cls} placeholder="••••••••" />
+          <input data-testid="admin-password-input" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className={cls} placeholder="••••••••" />
           <button data-testid="admin-login-submit" disabled={loading} className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-xl border gold-line bg-[rgba(212,175,55,0.08)] px-6 py-3.5 text-sm font-semibold text-gold hover:bg-[rgba(212,175,55,0.16)] disabled:opacity-60 transition-colors">
             {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Signing in…</> : "Sign In"}
           </button>

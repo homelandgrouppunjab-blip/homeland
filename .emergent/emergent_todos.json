@@ -1,22 +1,30 @@
 [
   {
-    "content": "Email module (Emergent Managed Email/Resend) with guardrail gate",
-    "status": "completed"
+    "content": "Provision local MySQL (dev) + install mysql2; set MYSQL_* env in api/.env",
+    "status": "in_progress"
   },
   {
-    "content": "Reminder digest logic (timezone-aware today, template, idempotent mark)",
-    "status": "completed"
+    "content": "Build db.js: MySQL pool + Mongo-compatible collection shim (findOne/find/insert/update/delete/count, $set/$addToSet/$pull/$in/$ne/$or/$regex) + table init",
+    "status": "pending"
   },
   {
-    "content": "In-process 7am scheduler (node-cron) + admin manual trigger endpoint",
-    "status": "completed"
+    "content": "Rewrite data layer in index.js to use db.js; admin auth via ADMIN_USERNAME/ADMIN_PASSWORD",
+    "status": "pending"
   },
   {
-    "content": "Admin Visits UI: send-reminders button + reminder-sent indicator",
-    "status": "completed"
+    "content": "Migrate preview MongoDB content -> MySQL (projects, updates, posts, team, faqs, site_content, leads, visits, users, uploads)",
+    "status": "pending"
   },
   {
-    "content": "Env vars + deploy docs updated; end-to-end tested",
-    "status": "completed"
+    "content": "Test backend end-to-end on MySQL (public + admin + favorites + reminders)",
+    "status": "pending"
+  },
+  {
+    "content": "mysqldump to importable .sql for Hostinger + update DEPLOY docs/.env.example with MYSQL_* vars",
+    "status": "pending"
+  },
+  {
+    "content": "Frontend admin login: username field; verify full app via screenshots",
+    "status": "pending"
   }
 ]
