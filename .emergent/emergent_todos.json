@@ -12,7 +12,7 @@
     "status": "completed"
   },
   {
-    "content": "Migrate preview MongoDB content -> MySQL + regenerate seed-data.json (real content incl uploads)",
+    "content": "Migrate preview content -> MySQL + regenerate seed-data.json",
     "status": "completed"
   },
   {
@@ -20,7 +20,7 @@
     "status": "completed"
   },
   {
-    "content": "Comprehensive testing (backend + frontend) on MySQL",
-    "status": "in_progress"
+    "content": "Comprehensive testing (100% pass) + production build + deploy readiness",
+    "status": "completed"
   }
 ]
