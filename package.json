@@ -2,14 +2,13 @@
   "name": "homeland-group",
   "version": "1.0.0",
   "private": true,
-  "description": "Homeland Group — React frontend + Node/Express API (MongoDB). The API serves the built frontend, so this deploys as a single Node web service.",
-  "packageManager": "yarn@1.22.22",
+  "description": "Homeland Group — React frontend + Node/Express API (MySQL). The API serves the built frontend, so this deploys as a single Node web service.",
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
-    "install-all": "yarn --cwd api install && yarn --cwd frontend install --production=false",
-    "build": "yarn --cwd frontend install --production=false && yarn --cwd frontend build && yarn --cwd api install --production=false",
+    "install-all": "npm --prefix api install --no-audit --no-fund && npm --prefix frontend install --include=dev --no-audit --no-fund",
+    "build": "npm --prefix frontend install --include=dev --no-audit --no-fund && npm --prefix frontend run build && npm --prefix api install --no-audit --no-fund",
     "start": "node api/index.js"
   }
 }
