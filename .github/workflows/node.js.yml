@@ -1,0 +1,29 @@
+# CI: verify the app builds on the Node version used in production (20+).
+# This project is a single Node/Express app that also builds the React frontend.
+name: Node.js CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install root (npm) + build everything
+        run: |
+          npm ci
+          npm run build
+        env:
+          CI: false
+          DISABLE_ESLINT_PLUGIN: true
