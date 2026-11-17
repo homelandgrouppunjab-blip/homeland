@@ -175,7 +175,14 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 
 
 // ---- App / Router ----
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+// CORS: if CORS_ORIGINS is set (comma-separated), allow only those origins;
+// otherwise reflect the request origin (works for same-origin / single-host deploys).
+const CORS_ORIGINS = (process.env.CORS_ORIGINS || "")
+  .split(",").map((s) => s.trim()).filter(Boolean);
+app.use(cors({
+  origin: CORS_ORIGINS.length ? CORS_ORIGINS : true,
+  credentials: true,
+}));
 app.use(express.json({ limit: "2mb" }));
 const r = express.Router();
 
