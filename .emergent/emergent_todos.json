@@ -1,26 +1,18 @@
 [
   {
-    "content": "Provision local MySQL (dev) + mysql2 + supervisor-managed MariaDB",
+    "content": "Harden SocialEmbed.js: sanitize markup with DOMPurify + only re-run external allowlisted scripts",
     "status": "completed"
   },
   {
-    "content": "db.js: MySQL Mongo-compatible shim + table init",
+    "content": "Fix silent error handlers: UserAuthContext (session exchange + logout) and ThemeToggle catches",
     "status": "completed"
   },
   {
-    "content": "index.js data layer -> db.js; admin auth via ADMIN_USERNAME/ADMIN_PASSWORD",
+    "content": "Verify build (esbuild + dompurify) and no regressions",
     "status": "completed"
   },
   {
-    "content": "Migrate preview content -> MySQL + regenerate seed-data.json",
-    "status": "completed"
-  },
-  {
-    "content": "Frontend admin login username field; deploy docs/.env.example -> MySQL",
-    "status": "completed"
-  },
-  {
-    "content": "Comprehensive testing (100% pass) + production build + deploy readiness",
+    "content": "Recover node_modules after partial npm install corruption (clean reinstall)",
     "status": "completed"
   }
 ]

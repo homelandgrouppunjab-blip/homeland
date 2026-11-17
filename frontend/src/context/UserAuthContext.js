@@ -35,7 +35,10 @@ export const UserProvider = ({ children }) => {
       const sid = hash.split("session_id=")[1].split("&")[0];
       authSession(sid)
         .then((d) => { setUser(d.user); return loadFavorites(); })
-        .catch(() => {})
+        .catch((e) => {
+          console.error("UserAuth: sign-in session exchange failed", e);
+          toast.error("Sign-in failed", { description: "We couldn't complete your sign-in. Please try again." });
+        })
         .finally(() => {
           window.history.replaceState(null, "", window.location.pathname + window.location.search);
           setLoading(false);
@@ -52,7 +55,7 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    try { await authLogout(); } catch { /* ignore */ }
+    try { await authLogout(); } catch (e) { console.warn("UserAuth: logout request failed; clearing local session anyway", e); }
     setUser(null);
     setFavorites([]);
   };

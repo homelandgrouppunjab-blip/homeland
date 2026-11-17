@@ -12,14 +12,14 @@ export const ThemeToggle = ({ className = "" }) => {
       const isLight = saved === "light";
       document.documentElement.classList.toggle("light", isLight);
       setLight(isLight);
-    } catch (e) { /* storage unavailable */ }
+    } catch (e) { console.warn("ThemeToggle: could not read saved theme from storage", e); }
   }, []);
 
   const toggle = () => {
     const next = !light;
     setLight(next);
     document.documentElement.classList.toggle("light", next);
-    try { localStorage.setItem("hg_theme", next ? "light" : "dark"); } catch (e) { /* ignore */ }
+    try { localStorage.setItem("hg_theme", next ? "light" : "dark"); } catch (e) { console.warn("ThemeToggle: could not persist theme to storage", e); }
   };
 
   return (
