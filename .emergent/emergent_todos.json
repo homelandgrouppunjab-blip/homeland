@@ -1,22 +1,18 @@
 [
   {
-    "content": "Add mongodb driver to api (npm) and update .env.example with sync vars",
+    "content": "Harden SocialEmbed.js: sanitize markup with DOMPurify + only re-run external allowlisted scripts",
     "status": "completed"
   },
   {
-    "content": "Create api/sync.js: Mongo→MySQL one-way mirror (initial copy + interval), safe no-op without MONGO_URL",
+    "content": "Fix silent error handlers: UserAuthContext (session exchange + logout) and ThemeToggle catches",
     "status": "completed"
   },
   {
-    "content": "Wire sync into index.js startup + add admin manual-sync endpoint",
+    "content": "Verify build (esbuild + dompurify) and no regressions",
     "status": "completed"
   },
   {
-    "content": "Test: disabled path + end-to-end mirror + admin login",
-    "status": "completed"
-  },
-  {
-    "content": "Document Hostinger env + behavior; final clean CI build check",
+    "content": "Recover node_modules after partial npm install corruption (clean reinstall)",
     "status": "completed"
   }
 ]
