@@ -1,5 +1,6 @@
-# CI: verify the app builds on the Node version used in production (20+).
-# This project is a single Node/Express app that also builds the React frontend.
+# CI: verify the app installs and builds the way Hostinger does.
+# Single Node/Express app in /api that also builds the React app in /frontend.
+# React Router 7 requires Node >= 20, so we test 20 and 22 (NOT 18).
 name: Node.js CI
 
 on:
@@ -12,18 +13,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [20.x]
+        node-version: [20.x, 22.x]
     steps:
       - uses: actions/checkout@v4
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install root (npm) + build everything
+
+      - name: Install + build (same chain as production)
         run: |
           npm ci
           npm run build
         env:
           CI: false
           DISABLE_ESLINT_PLUGIN: true
+
+      - name: Tests (skipped if none defined)
+        run: npm test --if-present -- --passWithNoTests
+        env:
+          CI: true
