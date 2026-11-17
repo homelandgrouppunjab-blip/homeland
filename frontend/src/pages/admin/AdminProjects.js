@@ -46,7 +46,7 @@ export default function AdminProjects() {
     Residential: ["2 BHK", "3 BHK", "4 BHK", "5 BHK", "Service Suite", "Penthouse", "Villa", "Studio"],
     Commercial: ["Showroom", "Office Space", "Virtual Space", "Hotel Room", "Retail Unit", "SCO", "Food Court"],
   };
-  const addCategory = () => set("unit_categories", [...(form.unit_categories || []), { segment: "Residential", type: "", area: "", dimensions: "", price: "", availability: "Available", total_units: "", units_left: "", floor_plan: "", description: "" }]);
+  const addCategory = () => set("unit_categories", [...(form.unit_categories || []), { _key: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())), segment: "Residential", type: "", area: "", dimensions: "", price: "", availability: "Available", total_units: "", units_left: "", floor_plan: "", description: "" }]);
   const updateCategory = (i, k, v) => set("unit_categories", (form.unit_categories || []).map((c, idx) => (idx === i ? { ...c, [k]: v } : c)));
   const removeCategory = (i) => set("unit_categories", (form.unit_categories || []).filter((_, idx) => idx !== i));
 
@@ -191,7 +191,7 @@ export default function AdminProjects() {
                 <p className="text-xs text-[color:var(--lux-ivory)]/45">No unit categories yet. Add 2BHK/3BHK/Service Suites (Residential) or Showroom/Office/Hotel Rooms (Commercial) with sizes & dimensions.</p>
               )}
               {(form.unit_categories || []).map((c, i) => (
-                <div key={i} className="rounded-xl bg-[color:var(--lux-obsidian)] border border-[color:var(--border-hairline)] p-3" data-testid={`admin-unit-category-${i}`}>
+                <div key={c._key || i} className="rounded-xl bg-[color:var(--lux-obsidian)] border border-[color:var(--border-hairline)] p-3" data-testid={`admin-unit-category-${i}`}>
                   <div className="grid sm:grid-cols-3 gap-3">
                     <div>
                       <label className={lbl}>Segment</label>

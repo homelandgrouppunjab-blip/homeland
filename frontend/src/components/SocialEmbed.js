@@ -45,12 +45,14 @@ export default function SocialEmbed({ code, className = "" }) {
     if (!code) { el.innerHTML = ""; return; }
 
     // 1) Sanitised markup (DOMPurify removes scripts + dangerous attributes).
+    // Safe: the string is sanitised with DOMPurify immediately before assignment.
     el.innerHTML = DOMPurify.sanitize(code, { ADD_TAGS: ["iframe"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "target"] });
 
     // 2) Re-create ONLY external, allowlisted loader scripts from the raw code.
-    const tmp = document.createElement("div");
-    tmp.innerHTML = code;
-    const scripts = Array.from(tmp.querySelectorAll("script"));
+    // DOMParser parses the markup WITHOUT executing or loading anything, so we can
+    // safely inspect the original <script> tags (no innerHTML of untrusted input).
+    const parsed = new DOMParser().parseFromString(code, "text/html");
+    const scripts = Array.from(parsed.querySelectorAll("script"));
     scripts.forEach((old) => {
       const src = old.getAttribute("src");
       if (!isAllowedScriptSrc(src)) return; // skip inline + non-allowlisted scripts
