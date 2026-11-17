@@ -1,4 +1,4 @@
-// Homeland Group — REST API (Node.js + Express + native MongoDB driver)
+// Homeland Group — REST API (Node.js + Express + MySQL via ./db.js)
 // No Python/FastAPI. Runs as a single Node process that serves the built
 // React frontend and the /api routes (Hostinger managed Node.js or VPS).
 try { require("dotenv").config({ path: require("path").join(__dirname, ".env") }); } catch (e) { /* dotenv optional (host dashboard env) */ }
@@ -13,6 +13,7 @@ const path = require("path");
 const seed = require("./seed-data.json");
 const { sendEmail } = require("./email");
 const mysqlDb = require("./db");
+const sync = require("./sync");
 
 const JWT_SECRET = process.env.JWT_SECRET || "change-me";
 const JWT_EXPIRE_MINUTES = parseInt(process.env.JWT_EXPIRE_MINUTES || "1440", 10);
@@ -475,6 +476,14 @@ r.post("/admin/login", wrap(async (req, res) => {
 
 r.get("/admin/me", requireAdmin, (req, res) => res.json(req.admin));
 
+// Manually trigger a Mongo->MySQL mirror pass (source of truth = MongoDB).
+// No-op (returns {disabled:true}) unless MONGO_URL is configured on the server.
+r.post("/admin/sync/run", requireAdmin, wrap(async (req, res) => {
+  const result = await sync.syncOnce();
+  if (result && result.ok === false) return res.status(502).json({ detail: "Sync failed: " + result.error });
+  res.json(result);
+}));
+
 r.get("/admin/stats", requireAdmin, wrap(async (req, res) => {
   const db = await getDb();
   const P = db.collection("projects");
@@ -649,7 +658,7 @@ r.delete("/admin/faqs/:id", requireAdmin, wrap(async (req, res) => {
   res.json({ success: true });
 }));
 
-// -------- Admin: upload (stored in MongoDB) --------
+// -------- Admin: upload (stored in MySQL) --------
 r.post("/admin/upload", requireAdmin, upload.single("file"), wrap(async (req, res) => {
   const db = await getDb();
   if (!req.file) return res.status(400).json({ detail: "No file" });
@@ -788,6 +797,9 @@ if (require.main === module) {
   // preview and VPS/PM2 inject PORT explicitly. So honor PORT, else default 3000.
   const port = process.env.PORT || 3000;
   app.listen(port, () => console.log(`Homeland Node API listening on :${port}`));
+
+  // Mongo -> MySQL mirror (only runs when MONGO_URL is configured; safe no-op otherwise).
+  try { sync.start(); } catch (e) { console.error("[sync] not started:", e.message); }
 
   // Morning site-visit reminders. Runs in-process (works on Hostinger's persistent
   // Node app / PM2 — no external cron needed). Fires daily at 07:00 in REMINDER_TZ.

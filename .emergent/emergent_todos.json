@@ -1,26 +1,22 @@
 [
   {
-    "content": "Provision local MySQL (dev) + mysql2 + supervisor-managed MariaDB",
+    "content": "Add mongodb driver to api (npm) and update .env.example with sync vars",
     "status": "completed"
   },
   {
-    "content": "db.js: MySQL Mongo-compatible shim + table init",
+    "content": "Create api/sync.js: Mongo→MySQL one-way mirror (initial copy + interval), safe no-op without MONGO_URL",
     "status": "completed"
   },
   {
-    "content": "index.js data layer -> db.js; admin auth via ADMIN_USERNAME/ADMIN_PASSWORD",
+    "content": "Wire sync into index.js startup + add admin manual-sync endpoint",
     "status": "completed"
   },
   {
-    "content": "Migrate preview content -> MySQL + regenerate seed-data.json",
+    "content": "Test: disabled path + end-to-end mirror + admin login",
     "status": "completed"
   },
   {
-    "content": "Frontend admin login username field; deploy docs/.env.example -> MySQL",
-    "status": "completed"
-  },
-  {
-    "content": "Comprehensive testing (100% pass) + production build + deploy readiness",
+    "content": "Document Hostinger env + behavior; final clean CI build check",
     "status": "completed"
   }
 ]
