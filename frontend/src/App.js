@@ -2,6 +2,7 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
+import { Analytics } from "@vercel/analytics/react";
 
 import PublicLayout from "@/components/PublicLayout";
 import Home from "@/pages/Home";
@@ -87,6 +88,7 @@ function App() {
           </UserProvider>
         </BrowserRouter>
       </AuthProvider>
+      <Analytics />
     </div>
   );
 }
