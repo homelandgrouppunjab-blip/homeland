@@ -160,8 +160,12 @@ function signToken(email) {
   return jwt.sign({ sub: email }, JWT_SECRET, { expiresIn: `${JWT_EXPIRE_MINUTES}m` });
 }
 function requireAdmin(req, res, next) {
+  // Prefer the httpOnly cookie (set at login); fall back to a Bearer token so
+  // API tooling / older clients keep working.
+  const cookies = parseCookies(req);
+  let token = cookies.admin_token || null;
   const h = req.headers.authorization || "";
-  const token = h.startsWith("Bearer ") ? h.slice(7) : null;
+  if (!token && h.startsWith("Bearer ")) token = h.slice(7);
   if (!token) return res.status(401).json({ detail: "Not authenticated" });
   try {
     const payload = jwt.verify(token, JWT_SECRET);
@@ -171,6 +175,15 @@ function requireAdmin(req, res, next) {
     return res.status(401).json({ detail: "Invalid or expired token" });
   }
 }
+
+// Shared cookie options for the admin session (same posture as customer auth).
+const ADMIN_COOKIE_OPTS = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/",
+  maxAge: JWT_EXPIRE_MINUTES * 60 * 1000,
+};
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });
 
@@ -407,7 +420,11 @@ r.post("/chat", wrap(async (req, res) => {
   const projects = await db.collection("projects").find({ visible: { $ne: false } }, { projection: { _id: 0 } }).toArray();
   const projLines = projects.map((p) => `- ${p.name} (${p.status}, ${p.type}) in ${p.location || p.city || ""}; ${p.price_range || "price on request"}; config: ${(p.unit_types || []).join(", ")}`).join("\n");
   const ai = content?.ai || {};
-  const sys = `You are the virtual concierge for ${content?.brand_name || "Homeland Group"}, a premium real-estate developer. Answer helpfully and concisely (2-5 sentences) about our projects, locations, pricing, amenities, and how to enquire or book a visit. If you are unsure, invite the visitor to enquire. Never invent specific prices, RERA numbers, dates, or figures that are not listed below. Contact: phone ${content?.contact_phone || "-"}, email ${content?.contact_email || "-"}, WhatsApp ${content?.contact_whatsapp || "-"}.\n\nProjects:\n${projLines || "(none listed)"}`;
+  const sys = `You are the virtual concierge for ${content?.brand_name || "Homeland Group"}, a premium real-estate developer. Answer helpfully and concisely (2-5 sentences) about our projects, locations, pricing, amenities, and how to enquire or book a visit. If you are unsure, invite the visitor to enquire. Never invent specific prices, RERA numbers, dates, or figures that are not listed below.
+
+FORMATTING RULES (very important): Reply in plain text only. Do NOT use any Markdown or special formatting characters whatsoever — no asterisks (*), no bold, no italics, no hash signs (#), no backticks, no bullet dashes (-), and no emojis. When listing several projects or points, write them as a clean numbered series, one per line like "1. ...", "2. ...". Keep it natural and easy to read.
+
+Contact: phone ${content?.contact_phone || "-"}, email ${content?.contact_email || "-"}, WhatsApp ${content?.contact_whatsapp || "-"}.\n\nProjects:\n${projLines || "(none listed)"}`;
   const messages = [{ role: "system", content: sys }, ...history.filter((m) => m && (m.role === "user" || m.role === "assistant") && m.content).map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) }))];
   if (!messages.some((m) => m.role === "user")) return res.status(400).json({ detail: "No user message" });
   try {
@@ -490,8 +507,17 @@ r.post("/admin/login", wrap(async (req, res) => {
   const okUser = username.toLowerCase() === String(ADMIN_USERNAME).toLowerCase();
   const okPass = password === String(ADMIN_PASSWORD);
   if (!okUser || !okPass) return res.status(401).json({ detail: "Invalid username or password" });
-  res.json({ access_token: signToken(ADMIN_USERNAME), token_type: "bearer", username: ADMIN_USERNAME, email: ADMIN_EMAIL });
+  const token = signToken(ADMIN_USERNAME);
+  // Set a secure httpOnly cookie (primary). access_token is still returned for
+  // backward compatibility but the frontend no longer stores it.
+  res.cookie("admin_token", token, ADMIN_COOKIE_OPTS);
+  res.json({ access_token: token, token_type: "cookie", username: ADMIN_USERNAME, email: ADMIN_EMAIL });
 }));
+
+r.post("/admin/logout", (req, res) => {
+  res.clearCookie("admin_token", { path: "/", sameSite: "none", secure: true });
+  res.json({ ok: true });
+});
 
 r.get("/admin/me", requireAdmin, (req, res) => res.json(req.admin));
 
@@ -557,6 +583,7 @@ r.post("/admin/projects", requireAdmin, wrap(async (req, res) => {
   if (await db.collection("projects").findOne({ slug: data.slug })) data.slug = `${data.slug}-${id.slice(0, 6)}`;
   const doc = { ...data, id, created_at: nowIso(), updated_at: nowIso() };
   await db.collection("projects").insertOne({ ...doc });
+  pingIndexNow([`/projects/${doc.slug}`, "/projects"]);
   res.json(doc);
 }));
 
@@ -567,6 +594,7 @@ r.put("/admin/projects/:id", requireAdmin, wrap(async (req, res) => {
   const data = projectDefaults(req.body || {});
   const doc = { ...data, id: req.params.id, created_at: existing.created_at || nowIso(), updated_at: nowIso() };
   await db.collection("projects").replaceOne({ id: req.params.id }, { ...doc });
+  pingIndexNow([`/projects/${doc.slug}`, "/projects"]);
   res.json(doc);
 }));
 
@@ -574,6 +602,7 @@ r.delete("/admin/projects/:id", requireAdmin, wrap(async (req, res) => {
   const db = await getDb();
   const del = await db.collection("projects").deleteOne({ id: req.params.id });
   if (!del.deletedCount) return res.status(404).json({ detail: "Project not found" });
+  pingIndexNow(["/projects"]);
   res.json({ success: true });
 }));
 
@@ -723,6 +752,7 @@ r.post("/admin/posts", requireAdmin, wrap(async (req, res) => {
   if (await db.collection("posts").findOne({ slug: data.slug })) data.slug = `${data.slug}-${id.slice(0, 6)}`;
   const doc = { ...data, id, created_at: nowIso(), updated_at: nowIso() };
   await db.collection("posts").insertOne({ ...doc });
+  pingIndexNow([`/insights/${doc.slug}`, "/insights"]);
   res.json(doc);
 }));
 r.put("/admin/posts/:id", requireAdmin, wrap(async (req, res) => {
@@ -732,12 +762,14 @@ r.put("/admin/posts/:id", requireAdmin, wrap(async (req, res) => {
   const data = postDefaults(req.body || {});
   const doc = { ...data, id: req.params.id, created_at: existing.created_at || nowIso(), updated_at: nowIso() };
   await db.collection("posts").replaceOne({ id: req.params.id }, { ...doc });
+  pingIndexNow([`/insights/${doc.slug}`, "/insights"]);
   res.json(doc);
 }));
 r.delete("/admin/posts/:id", requireAdmin, wrap(async (req, res) => {
   const db = await getDb();
   const del = await db.collection("posts").deleteOne({ id: req.params.id });
   if (!del.deletedCount) return res.status(404).json({ detail: "Post not found" });
+  pingIndexNow(["/insights"]);
   res.json({ success: true });
 }));
 
@@ -864,7 +896,117 @@ function injectMeta(html, meta) {
   return out;
 }
 
+// ---------- Auto SEO engine ----------
+// IndexNow key (served at /<key>.txt). Public by design; override via env.
+const INDEXNOW_KEY = (process.env.INDEXNOW_KEY || "a3f1c9e84b7d4f26b0c5e9a71d8246f5").trim();
+
+// Instantly notify participating search engines (Bing, Yandex, Seznam, Naver,
+// Yep...) when content changes. Best-effort and never throws.
+function pingIndexNow(paths) {
+  try {
+    const list = (Array.isArray(paths) ? paths : [paths]).filter(Boolean);
+    if (!list.length) return;
+    const host = PUBLIC_ORIGIN.replace(/^https?:\/\//, "");
+    const urlList = list.map((p) => (/^https?:\/\//.test(p) ? p : `${PUBLIC_ORIGIN}${p.startsWith("/") ? "" : "/"}${p}`));
+    const body = JSON.stringify({ host, key: INDEXNOW_KEY, keyLocation: `${PUBLIC_ORIGIN}/${INDEXNOW_KEY}.txt`, urlList });
+    const https = require("https");
+    const req = https.request("https://api.indexnow.org/indexnow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8", "Content-Length": Buffer.byteLength(body) },
+    }, (resp) => { resp.on("data", () => {}); resp.on("end", () => {}); });
+    req.on("error", (e) => console.warn("[indexnow] ping failed:", e.message));
+    req.write(body);
+    req.end();
+    console.log(`[indexnow] submitted ${urlList.length} url(s)`);
+  } catch (e) {
+    console.warn("[indexnow] error:", e.message);
+  }
+}
+
+// Static (non-DB) routes that should always be in the sitemap.
+const SITEMAP_STATIC = [
+  { loc: "/", changefreq: "weekly", priority: "1.0" },
+  { loc: "/projects", changefreq: "weekly", priority: "0.9" },
+  { loc: "/upcoming", changefreq: "weekly", priority: "0.8" },
+  { loc: "/about", changefreq: "monthly", priority: "0.7" },
+  { loc: "/vision", changefreq: "monthly", priority: "0.6" },
+  { loc: "/locations", changefreq: "monthly", priority: "0.6" },
+  { loc: "/compare", changefreq: "monthly", priority: "0.6" },
+  { loc: "/rera", changefreq: "monthly", priority: "0.6" },
+  { loc: "/brochures", changefreq: "monthly", priority: "0.5" },
+  { loc: "/insights", changefreq: "weekly", priority: "0.6" },
+  { loc: "/contact", changefreq: "yearly", priority: "0.5" },
+];
+
+// Build the sitemap live from the database so new projects / posts are indexed
+// automatically with no manual edits.
+async function buildSitemapXml() {
+  const db = await getDb();
+  const urls = [...SITEMAP_STATIC];
+  try {
+    const projects = await db.collection("projects").find({}, { projection: { slug: 1 } }).toArray();
+    projects.forEach((p) => p.slug && urls.push({ loc: `/projects/${p.slug}`, changefreq: "weekly", priority: "0.8" }));
+  } catch (e) { /* keep static */ }
+  try {
+    const posts = await db.collection("posts").find({}, { projection: { slug: 1 } }).toArray();
+    posts.forEach((p) => p.slug && urls.push({ loc: `/insights/${p.slug}`, changefreq: "monthly", priority: "0.5" }));
+  } catch (e) { /* keep static */ }
+  const today = new Date().toISOString().slice(0, 10);
+  const body = urls
+    .map((u) => `  <url><loc>${PUBLIC_ORIGIN}${u.loc}</loc><lastmod>${today}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`)
+    .join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.w3.org/2000/schema/sitemap/0.9">\n${body}\n</urlset>\n`
+    .replace("http://www.w3.org/2000/schema/sitemap/0.9", "http://www.sitemaps.org/schemas/sitemap/0.9");
+}
+
+// WebSite + sitelinks search box. The Organization/RealEstateAgent schema is
+// already static in index.html (sitewide), so we only add WebSite here to avoid
+// duplicate Organization markup.
+function siteJsonLd() {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: PUBLIC_ORIGIN + "/",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${PUBLIC_ORIGIN}/projects?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ];
+}
+
+// Inject one or more JSON-LD objects into the <head> of the served HTML.
+function injectJsonLd(html, objects) {
+  const scripts = (objects || [])
+    .filter(Boolean)
+    .map((o) => `    <script type="application/ld+json">${JSON.stringify(o).replace(/</g, "\\u003c")}</script>`)
+    .join("\n");
+  if (!scripts) return html;
+  return html.replace(/<\/head>/i, `${scripts}\n</head>`);
+}
+
 if (fs.existsSync(path.join(FRONTEND_BUILD, "index.html"))) {
+  // Dynamic SEO endpoints (registered BEFORE static so they win over any
+  // stale files in the build folder).
+  app.get("/sitemap.xml", async (req, res) => {
+    try {
+      const xml = await buildSitemapXml();
+      res.set("Content-Type", "application/xml").send(xml);
+    } catch (e) {
+      res.sendFile(path.join(FRONTEND_BUILD, "sitemap.xml"));
+    }
+  });
+  app.get("/robots.txt", (req, res) => {
+    res.type("text/plain").send(
+      `User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${PUBLIC_ORIGIN}/sitemap.xml\n`
+    );
+  });
+  // IndexNow ownership verification key.
+  app.get(`/${INDEXNOW_KEY}.txt`, (req, res) => res.type("text/plain").send(INDEXNOW_KEY));
+
   app.use(express.static(FRONTEND_BUILD, { index: false }));
 
   let BASE_HTML = null;
@@ -884,24 +1026,66 @@ if (fs.existsSync(path.join(FRONTEND_BUILD, "index.html"))) {
         const db = await getDb();
         const p = await db.collection("projects").findOne({ slug: projMatch[1] });
         if (p) {
-          return res.send(injectMeta(baseHtml(), {
+          const html = injectMeta(baseHtml(), {
             title: `${p.name} — ${p.location || p.city || "Mohali"} | ${SITE_NAME}`,
             description: p.description || p.tagline,
             url: canonical,
             image: p.hero_image,
-          }));
+          });
+          const residence = {
+            "@context": "https://schema.org",
+            "@type": "Residence",
+            name: p.name,
+            description: (p.description || p.tagline || "").replace(/\s+/g, " ").trim().slice(0, 300),
+            url: canonical,
+            image: p.hero_image ? absUrl(p.hero_image) : undefined,
+            address: { "@type": "PostalAddress", streetAddress: p.location || undefined, addressLocality: p.city || "Mohali", addressRegion: "Punjab", addressCountry: "IN" },
+          };
+          const crumbs = {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: `${PUBLIC_ORIGIN}/` },
+              { "@type": "ListItem", position: 2, name: "Projects", item: `${PUBLIC_ORIGIN}/projects` },
+              { "@type": "ListItem", position: 3, name: p.name, item: canonical },
+            ],
+          };
+          return res.send(injectJsonLd(html, [residence, crumbs]));
         }
       } else if (postMatch) {
         const db = await getDb();
         const post = await db.collection("posts").findOne({ slug: postMatch[1] });
         if (post) {
-          return res.send(injectMeta(baseHtml(), {
+          const html = injectMeta(baseHtml(), {
             title: `${post.title} | ${SITE_NAME}`,
             description: post.excerpt || post.content,
             url: canonical,
             image: post.cover_image,
-          }));
+          });
+          const article = {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: post.title,
+            description: (post.excerpt || post.content || "").replace(/\s+/g, " ").trim().slice(0, 300),
+            image: post.cover_image ? absUrl(post.cover_image) : undefined,
+            datePublished: post.date || post.created_at || undefined,
+            author: { "@type": "Organization", name: post.author || SITE_NAME },
+            publisher: { "@type": "Organization", name: SITE_NAME, logo: { "@type": "ImageObject", url: `${PUBLIC_ORIGIN}/homeland-logo.webp` } },
+            mainEntityOfPage: canonical,
+          };
+          const crumbs = {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: `${PUBLIC_ORIGIN}/` },
+              { "@type": "ListItem", position: 2, name: "Insights", item: `${PUBLIC_ORIGIN}/insights` },
+              { "@type": "ListItem", position: 3, name: post.title, item: canonical },
+            ],
+          };
+          return res.send(injectJsonLd(html, [article, crumbs]));
         }
+      } else if (req.path === "/") {
+        return res.send(injectJsonLd(baseHtml(), siteJsonLd()));
       }
     } catch (e) {
       // Fall through to the plain SPA shell if a lookup fails.

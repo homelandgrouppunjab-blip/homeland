@@ -21,6 +21,15 @@ export default function Rera() {
         title="RERA & FAQ"
         path="/rera"
         description="Every Homeland Group project is RERA-registered with the Punjab Real Estate Regulatory Authority. Find all RERA registration numbers and answers to common buyer questions."
+        jsonLd={faqs.length ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.filter((f) => f.q && f.a).map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        } : undefined}
       />
       <div className="container-lux">
         <SectionHeading kicker="Transparency" title="RERA & FAQ" subtitle="Every Homeland project is RERA-registered. Find all registration numbers and answers to common questions below." />

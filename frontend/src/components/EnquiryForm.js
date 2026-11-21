@@ -15,9 +15,15 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [waNumber, setWaNumber] = useState("");
+  const [contactPhone, setContactPhone] = useState("+91 90417 95879");
+  const [contactEmail, setContactEmail] = useState("support@homelandgroupindia.com");
 
   useEffect(() => {
-    getContent().then((c) => { if (c?.contact_whatsapp) setWaNumber(c.contact_whatsapp); }).catch(() => {});
+    getContent().then((c) => {
+      if (c?.contact_whatsapp) setWaNumber(c.contact_whatsapp);
+      if (c?.contact_phone) setContactPhone(c.contact_phone);
+      if (c?.contact_email) setContactEmail(c.contact_email);
+    }).catch(() => {});
   }, []);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
@@ -54,6 +60,13 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
       form.message ? `Message: ${form.message}` : "",
     ].filter(Boolean);
     window.open(`https://wa.me/${digits}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener");
+    // Also capture the enquiry as a lead so the team has the record (best-effort).
+    createLead({ ...form, city: cityFilter === "All" ? "" : cityFilter, source: "whatsapp" }).catch(() => {});
+    // In-app auto-reply / acknowledgement with direct contact details.
+    toast.success(
+      `Thank you for contacting Homeland Group! Our team will get in touch with you shortly. 📞 ${contactPhone}  ✉️ ${contactEmail}`,
+      { duration: 7000 }
+    );
     if (onSuccess) onSuccess();
   };
 

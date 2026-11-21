@@ -5,20 +5,9 @@ import axios from "axios";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "";
 export const API = `${BACKEND_URL}/api`;
 
-const client = axios.create({ baseURL: API });
-
-client.interceptors.request.use((config) => {
-  // Bearer token for the stateless JWT API. Stored in localStorage so it can be
-  // attached as an Authorization header (see AuthContext for the storage rationale
-  // and the httpOnly-cookie migration note). Guarded in case storage is blocked.
-  try {
-    const token = localStorage.getItem("hg_token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-  } catch (e) {
-    console.warn("api: localStorage unavailable for auth token", e);
-  }
-  return config;
-});
+// withCredentials: admin + customer sessions use secure httpOnly cookies, so the
+// browser must send cookies with every request (no token in localStorage).
+const client = axios.create({ baseURL: API, withCredentials: true });
 
 // ---- Public ----
 export const getProjects = (params = {}) => client.get("/projects", { params }).then((r) => r.data);
@@ -47,6 +36,7 @@ export const getMyInquiries = () => client.get("/me/inquiries", { withCredential
 
 // ---- Admin ----
 export const adminLogin = (payload) => client.post("/admin/login", payload).then((r) => r.data);
+export const adminLogout = () => client.post("/admin/logout").then((r) => r.data);
 export const adminMe = () => client.get("/admin/me").then((r) => r.data);
 export const adminStats = () => client.get("/admin/stats").then((r) => r.data);
 export const adminGetProjects = () => client.get("/admin/projects").then((r) => r.data);

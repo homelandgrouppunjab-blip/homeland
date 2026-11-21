@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { adminLogin, adminMe } from "@/lib/api";
+import { adminLogin, adminLogout, adminMe } from "@/lib/api";
 
 const AuthContext = createContext(null);
 
@@ -8,36 +8,24 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // NOTE: The API is a stateless JWT bearer API.
-    // The token is kept in localStorage to attach as an Authorization header.
-    // Migrating to httpOnly cookies would require server-side session/CSRF handling;
-    // tracked as a separate hardening task. XSS risk is mitigated by React's default
-    // escaping and by not rendering untrusted HTML.
-    const token = localStorage.getItem("hg_token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    // Session is carried in a secure httpOnly cookie (set by /admin/login).
+    // On mount we ask the server who we are; no token is read from JS storage.
     adminMe()
       .then((d) => setEmail(d.email))
-      .catch((e) => {
-        console.warn("AuthContext: session invalid, clearing token", e);
-        localStorage.removeItem("hg_token");
-      })
+      .catch(() => setEmail(null))
       .finally(() => setLoading(false));
-    // Runs once on mount to restore an existing session; adminMe is a stable import.
+    // Runs once on mount; adminMe is a stable import.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = async (payload) => {
-    const data = await adminLogin(payload);
-    localStorage.setItem("hg_token", data.access_token);
+    const data = await adminLogin(payload); // server sets the httpOnly cookie
     setEmail(data.email);
     return data;
   };
 
-  const logout = () => {
-    localStorage.removeItem("hg_token");
+  const logout = async () => {
+    try { await adminLogout(); } catch (e) { /* clear locally regardless */ }
     setEmail(null);
   };
 

@@ -1,19 +1,101 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Bot, X, Send, Loader2 } from "lucide-react";
-import { sendChat } from "@/lib/api";
+import { Bot, X, Send, Loader2, Phone, Mail, MessageCircle } from "lucide-react";
+import { sendChat, getContent } from "@/lib/api";
 
-const GREETING = { role: "assistant", content: "Hello! I'm the Homeland Group concierge. Ask me about our projects, locations, pricing or how to book a visit." };
+const GREETING = {
+  role: "assistant",
+  content:
+    "Hello! I'm the Homeland Group concierge. Ask me anything about our projects, locations, pricing or booking a visit — or tap a question below.",
+};
+
+// Predefined question → answer pairs. Built with the live contact details so the
+// "talk to our team" reply always shows the current number/email.
+function buildFaqs(contact) {
+  const phone = contact.phone || "+91 90417 95879";
+  const email = contact.email || "support@homelandgroupindia.com";
+  const wa = (contact.whatsapp || phone || "").replace(/[^0-9]/g, "");
+  return [
+    {
+      q: "What projects do you offer?",
+      a: "We craft luxury residential and commercial landmarks across Mohali, Chandigarh, New Chandigarh, Amritsar, Kasauli and Goa — including Homeland Regalia, CP67, Homeland Heights, Global Park and Infinia. Visit the Projects page to explore them all.",
+    },
+    {
+      q: "Where are your projects located?",
+      a: "Our developments are spread across the Tricity and beyond — Mohali (Sectors 67, 70, 75, 77), New Chandigarh, Amritsar, Kasauli (Himachal) and Goa. Check the Locations page for an interactive map.",
+    },
+    {
+      q: "Are your projects RERA-registered?",
+      a: "Yes — every Homeland project is RERA-registered with the Punjab Real Estate Regulatory Authority. You'll find all registration numbers on our RERA page.",
+    },
+    {
+      q: "What are the price ranges?",
+      a: "Prices vary by project and configuration. Share your requirement and our team will send you the latest price list, floor plans and current offers.",
+    },
+    {
+      q: "How do I book a site visit?",
+      a: "You can book a site visit from the 'Book a Visit' page, or leave your details via Enquire Now and our team will arrange a convenient time for you.",
+    },
+    {
+      q: "I want to talk to your team",
+      a: `Thank you for contacting Homeland Group! 🙏 Our team will get in touch with you shortly. Meanwhile, you can reach us directly:\n\n📞 ${phone}\n✉️ ${email}`,
+      actions: [
+        { label: "Call Now", href: `tel:${phone.replace(/\s/g, "")}`, icon: "phone" },
+        wa ? { label: "WhatsApp", href: `https://wa.me/${wa}?text=${encodeURIComponent("Hi Homeland Group, I'd like to enquire about your projects.")}`, icon: "whatsapp" } : null,
+        { label: "Email", href: `mailto:${email}`, icon: "mail" },
+      ].filter(Boolean),
+    },
+  ];
+}
+
+// Strip any Markdown / special characters so AI replies render as clean plain
+// text in a simple series (the model is also told to avoid them server-side).
+function toPlainText(s) {
+  return String(s || "")
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/__(.*?)__/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/`([^`]*)`/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^[\t ]*[-•]\s+/gm, "")
+    .replace(/\*/g, "")
+    .trim();
+}
+
+const ActionIcon = ({ name }) => {
+  if (name === "phone") return <Phone className="h-3.5 w-3.5" />;
+  if (name === "mail") return <Mail className="h-3.5 w-3.5" />;
+  return <MessageCircle className="h-3.5 w-3.5" />;
+};
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([GREETING]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [contact, setContact] = useState({ phone: "", email: "", whatsapp: "" });
   const scrollRef = useRef(null);
+
+  useEffect(() => {
+    getContent()
+      .then((c) => setContact({ phone: c?.contact_phone || "", email: c?.contact_email || "", whatsapp: c?.contact_whatsapp || "" }))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, open, loading]);
+
+  const faqs = buildFaqs(contact);
+
+  // Answer a predefined question instantly (no API call).
+  const askFaq = (faq) => {
+    if (loading) return;
+    setMessages((m) => [
+      ...m,
+      { role: "user", content: faq.q },
+      { role: "assistant", content: faq.a, actions: faq.actions },
+    ]);
+  };
 
   const send = async () => {
     const text = input.trim();
@@ -23,10 +105,10 @@ export default function Chatbot() {
     setInput("");
     setLoading(true);
     try {
-      const { reply } = await sendChat(next.filter((m) => m.role !== "system"));
-      setMessages((m) => [...m, { role: "assistant", content: reply || "Sorry, I didn't catch that." }]);
+      const { reply } = await sendChat(next.filter((m) => m.role !== "system").map(({ role, content }) => ({ role, content })));
+      setMessages((m) => [...m, { role: "assistant", content: toPlainText(reply) || "Sorry, I didn't catch that." }]);
     } catch {
-      setMessages((m) => [...m, { role: "assistant", content: "I'm having trouble right now. Please try again, or reach us via the Enquire Now button." }]);
+      setMessages((m) => [...m, { role: "assistant", content: "I'm having trouble right now. Please try again, or tap 'I want to talk to your team' below." }]);
     } finally {
       setLoading(false);
     }
@@ -66,21 +148,56 @@ export default function Chatbot() {
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div
-                  data-testid={`chatbot-msg-${m.role}`}
-                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-                    m.role === "user"
-                      ? "bg-[rgba(212,175,55,0.16)] text-ivory rounded-br-sm"
-                      : "bg-white/5 text-[color:var(--lux-ivory)]/85 rounded-bl-sm"
-                  }`}
-                >
-                  {m.content}
+                <div className={`max-w-[85%] ${m.role === "user" ? "" : "w-full"}`}>
+                  <div
+                    data-testid={`chatbot-msg-${m.role}`}
+                    className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-line ${
+                      m.role === "user"
+                        ? "bg-[rgba(212,175,55,0.16)] text-ivory rounded-br-sm inline-block"
+                        : "bg-white/5 text-[color:var(--lux-ivory)]/85 rounded-bl-sm"
+                    }`}
+                  >
+                    {m.content}
+                  </div>
+                  {m.actions && m.actions.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2" data-testid="chatbot-msg-actions">
+                      {m.actions.map((a) => (
+                        <a
+                          key={a.label}
+                          href={a.href}
+                          target={a.icon === "whatsapp" ? "_blank" : undefined}
+                          rel="noreferrer"
+                          data-testid={`chatbot-action-${a.label.toLowerCase().replace(/\s+/g, "-")}`}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border-gold)] bg-[rgba(212,175,55,0.08)] px-3 py-1.5 text-xs font-semibold text-gold hover:bg-[rgba(212,175,55,0.18)] transition-colors"
+                        >
+                          <ActionIcon name={a.icon} /> {a.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
             {loading && (
               <div className="flex justify-start"><div className="rounded-2xl bg-white/5 px-3.5 py-2.5 text-sm text-[color:var(--lux-ivory)]/60 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Typing…</div></div>
             )}
+          </div>
+
+          {/* Quick-reply question chips */}
+          <div className="px-3 pt-2 border-t border-[color:var(--border-hairline)]">
+            <div className="flex gap-2 overflow-x-auto pb-2" data-testid="chatbot-quick-replies">
+              {faqs.map((f) => (
+                <button
+                  key={f.q}
+                  onClick={() => askFaq(f)}
+                  disabled={loading}
+                  data-testid={`chatbot-faq-${f.q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`}
+                  className="shrink-0 rounded-full border border-[color:var(--border-hairline)] bg-[color:var(--lux-obsidian)] px-3 py-1.5 text-xs text-[color:var(--lux-ivory)]/80 hover:border-[color:var(--border-gold)] hover:text-gold disabled:opacity-40 transition-colors"
+                >
+                  {f.q}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="p-3 border-t border-[color:var(--border-hairline)] flex items-end gap-2">

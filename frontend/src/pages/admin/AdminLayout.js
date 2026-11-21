@@ -18,7 +18,7 @@ const NAV = [
 export default function AdminLayout() {
   const { logout, email } = useAuth();
   const nav = useNavigate();
-  const doLogout = () => { logout(); nav("/admin/login"); };
+  const doLogout = async () => { await logout(); nav("/admin/login"); };
 
   return (
     <div className="min-h-screen flex">

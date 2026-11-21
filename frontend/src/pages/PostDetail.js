@@ -26,17 +26,6 @@ export default function PostDetail() {
         description={(post.excerpt || post.content || "").replace(/\s+/g, " ").trim().slice(0, 300)}
         image={post.cover_image}
         type="article"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: post.title,
-          description: (post.excerpt || "").slice(0, 300),
-          image: post.cover_image || undefined,
-          datePublished: post.date || undefined,
-          author: { "@type": "Organization", name: post.author || "Homeland Group" },
-          publisher: { "@type": "Organization", name: "Homeland Group Mohali" },
-          mainEntityOfPage: `https://www.homelandgroupindia.com/insights/${post.slug}`,
-        }}
       />
       <div className="relative h-[52vh] min-h-[360px]">
         <img src={post.cover_image} alt={post.title} className="h-full w-full object-cover" />

@@ -1,18 +1,26 @@
 [
   {
-    "content": "Blog Humanize: rewrite all Insights posts (title/excerpt/content) in premium voice; apply to seed + DB",
+    "content": "Cookie-based admin login (backend + frontend) — tested 100% by testing agent",
     "status": "completed"
   },
   {
-    "content": "Social Share Preview: server-side inject per-project & per-post OG/Twitter meta into index.html for crawlers",
+    "content": "FAQ structured data (FAQPage JSON-LD on Rera)",
     "status": "completed"
   },
   {
-    "content": "Project Specs Depth: enrich projects with official floor plans, amenities & unit sizes from Homeland sites",
+    "content": "SEO engine: dynamic sitemap + server-side JSON-LD + IndexNow auto-submit",
     "status": "completed"
   },
   {
-    "content": "Reseed/apply to DB, compile + build check, verify via curl (crawler UA) + screenshots",
+    "content": "WhatsApp enquiry auto-reply (thank-you + mobile + email) and capture as lead",
     "status": "completed"
+  },
+  {
+    "content": "Chatbot predefined Q&A + contact auto-reply with Call/WhatsApp/Email actions",
+    "status": "completed"
+  },
+  {
+    "content": "Production build + restart backend",
+    "status": "in_progress"
   }
 ]

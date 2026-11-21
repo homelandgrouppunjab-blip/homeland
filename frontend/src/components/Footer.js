@@ -57,7 +57,7 @@ export const Footer = () => {
             <h4 className="text-sm font-semibold text-ivory uppercase tracking-wider mb-4">Get in Touch</h4>
             <ul className="space-y-3 text-sm text-[color:var(--lux-ivory)]/70">
               <li className="flex items-start gap-3"><Phone className="h-4 w-4 text-gold mt-0.5 shrink-0" /><a href={`tel:${content?.contact_phone || "+91 90417 95879"}`} className="hover:text-gold">{content?.contact_phone || "+91 90417 95879"}</a></li>
-              <li className="flex items-start gap-3"><Mail className="h-4 w-4 text-gold mt-0.5 shrink-0" /><a href={`mailto:${content?.contact_email}`} className="hover:text-gold break-all">{content?.contact_email || "sales@homelandgroup.org"}</a></li>
+              <li className="flex items-start gap-3"><Mail className="h-4 w-4 text-gold mt-0.5 shrink-0" /><a href={`mailto:${content?.contact_email}`} className="hover:text-gold break-all">{content?.contact_email || "support@homelandgroupindia.com"}</a></li>
               <li className="flex items-start gap-3"><MapPin className="h-4 w-4 text-gold mt-0.5 shrink-0" /><span>{content?.contact_address || "Sector 77, Mohali, Punjab"}</span></li>
             </ul>
           </div>
