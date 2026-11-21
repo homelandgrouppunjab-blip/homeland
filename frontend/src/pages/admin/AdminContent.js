@@ -293,6 +293,15 @@ export default function AdminContent() {
             <p className="text-xs text-[color:var(--lux-ivory)]/50 mb-3">Paste the embed code from a free widget service (Behold, SnapWidget or EmbedSocial). Your latest posts then appear automatically on the Updates page. Leave empty to hide the feed.</p>
             <textarea rows={5} className={cls} value={c.instagram_embed || ""} onChange={(e) => set("instagram_embed", e.target.value)} placeholder="<script>…</script> or <iframe…> widget code" data-testid="admin-content-instagram-embed" />
           </div>
+          <div className="pt-4 border-t border-[color:var(--border-hairline)]">
+            <h3 className="text-sm font-semibold text-ivory mb-1">Allowed Embed Providers</h3>
+            <p className="text-xs text-[color:var(--lux-ivory)]/50 mb-3">For security, only widget scripts from these domains are allowed to run in the embed above. One domain per line (e.g. <code className="text-gold">behold.so</code>). Leave empty to use the built-in trusted list (Behold, SnapWidget, EmbedSocial, Elfsight, etc.).</p>
+            <textarea rows={4} className={cls}
+              value={(c.social_embed_allowlist || []).join("\n")}
+              onChange={(e) => set("social_embed_allowlist", e.target.value.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean))}
+              placeholder={"behold.so\nsnapwidget.com\nembedsocial.com"}
+              data-testid="admin-content-embed-allowlist" />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

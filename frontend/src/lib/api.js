@@ -75,6 +75,11 @@ export const adminUpdateUpdate = (id, p) => client.put(`/admin/updates/${id}`, p
 export const adminDeleteUpdate = (id) => client.delete(`/admin/updates/${id}`).then((r) => r.data);
 export const adminAiDesign = (prompt) => client.post("/admin/ai/design", { prompt }).then((r) => r.data);
 
+// ---- Sync & health ----
+export const getHealth = () => client.get("/health").then((r) => r.data);
+export const adminSyncStatus = () => client.get("/admin/sync/status").then((r) => r.data);
+export const adminSyncRun = () => client.post("/admin/sync/run").then((r) => r.data);
+
 export const uploadFile = (file) => {
   const fd = new FormData();
   fd.append("file", file);

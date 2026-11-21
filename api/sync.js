@@ -33,6 +33,15 @@ let client = null;
 let running = false;
 let timer = null;
 
+// Last-run state, surfaced to the admin Sync panel and /api/health.
+const state = {
+  lastRunAt: null,       // ISO timestamp of the last completed pass
+  lastDurationMs: null,  // how long that pass took
+  lastResult: null,      // "ok" | "error"
+  lastError: null,       // error message if the last pass failed
+  lastSummary: null,     // per-collection { upserts, deletes }
+};
+
 async function getMongoDb() {
   const url = process.env.MONGO_URL;
   if (!url) return null;
@@ -115,9 +124,17 @@ async function syncOnce() {
     }
 
     const ms = Date.now() - started;
+    state.lastRunAt = new Date().toISOString();
+    state.lastDurationMs = ms;
+    state.lastResult = "ok";
+    state.lastError = null;
+    state.lastSummary = summary;
     log(`mirror complete in ${ms}ms`, JSON.stringify(summary));
     return { ok: true, ms, summary };
   } catch (e) {
+    state.lastRunAt = new Date().toISOString();
+    state.lastResult = "error";
+    state.lastError = e.message;
     errlog("mirror failed:", e.message);
     return { ok: false, error: e.message };
   } finally {
@@ -148,4 +165,34 @@ function start() {
   }
 }
 
-module.exports = { start, syncOnce };
+module.exports = { start, syncOnce, status, pingMongo };
+
+// Current mirror configuration + last-run state (for the admin Sync panel).
+function status() {
+  return {
+    enabled: !!process.env.MONGO_URL,
+    driverInstalled: !!MongoClient,
+    sourceOfTruth: process.env.MONGO_URL ? "MongoDB" : "MySQL",
+    intervalSec: parseInt(process.env.MONGO_SYNC_INTERVAL_SEC || "60", 10),
+    deleteEnabled: truthy(process.env.MONGO_SYNC_DELETE || ""),
+    running,
+    lastRunAt: state.lastRunAt,
+    lastDurationMs: state.lastDurationMs,
+    lastResult: state.lastResult,
+    lastError: state.lastError,
+    lastSummary: state.lastSummary,
+  };
+}
+
+// Lightweight connectivity check used by /api/health and the admin panel.
+async function pingMongo() {
+  if (!process.env.MONGO_URL) return { configured: false, ok: false };
+  if (!MongoClient) return { configured: true, ok: false, error: "mongodb driver not installed" };
+  try {
+    const mdb = await getMongoDb();
+    await mdb.command({ ping: 1 });
+    return { configured: true, ok: true };
+  } catch (e) {
+    return { configured: true, ok: false, error: e.message };
+  }
+}

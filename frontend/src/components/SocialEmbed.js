@@ -24,20 +24,27 @@ const ALLOWED_SCRIPT_HOSTS = [
   "juicer.io", "assets.juicer.io",
 ];
 
-function isAllowedScriptSrc(src) {
+// Exposed so the admin UI can show the built-in default providers.
+export const DEFAULT_EMBED_HOSTS = ALLOWED_SCRIPT_HOSTS;
+
+function isAllowedScriptSrc(src, hosts) {
   if (!src) return false;
   try {
     const url = new URL(src, window.location.origin);
     if (url.protocol !== "https:") return false;
     const host = url.hostname.toLowerCase();
-    return ALLOWED_SCRIPT_HOSTS.some((h) => host === h || host.endsWith("." + h));
+    return hosts.some((h) => host === h || host.endsWith("." + h));
   } catch {
     return false;
   }
 }
 
-export default function SocialEmbed({ code, className = "" }) {
+export default function SocialEmbed({ code, className = "", allowedHosts }) {
   const ref = useRef(null);
+  // Admin-managed allowlist (from site content) overrides the defaults when set.
+  const hosts = Array.isArray(allowedHosts) && allowedHosts.length
+    ? allowedHosts.map((h) => String(h).trim().toLowerCase()).filter(Boolean)
+    : ALLOWED_SCRIPT_HOSTS;
 
   useEffect(() => {
     const el = ref.current;
@@ -55,7 +62,7 @@ export default function SocialEmbed({ code, className = "" }) {
     const scripts = Array.from(parsed.querySelectorAll("script"));
     scripts.forEach((old) => {
       const src = old.getAttribute("src");
-      if (!isAllowedScriptSrc(src)) return; // skip inline + non-allowlisted scripts
+      if (!isAllowedScriptSrc(src, hosts)) return; // skip inline + non-allowlisted scripts
       const s = document.createElement("script");
       s.src = src;
       if (old.async) s.async = true;
@@ -64,7 +71,7 @@ export default function SocialEmbed({ code, className = "" }) {
       if (charset) s.setAttribute("charset", charset);
       el.appendChild(s);
     });
-  }, [code]);
+  }, [code, hosts.join("|")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!code) return null;
   return <div ref={ref} className={className} data-testid="social-embed" />;
