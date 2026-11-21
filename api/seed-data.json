@@ -75,7 +75,7 @@
     {
       "name": "CP67",
       "slug": "cp67",
-      "tagline": "Many Reasons to Be Here.",
+      "tagline": "Premium Retail, Offices & Multiplex on 200 ft Airport Road",
       "status": "DELIVERED",
       "possession": "100% Leased Asset",
       "delivery_year": "",
@@ -92,7 +92,7 @@
       "key_units": "Pre-leased Showrooms · Food Courts · Grade-A Offices",
       "price_range": "On Request",
       "rera_numbers": [
-        "PBRERA-SAS80-PR0198"
+        "PBRERA-SAS81-PC-0045"
       ],
       "rera_registered_date": "2016-11-05",
       "rera_certificate_url": "",
@@ -105,7 +105,7 @@
         "24x7 Security",
         "Premium International Brand Mix"
       ],
-      "description": "CP67 Mohali is where life, work, shopping, dining and entertainment converge seamlessly. A place where patrons indulge, retailers thrive and businesses grow. With a rich legacy of standardized business spaces and delightful food hubs, CP67 has become a symbol of productivity, excellence and progress — built on the trust and belief of our clients.",
+      "description": "CP67 is Mohali’s most iconic commercial mixed-use landmark, sprawling across a massive 75 lakh sq.ft of prime real estate on the prestigious 200 ft Airport Road — bringing together premium retail, Grade-A offices and a multiplex under one address.",
       "highlights": [
         "Longest frontage on the International Airport Road",
         "100% leased, operational asset",
@@ -186,12 +186,12 @@
       "visible": true,
       "id": "518347d2-2cc8-499f-b6e8-b97e009af4f7",
       "created_at": "2026-08-09T16:11:56.555809+00:00",
-      "updated_at": "2026-10-11T23:42:45.804Z"
+      "updated_at": "2026-11-21T13:40:09.319Z"
     },
     {
       "name": "Homeland Global Park",
       "slug": "homeland-global-park",
-      "tagline": "The Most Lucrative Investment in India's Most Lucrative Destination.",
+      "tagline": "Premium Mall, Luxury Retail & Serviced Residences",
       "status": "ONGOING",
       "possession": "Possession by Mar 2028",
       "delivery_year": "",
@@ -223,7 +223,7 @@
         "Serviced Residences",
         "Smart Parking"
       ],
-      "description": "Homeland Global Park is a massive mixed-use development in Punjab featuring an uber-premium luxury mall, business suites and serviced residences. It aims to redefine shopping, working, playing and living in the region — capitalizing on Punjab's rapid growth and its position as one of India's most lucrative investment destinations.",
+      "description": "Homeland Global Park is Homeland Group’s visionary mixed-use development on the prestigious PR-7 Airport Road, Mohali — combining a premium mall, luxury retail and serviced residences.",
       "highlights": [
         "Uber-premium luxury mall & high-street retail",
         "Business suites + serviced residences",
@@ -303,12 +303,12 @@
       "visible": true,
       "id": "9740f88a-36a4-4504-8424-eeb9bbbc4c7d",
       "created_at": "2026-08-09T16:11:56.554608+00:00",
-      "updated_at": "2026-10-11T23:42:52.444Z"
+      "updated_at": "2026-11-21T13:40:09.319Z"
     },
     {
       "name": "Homeland Ranjit Avenue",
       "slug": "homeland-ranjit-avenue",
-      "tagline": "Your Dream Home Awaits in Amritsar.",
+      "tagline": "Pre-Launch Ultra-Luxury Residences in Ranjit Avenue, Amritsar",
       "status": "UPCOMING",
       "possession": "Launching Soon",
       "delivery_year": "",
@@ -334,7 +334,7 @@
         "24x7 Security",
         "Children's Play Area"
       ],
-      "description": "Homeland Amritsar (Ranjit Avenue) is a premium residential project in the heart of Ranjit Avenue, blending modern architecture with luxurious living. Strategically located near major landmarks, it offers a comfortable lifestyle with all essential amenities.",
+      "description": "Homeland Ranjit Avenue is an exclusive pre-launch luxury residential project in Ranjit Avenue, Amritsar, developed in partnership between Homeland Group and VRC — featuring two magnificent sites spanning 17.5 acres in total.",
       "highlights": [
         "Prime Ranjit Avenue location",
         "Mixed-use premium development",
@@ -374,7 +374,7 @@
       "visible": true,
       "id": "a4c64762-1279-443c-a47f-48fb92389b28",
       "created_at": "2026-08-09T16:11:56.557345+00:00",
-      "updated_at": "2026-10-11T23:42:45.817Z"
+      "updated_at": "2026-11-21T13:40:09.319Z"
     },
     {
       "name": "Ikaahi Homes",
@@ -449,7 +449,7 @@
     {
       "name": "Homeland Infinia",
       "slug": "homeland-infinia",
-      "tagline": "Where New Chandigarh Meets Its Finest Address.",
+      "tagline": "Upcoming Ultra-Luxury 3/4/5 BHK Apartments Opposite PCA Stadium",
       "status": "ONGOING",
       "possession": "Possession by Dec 2026",
       "delivery_year": "",
@@ -479,7 +479,7 @@
         "Parking Facility",
         "Jogging Track"
       ],
-      "description": "Discover Homeland Infinia, offering ultra-luxury apartments in New Chandigarh. Experience premium residences, modern amenities and elegant living amidst the green, planned township at the foothills of the Shivaliks.",
+      "description": "Homeland Infinia is Homeland Group’s upcoming ultra-luxury residential development in New Chandigarh, positioned opposite the iconic PCA International Cricket Stadium — featuring ultra-luxury 3/4/5 BHK apartments.",
       "highlights": [
         "Foothills of the Shivaliks",
         "Planned green township of New Chandigarh",
@@ -555,12 +555,12 @@
       "visible": true,
       "id": "d5e119ea-3b24-4a99-a878-4bd6d6f7219d",
       "created_at": "2026-08-09T16:11:56.556330+00:00",
-      "updated_at": "2026-10-11T23:42:45.811Z"
+      "updated_at": "2026-11-21T13:40:09.319Z"
     },
     {
       "name": "Homeland Vaana",
       "slug": "homeland-vaana",
-      "tagline": "A Serene Retreat in Kasauli.",
+      "tagline": "Wellness Homes in the Shivalik Hills, Himachal Pradesh",
       "status": "UPCOMING",
       "possession": "Launching Soon",
       "delivery_year": "",
@@ -587,7 +587,7 @@
         "24x7 Security",
         "Landscaped Gardens"
       ],
-      "description": "Homeland Vaana offers a tranquil living experience amidst the lush greenery of Kasauli. With modern architecture, premium amenities and spacious villas with stunning valley views, it is designed for those seeking peace and luxury away from the city.",
+      "description": "Homeland Vaana is a premium residential and wellness-focused development in the Shivalik Hills near Dharampur, Himachal Pradesh, at an altitude of approximately 1,500 metres — offering studios, 1/2/3 BHK apartments and premium villas. Price on request.",
       "highlights": [
         "Luxury villas in serene Kasauli",
         "Stunning valley & hill views",
@@ -626,12 +626,12 @@
       "visible": true,
       "id": "e2e56bcb-0d28-4de0-b926-99d99c6c8a67",
       "created_at": "2026-08-09T16:11:56.557917+00:00",
-      "updated_at": "2026-10-11T23:42:45.805Z"
+      "updated_at": "2026-11-21T13:40:09.319Z"
     },
     {
       "name": "Homeland Heights",
       "slug": "homeland-heights",
-      "tagline": "Live the Luxury.",
+      "tagline": "Ready-to-Move Luxury 3/4/5/6 BHK Apartments in Sector 70",
       "status": "DELIVERED",
       "possession": "Delivered · Ready to Move",
       "delivery_year": "",
@@ -661,7 +661,7 @@
         "Game Zone",
         "Swimming Pool, Kids Pool & Pool Deck"
       ],
-      "description": "Homeland Heights is one of its kind luxury residential projects with avant-garde splendour and distinctive architectural supremacy. Each home is seamlessly blended with efficacy and magnificence, with attention to detail that offers convenience and comfort. Widely spaced apartments with ample ventilation ensure a harmonious living experience for those who never settle for less.",
+      "description": "Homeland Heights is the iconic residential landmark that put Homeland Group on the map — a delivered, ready-to-move masterpiece in Sector 70, Mohali, featuring luxury 3/4/5/6 BHK apartments.",
       "highlights": [
         "Delivered, ready-to-move luxury residences",
         "Spacious, well-ventilated homes",
@@ -745,12 +745,12 @@
       "visible": true,
       "id": "ebccbaac-25b0-48ee-aa7c-3478b91add0d",
       "created_at": "2026-08-09T16:11:56.555210+00:00",
-      "updated_at": "2026-10-11T23:42:45.811Z"
+      "updated_at": "2026-11-21T13:40:09.319Z"
     },
     {
       "name": "Homeland Regalia",
       "slug": "homeland-regalia",
-      "tagline": "The Most Powerful Address in Punjab — Reserved for the Exclusive Few.",
+      "tagline": "Ultra-Luxury 3/4/5 BHK Apartments & Penthouses in Sector 77",
       "status": "ONGOING",
       "possession": "Possession by Dec 2026",
       "delivery_year": "",
@@ -787,7 +787,7 @@
         "Club Deck with Bar & Cafe",
         "Reflexology Plaza"
       ],
-      "description": "Experience ultra-luxury living at Homeland Regalia, a premium residential project designed as a true symbol of royalty. With top-tier amenities, lush green surroundings, and unmatched connectivity to Mohali, Chandigarh, and beyond, this is not just a home, it is a royal lifestyle. Thoughtfully designed and carefully crafted by one of the most trusted builders in North India, Homeland Regalia is ideal for those seeking family-friendly residential apartments with modern amenities.",
+      "description": "Homeland Regalia is the most ambitious ultra-luxury residential project in the Tricity, set on 4.58 acres in Sector 77, Mohali — offering expansive 3/4/5 BHK apartments and penthouses crafted for modern luxury living.",
       "highlights": [
         "6 iconic towers with panoramic Shivalik views",
         "3-side open sky residences with private decks",
@@ -878,7 +878,7 @@
       "visible": true,
       "id": "f94e4d1f-866f-4a60-8ed6-336b90ecc56b",
       "created_at": "2026-08-09T16:11:56.553606+00:00",
-      "updated_at": "2026-10-11T23:42:45.806Z"
+      "updated_at": "2026-11-21T13:40:09.319Z"
     },
     {
       "id": "e5d79613-9a03-49ba-b216-773b5e26dd3e",
