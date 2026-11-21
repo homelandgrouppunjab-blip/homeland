@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { MapPin, FileText, ShieldCheck, Check, Copy, Play, ChevronLeft, ChevronRight, X, Home, Ruler, CalendarClock, Building2, Layers, Waves, Dumbbell, Car, Trees, Utensils, ArrowUpDown, Baby, Sparkles, Users, Zap, BatteryCharging, Droplets, Sun, Snowflake, Briefcase, Film, ShoppingBag, Compass, Wind, Trophy, ChefHat, BellRing, Store, Maximize2, Plus, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { getProject, getProjects } from "@/lib/api";
+import { logger } from "@/lib/logger";
 import StatusBadge from "@/components/StatusBadge";
 import ProjectMap from "@/components/ProjectMap";
 import LogoPlaque from "@/components/LogoPlaque";
@@ -78,8 +79,8 @@ export default function ProjectDetail() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    getProject(slug).then((d) => { setP(d); setActive(0); }).catch((e) => { console.error("ProjectDetail: failed to load project", e); setP(null); });
-    getProjects().then(setAll).catch((e) => console.error("ProjectDetail: failed to load projects", e));
+    getProject(slug).then((d) => { setP(d); setActive(0); }).catch((e) => { logger.error("ProjectDetail: failed to load project", e); setP(null); });
+    getProjects().then(setAll).catch((e) => logger.error("ProjectDetail: failed to load projects", e));
     // Re-fetch only when the slug changes; the api helpers are stable imports.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);

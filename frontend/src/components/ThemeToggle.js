@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 export const ThemeToggle = ({ className = "" }) => {
   const [light, setLight] = useState(
@@ -12,14 +13,14 @@ export const ThemeToggle = ({ className = "" }) => {
       const isLight = saved === "light";
       document.documentElement.classList.toggle("light", isLight);
       setLight(isLight);
-    } catch (e) { console.warn("ThemeToggle: could not read saved theme from storage", e); }
+    } catch (e) { logger.warn("ThemeToggle: could not read saved theme from storage", e); }
   }, []);
 
   const toggle = () => {
     const next = !light;
     setLight(next);
     document.documentElement.classList.toggle("light", next);
-    try { localStorage.setItem("hg_theme", next ? "light" : "dark"); } catch (e) { console.warn("ThemeToggle: could not persist theme to storage", e); }
+    try { localStorage.setItem("hg_theme", next ? "light" : "dark"); } catch (e) { logger.warn("ThemeToggle: could not persist theme to storage", e); }
   };
 
   return (

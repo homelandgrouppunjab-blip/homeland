@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { adminLogin, adminLogout, adminMe } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 const AuthContext = createContext(null);
 
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }) => {
       await adminLogout();
     } catch (error) {
       // Non-fatal: the server session clears on its own; log and clear locally.
-      console.warn("AuthContext: logout request failed, clearing session locally", error);
+      logger.warn("AuthContext: logout request failed, clearing session locally", error);
     }
     setEmail(null);
   };

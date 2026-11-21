@@ -55,7 +55,7 @@ export default function Home() {
               {(content?.benchmark_kpis || []).slice(0, 4).map((k, idx) => {
                 const Icon = ICONS[k.icon] || Award;
                 return (
-                  <div key={idx} className="rounded-2xl bg-glass hairline p-6">
+                  <div key={k.label || k.value || idx} className="rounded-2xl bg-glass hairline p-6">
                     <Icon className="h-6 w-6 text-gold" />
                     <div className="mt-4 font-display text-3xl text-ivory tabular-nums">{k.value}</div>
                     <div className="text-xs text-[color:var(--lux-ivory)]/60 mt-1">{k.label}</div>
@@ -69,7 +69,7 @@ export default function Home() {
           <FadeUp delay={0.15}>
             <div data-testid="home-history-summary" className="mt-12 max-w-4xl space-y-5">
               {content.history_full.slice(1).map((para, i) => (
-                <p key={i} className="text-[color:var(--lux-ivory)]/70 leading-relaxed">{para}</p>
+                <p key={para.slice(0, 40)} className="text-[color:var(--lux-ivory)]/70 leading-relaxed">{para}</p>
               ))}
               <Link to="/about" className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:gap-3 transition-all">
                 Read Our Full Story <ArrowRight className="h-4 w-4" />
@@ -113,7 +113,7 @@ export default function Home() {
             {(content?.benchmark_kpis || []).map((k, idx) => {
               const Icon = ICONS[k.icon] || Award;
               return (
-                <FadeUp key={idx} delay={idx * 0.05}>
+                <FadeUp key={k.label || k.value || idx} delay={idx * 0.05}>
                   <div className="rounded-2xl bg-glass hairline p-6 h-full">
                     <div className="flex items-center gap-3">
                       <Icon className="h-5 w-5 text-gold" />
@@ -134,7 +134,7 @@ export default function Home() {
         <SectionHeading kicker="Our Journey" title="Milestones That Shaped Us" subtitle="From our first foundation stone to today's landmark addresses, each milestone reflects a decision to build better. This is the story behind the trust our homeowners place in us." />
         <div className="mt-12 grid md:grid-cols-2 gap-x-16">
           {(content?.milestones || []).map((m, idx) => (
-            <FadeUp key={idx} delay={idx * 0.05}>
+            <FadeUp key={m.year || m.title || idx} delay={idx * 0.05}>
               <div className="relative pl-8 pb-10 border-l border-[color:var(--border-hairline)]">
                 <span className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-gold ring-4 ring-[rgba(212,175,55,0.2)]" />
                 <div className="text-gold font-display text-2xl">{m.year}</div>
@@ -167,7 +167,7 @@ export default function Home() {
             <SectionHeading kicker="Our Vision" title="Building the Future of Living" subtitle={content?.vision_statement || "We design more than buildings — we shape the way tomorrow lives, works and gathers. Guided by innovation, sustainability and enduring craftsmanship, our vision is to create landmark communities that stand proudly for generations."} />
             <div className="mt-8 space-y-3">
               {(content?.vision_pillars || []).slice(0, 5).map((p, idx) => (
-                <FadeUp key={idx} delay={idx * 0.05}>
+                <FadeUp key={p.title || idx} delay={idx * 0.05}>
                   <div className="flex items-start gap-4 rounded-xl bg-glass hairline p-4">
                     <div className="h-8 w-8 shrink-0 grid place-items-center rounded-full bg-[rgba(212,175,55,0.12)] text-gold text-sm font-semibold">{idx + 1}</div>
                     <div>
@@ -208,7 +208,7 @@ export default function Home() {
             <SectionHeading kicker="Enquire Now" title="Begin Your Homeland Journey" subtitle="Share your details and our relationship managers will curate the perfect address for you." />
             <div className="mt-8 space-y-4">
               {(content?.vision_pillars || []).slice(0, 3).map((p, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm text-[color:var(--lux-ivory)]/70">
+                <div key={p.title || i} className="flex items-center gap-3 text-sm text-[color:var(--lux-ivory)]/70">
                   <ShieldCheck className="h-4 w-4 text-gold" /> {p.title}
                 </div>
               ))}

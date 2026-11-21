@@ -23,7 +23,7 @@ export const ProjectMap = ({ points = [], center, zoom = 11, height = "420px", o
           maxZoom={19}
         />
         {valid.map((p, i) => (
-          <Marker key={i} position={[p.map_lat, p.map_lng]} icon={goldIcon}
+          <Marker key={p.slug || p.name || i} position={[p.map_lat, p.map_lng]} icon={goldIcon}
             eventHandlers={{ click: () => onSelect && onSelect(p) }}>
             <Popup>
               <div style={{ minWidth: 160 }}>

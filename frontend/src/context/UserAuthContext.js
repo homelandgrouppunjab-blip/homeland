@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { authSession, authMe, authLogout, getFavoriteSlugs, addFavorite, removeFavorite } from "@/lib/api";
+import { logger } from "@/lib/logger";
 
 const UserAuthContext = createContext(null);
 export const useUser = () => useContext(UserAuthContext);
@@ -36,7 +37,7 @@ export const UserProvider = ({ children }) => {
       authSession(sid)
         .then((d) => { setUser(d.user); return loadFavorites(); })
         .catch((e) => {
-          console.error("UserAuth: sign-in session exchange failed", e);
+          logger.error("UserAuth: sign-in session exchange failed", e);
           toast.error("Sign-in failed", { description: "We couldn't complete your sign-in. Please try again." });
         })
         .finally(() => {
@@ -55,7 +56,7 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    try { await authLogout(); } catch (e) { console.warn("UserAuth: logout request failed; clearing local session anyway", e); }
+    try { await authLogout(); } catch (e) { logger.warn("UserAuth: logout request failed; clearing local session anyway", e); }
     setUser(null);
     setFavorites([]);
   };

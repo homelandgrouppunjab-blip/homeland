@@ -1,26 +1,22 @@
 [
   {
-    "content": "Cookie-based admin login (backend + frontend) — tested 100% by testing agent",
+    "content": "Add dev-only logger util and replace console.* across 6 files",
     "status": "completed"
   },
   {
-    "content": "FAQ structured data (FAQPage JSON-LD on Rera)",
+    "content": "Fix index-based keys with stable keys (Home, HeroSlider, ProjectMap)",
     "status": "completed"
   },
   {
-    "content": "SEO engine: dynamic sitemap + server-side JSON-LD + IndexNow auto-submit",
+    "content": "Fix hook dependencies safely (memoize AdminUpdates load; keep others lint-clean)",
     "status": "completed"
   },
   {
-    "content": "WhatsApp enquiry auto-reply (thank-you + mobile + email) and capture as lead",
+    "content": "Verify SocialEmbed XSS mitigation is sound (DOMPurify already in place)",
     "status": "completed"
   },
   {
-    "content": "Chatbot predefined Q&A + contact auto-reply with Call/WhatsApp/Email actions",
-    "status": "completed"
-  },
-  {
-    "content": "Production build + restart backend",
+    "content": "Compile check (esbuild) + production build + screenshot verify",
     "status": "in_progress"
   }
 ]

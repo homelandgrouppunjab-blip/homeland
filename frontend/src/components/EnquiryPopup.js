@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getProjects } from "@/lib/api";
+import { logger } from "@/lib/logger";
 import EnquiryModal from "@/components/EnquiryModal";
 
 export const LEAD_KEY = "homeland_lead_submitted";
@@ -10,7 +11,7 @@ export const EnquiryPopup = () => {
 
   useEffect(() => {
     // Show the enquiry invite after a delay so visitors can view the page first.
-    getProjects().then(setProjects).catch((e) => console.error("EnquiryPopup: failed to load projects", e));
+    getProjects().then(setProjects).catch((e) => logger.error("EnquiryPopup: failed to load projects", e));
     const t = setTimeout(() => {
       setOpen(true);
     }, 7000);
@@ -20,7 +21,7 @@ export const EnquiryPopup = () => {
   }, []);
 
   const markLead = () => {
-    try { sessionStorage.setItem(LEAD_KEY, "1"); } catch (e) { console.warn("EnquiryPopup: could not persist LEAD_KEY", e); }
+    try { sessionStorage.setItem(LEAD_KEY, "1"); } catch (e) { logger.warn("EnquiryPopup: could not persist LEAD_KEY", e); }
   };
 
   return (

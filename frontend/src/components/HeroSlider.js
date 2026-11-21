@@ -79,8 +79,8 @@ export const HeroSlider = ({ projects = [] }) => {
 
       <div className="absolute bottom-8 left-0 right-0 z-10 container-lux flex items-center justify-between">
         <div className="flex gap-2">
-          {projects.map((_, idx) => (
-            <button key={idx} aria-label={`Slide ${idx + 1}`} onClick={() => setI(idx)}
+          {projects.map((p, idx) => (
+            <button key={p.slug || p.id || idx} aria-label={`Slide ${idx + 1}`} onClick={() => setI(idx)}
               className={`h-1 rounded-full transition-all ${idx === i ? "w-10 bg-gold" : "w-5 bg-white/30"}`} />
           ))}
         </div>

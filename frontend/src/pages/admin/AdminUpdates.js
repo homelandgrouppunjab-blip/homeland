@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, Loader2, EyeOff, Pin } from "lucide-react";
 import { toast } from "sonner";
 import { adminGetUpdates, adminCreateUpdate, adminUpdateUpdate, adminDeleteUpdate, adminGetProjects } from "@/lib/api";
@@ -21,8 +21,8 @@ export default function AdminUpdates() {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
 
-  const load = () => adminGetUpdates().then(setList).catch(() => toast.error("Failed to load"));
-  useEffect(() => { load(); adminGetProjects().then(setProjects).catch(() => {}); }, []);
+  const load = useCallback(() => adminGetUpdates().then(setList).catch(() => toast.error("Failed to load")), []);
+  useEffect(() => { load(); adminGetProjects().then(setProjects).catch(() => {}); }, [load]);
 
   const openCreate = () => { setEditing(null); setForm(EMPTY); setOpen(true); };
   const openEdit = (p) => { setEditing(p); setForm({ ...EMPTY, ...p }); setOpen(true); };
