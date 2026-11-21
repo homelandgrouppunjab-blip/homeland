@@ -157,18 +157,24 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
           </SelectContent>
         </Select>
       </div>
+      {!compact && (
       <div>
         <label className="text-xs text-platinum mb-1.5 block">Budget (optional)</label>
         <input data-testid="enquiry-budget-input" className={inputCls} value={form.budget} onChange={(e) => set("budget", e.target.value)} placeholder="e.g. ₹1.5 - 2 Cr" />
       </div>
+      )}
+      {!compact && (
       <div className={compact ? "" : "sm:col-span-2"}>
         <label className="text-xs text-platinum mb-1.5 block">Preferred Contact Time</label>
         <input data-testid="enquiry-time-input" className={inputCls} value={form.preferred_contact_time} onChange={(e) => set("preferred_contact_time", e.target.value)} placeholder="e.g. Weekdays, 10am - 1pm" />
       </div>
+      )}
+      {!compact && (
       <div className={compact ? "" : "sm:col-span-2"}>
         <label className="text-xs text-platinum mb-1.5 block">Message</label>
         <textarea data-testid="enquiry-message-input" rows={compact ? 3 : 4} className={inputCls} value={form.message} onChange={(e) => set("message", e.target.value)} placeholder="Tell us what you're looking for…" />
       </div>
+      )}
       <div className={compact ? "" : "sm:col-span-2"}>
         <button
           type="submit"

@@ -71,6 +71,9 @@
     "build": "CI=false DISABLE_ESLINT_PLUGIN=true craco build",
     "test": "craco test"
   },
+  "overrides": {
+    "websocket-driver": "^0.8.0"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -108,6 +111,7 @@
     "qs": "6.15.2",
     "diff": "4.0.4",
     "follow-redirects": "1.16.0",
+    "websocket-driver": "0.8.0",
     "path-to-regexp": "0.1.13",
     "rollup": "2.80.0",
     "underscore": "1.13.8",
