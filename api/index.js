@@ -935,6 +935,7 @@ const SITEMAP_STATIC = [
   { loc: "/rera", changefreq: "monthly", priority: "0.6" },
   { loc: "/brochures", changefreq: "monthly", priority: "0.5" },
   { loc: "/insights", changefreq: "weekly", priority: "0.6" },
+  { loc: "/whats-new", changefreq: "weekly", priority: "0.5" },
   { loc: "/contact", changefreq: "yearly", priority: "0.5" },
 ];
 

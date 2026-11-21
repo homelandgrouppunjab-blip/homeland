@@ -1,22 +1,30 @@
 [
   {
-    "content": "Add dev-only logger util and replace console.* across 6 files",
+    "content": "Create build history data (public entries + milestones, categorised, dated)",
     "status": "completed"
   },
   {
-    "content": "Fix index-based keys with stable keys (Home, HeroSlider, ProjectMap)",
+    "content": "Build public What's New page component matching site theme",
     "status": "completed"
   },
   {
-    "content": "Fix hook dependencies safely (memoize AdminUpdates load; keep others lint-clean)",
+    "content": "Add /whats-new route in App.js",
     "status": "completed"
   },
   {
-    "content": "Verify SocialEmbed XSS mitigation is sound (DOMPurify already in place)",
+    "content": "Add footer link to What's New",
     "status": "completed"
   },
   {
-    "content": "Compile check (esbuild) + production build + screenshot verify",
+    "content": "Create BUILD_HISTORY.md at project root",
+    "status": "completed"
+  },
+  {
+    "content": "Add /whats-new to sitemap.xml + backend sitemap",
+    "status": "completed"
+  },
+  {
+    "content": "Compile + build + screenshot verify (desktop & mobile)",
     "status": "in_progress"
   }
 ]

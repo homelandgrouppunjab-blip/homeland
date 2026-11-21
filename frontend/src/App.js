@@ -20,6 +20,7 @@ import BookVisit from "@/pages/BookVisit";
 import Insights from "@/pages/Insights";
 import PostDetail from "@/pages/PostDetail";
 import Updates from "@/pages/Updates";
+import WhatsNew from "@/pages/WhatsNew";
 import Account from "@/pages/Account";
 import Legal from "@/pages/Legal";
 import NotFound from "@/pages/NotFound";
@@ -64,6 +65,7 @@ function App() {
               <Route path="/insights" element={<Insights />} />
               <Route path="/insights/:slug" element={<PostDetail />} />
               <Route path="/updates" element={<Updates />} />
+              <Route path="/whats-new" element={<WhatsNew />} />
               <Route path="/account" element={<Account />} />
               <Route path="/legal/:doc" element={<Legal />} />
             </Route>
