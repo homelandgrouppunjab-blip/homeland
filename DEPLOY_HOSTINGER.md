@@ -1,205 +1,85 @@
-## Deploy Homeland Group on Hostinger (React + Node API + MySQL)
+# Homeland Group — Hostinger Deployment Guide
 
-This hosts the **current** app (no rewrite): the Node/Express API in `/api` serves
-both the REST API (`/api/*`) **and** the built React frontend as a single process.
-Database is **MySQL** (your Hostinger MySQL). Uploads are stored in MySQL, so no
-persistent disk is required.
-
-> Admin login uses the `ADMIN_USERNAME` and `ADMIN_PASSWORD` environment variables.
+This app = React frontend (`/frontend`) + Node/Express API (`/api`) + MySQL. The
+Express server also serves the built frontend and `/api/*` from the SAME domain.
 
 ---
 
-## 0) Prerequisites
-- A **Hostinger VPS** (recommended) OR a Hostinger Cloud/Business plan with **Node.js app** support.
-- A domain (can be your Hostinger domain).
-- A **MySQL database** (every Hostinger plan includes MySQL).
-- Your code pushed to **GitHub** (use "Save to GitHub" in Emergent).
+## 1. Hostinger Node.js app settings (hPanel → Website → Node.js)
+
+| Setting            | Value                                  |
+|--------------------|----------------------------------------|
+| Application root   | repository root (`./`)                 |
+| Startup file       | `app.js`                               |
+| Build command      | `npm run build`                        |
+| Node version       | 22 (or 20)                             |
+| PORT               | **leave unset** (Hostinger injects it) |
+
+After any code change: **Pull the latest commit → Restart app → Purge CDN cache.**
 
 ---
 
-## 1) Create the MySQL database
-1. hPanel → **Databases → MySQL Databases** → create a database + user (note the
-   **database name**, **username**, **password**).
-2. The app and MySQL live on the same Hostinger account, so the host is usually
-   **`localhost`** (port **3306**). No remote access needed.
-3. (Optional) To also bring over past leads/site-visit history, import the provided
-   `hostinger_mysql_import.sql` via **phpMyAdmin → Import**. Your projects, posts,
-   team, FAQs, site content, updates and uploads are seeded automatically on first
-   run even without this import.
+## 2. Environment variables (hPanel → Node.js → Environment)
 
----
+Database (use ONE complete set — the `MYSQL_*` set is recommended):
 
-## OPTION A — Hostinger VPS (recommended)
-
-### A1. Connect & install Node
-```bash
-ssh root@YOUR_VPS_IP
-# install Node 20 LTS
-curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-apt-get install -y nodejs git nginx
-npm i -g pm2 yarn
-```
-
-### A2. Get the code & install
-```bash
-cd /var/www
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git homeland
-cd homeland
-
-# install + build frontend (same-origin /api, so NO backend URL needed)
-cd frontend
-yarn install
-# make sure no preview URL leaks into the build:
-printf "REACT_APP_BACKEND_URL=\n" > .env
-yarn build
-cd ..
-
-# install API deps
-cd api
-yarn install
-cd ..
-```
-
-### A3. Configure the API environment
-Create `/var/www/homeland/api/.env`:
 ```
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
-MYSQL_USER=your_mysql_user
-MYSQL_PASSWORD=your_mysql_password
-MYSQL_DATABASE=your_mysql_database
-JWT_SECRET=PUT_A_LONG_RANDOM_STRING_HERE
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=ChooseAStrongPassword
-JWT_EXPIRE_MINUTES=1440
-PORT=8001
-# AI assistant + website chatbot (Emergent universal LLM key). Required for the
-# chatbot and the admin AI design assistant. You can replace it with your own
-# OpenAI/Anthropic/Google key setup later if you prefer.
-# Paste your own key value here on the server — do NOT commit real keys to Git.
-EMERGENT_LLM_KEY=your-emergent-llm-key-here
-# Site-visit reminder emails (Emergent Managed Email / Resend). The email key is
-# provisioned by Emergent — paste its value on the server; never commit it.
-EMERGENT_EMAIL_KEY=your-emergent-email-key-here
-EMAIL_FROM_NAME=Homeland Group
-# Inbox that receives the morning site-visit reminders (your sales team/admin).
-REMINDER_EMAIL=sales@yourdomain.com
-# Timezone used for the 7am reminder schedule.
-REMINDER_TZ=Asia/Kolkata
-```
-The API auto-detects the built frontend at `../frontend/build` and serves it, so a
-single process serves the whole site plus `/api`.
-
-### A4. Start with PM2
-```bash
-cd /var/www/homeland/api
-pm2 start index.js --name homeland
-pm2 save
-pm2 startup        # run the command it prints, to auto-start on reboot
-```
-Test locally on the VPS: `curl http://localhost:8001/api/` → should return the health JSON.
-
-### A5. Nginx reverse proxy + domain
-Create `/etc/nginx/sites-available/homeland`:
-```nginx
-server {
-    listen 80;
-    server_name yourdomain.com www.yourdomain.com;
-
-    client_max_body_size 20M;   # allow brochure/image uploads
-
-    location / {
-        proxy_pass http://127.0.0.1:8001;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-Enable + reload:
-```bash
-ln -s /etc/nginx/sites-available/homeland /etc/nginx/sites-enabled/
-nginx -t && systemctl reload nginx
+MYSQL_USER=u771530361_homeland
+MYSQL_PASSWORD=<your db password>
+MYSQL_DATABASE=u771530361_homeland
 ```
 
-### A6. Point the domain
-In **Hostinger → Domains → DNS Zone**, add an **A record**:
-`@  →  YOUR_VPS_IP` and `www → YOUR_VPS_IP` (TTL Auto).
+Admin + auth (needed for /admin/login, secure cookies require HTTPS):
 
-### A7. Free SSL (HTTPS)
-```bash
-apt-get install -y certbot python3-certbot-nginx
-certbot --nginx -d yourdomain.com -d www.yourdomain.com
 ```
-Certbot installs the certificate and auto-renews.
-
-### A8. Verify
-- `https://yourdomain.com/` → site loads
-- `https://yourdomain.com/api/` → health JSON
-- `https://yourdomain.com/projects/homeland-regalia` (refresh works — SPA fallback)
-- `https://yourdomain.com/admin/login` → log in with your ADMIN_EMAIL/PASSWORD
-
-### A9. Updating later
-```bash
-cd /var/www/homeland
-git pull
-cd frontend && yarn install && yarn build && cd ..
-cd api && yarn install && pm2 restart homeland
+JWT_SECRET=<long random string>
+ADMIN_USERNAME=<your admin user>
+ADMIN_PASSWORD=<your admin password>
 ```
+
+Frontend build: `REACT_APP_BACKEND_URL` must be **blank/unset** so the site calls
+`/api` on its own domain. Do NOT set MONGO_URL (MySQL is the primary DB).
 
 ---
 
-## OPTION B — Hostinger Cloud/Business managed "Node.js app" (hPanel + GitHub)  ← recommended for Cloud Startup
-This uses Hostinger's automated pipeline (it runs install + build + start for you).
+## 3. Images — now self-hosted (durable)
 
-1. **Push to GitHub first** ("Save to GitHub" in Emergent). The pipeline deploys from the repo.
-2. In **hPanel → Websites → Add Website → Node.js Web App**, connect your **GitHub repo** and
-   branch **main**.
-3. On the **Deploy settings** screen set exactly:
-   - **Application root directory:** `/` (leave empty — the root `package.json` is here)
-   - **Package manager:** auto (it detects `yarn.lock` → Yarn). Do NOT upload `node_modules`.
-   - **Build command / script:** `build`  (root script builds the React app **and** installs the API)
-   - **Entry / startup file:** `api/index.js`
-   - **Output directory:** `frontend/build`
-   - **Node version:** **20** (or 22)
-4. Add **Environment variables** (hPanel → your Node app → Environment):
-   - `MYSQL_HOST` = `localhost`
-   - `MYSQL_PORT` = `3306`
-   - `MYSQL_USER` = your MySQL username
-   - `MYSQL_PASSWORD` = your MySQL password
-   - `MYSQL_DATABASE` = your MySQL database name
-   - `JWT_SECRET` = a long random string
-   - `ADMIN_USERNAME` = your admin username (e.g. `admin`)
-   - `ADMIN_PASSWORD` = a strong password
-   - `JWT_EXPIRE_MINUTES` = `1440`
-   - `EMERGENT_LLM_KEY` = your key (for chatbot + AI design)
-   - `EMERGENT_EMAIL_KEY` = your Emergent email key (for site-visit reminders)
-   - `EMAIL_FROM_NAME` = `Homeland Group`
-   - `REMINDER_EMAIL` = your sales/admin inbox (receives the morning reminders)
-   - `REMINDER_TZ` = `Asia/Kolkata`
-   - **Do NOT set `REACT_APP_BACKEND_URL`** (blank = same-origin `/api`).
-   - You usually do **not** need to set `PORT` — the app defaults to **3000**, which is what
-     Hostinger proxies to. If Hostinger injects a different `PORT`, the app honors it automatically.
-5. Click **Deploy** and watch **Deployments → logs**.
-6. Map your domain to the app, then verify the same URLs as A8 (`/`, `/api/`, a deep link refresh,
-   `/admin/login`).
-
-> Shared/Web (PHP-only) hosting **cannot** run this Node app. Use a Node-capable plan (Cloud/Business) or VPS.
+All 10 official project images are bundled in the repo at `frontend/public/projects/`
+and ship into `frontend/build/projects/` on `npm run build`. The database now points
+`hero_image` / gallery to local paths like `/projects/cp67.jpg`, so images no longer
+depend on any external website. Nothing extra to configure — just deploy the build.
 
 ---
 
-## First run
-On the first request the API **auto-seeds** your empty MySQL database from
-`api/seed-data.json` (your 9 projects, site content, team, FAQs, posts, updates and
-uploads). It creates the tables automatically. Existing data is never overwritten.
-Admin login uses the `ADMIN_USERNAME` / `ADMIN_PASSWORD` you set in the environment.
+## 4. Database content import (SAFE — keeps your leads & users)
 
-## Notes
-- **Uploads** go into MySQL and are served at `/api/uploads/<file>` — they survive
-  restarts and need no disk/object store. Keep `client_max_body_size` in Nginx ≥ your
-  largest upload.
-- **Same-origin API:** the frontend calls `/api` on the same domain, so there is no
-  CORS or backend-URL configuration to manage.
-- **Security:** never commit `api/.env`. Use strong `JWT_SECRET` and `ADMIN_PASSWORD`.
+File: `hostinger_import.sql` (repo root).
+
+- It only CREATEs tables if missing and UPSERTS site content, projects, posts,
+  FAQs, team, updates and uploads.
+- It performs **no DROP** and never touches `leads`, `users`, `admins`,
+  `site_visits` or `user_sessions`. Existing enquiries stay intact.
+- It is safe to re-run any time.
+
+Import steps (hPanel → Databases → phpMyAdmin):
+1. Select the `u771530361_homeland` database on the left.
+2. Open the **Import** tab → choose `hostinger_import.sql` → **Go**.
+3. (SSH alternative) `mysql -u u771530361_homeland -p u771530361_homeland < hostinger_import.sql`
+
+---
+
+## 5. Verify live (in order)
+
+1. `https://homelandgroupindia.com/api/`            → `{"message":"Homeland Group Mohali API","status":"ok"}`
+2. `https://homelandgroupindia.com/api/health`      → includes `"mysql":{"ok":true}`
+3. `https://homelandgroupindia.com/api/projects`    → array of 10 projects
+4. `https://homelandgroupindia.com/projects`        → cards with images
+5. Open one project → hero + gallery images load
+
+If `/api/` still returns a generic `{"status":404,"message":"The requested resource
+wasn't found."}`, the domain is NOT yet routed to this Node app — re-check the
+Application root / Startup file above, confirm the latest commit is deployed, and
+purge the CDN cache. Share the **runtime (application) logs**, not build logs, if it
+persists.
