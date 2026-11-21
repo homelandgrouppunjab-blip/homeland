@@ -22,6 +22,22 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
+  // City → Project filtering. "All" shows every project.
+  const [cityFilter, setCityFilter] = useState("All");
+  const cities = [...new Set(projects.map((p) => (p.city || "").trim()).filter(Boolean))].sort();
+  const filteredProjects = cityFilter === "All"
+    ? projects
+    : projects.filter((p) => (p.city || "").trim().toLowerCase() === cityFilter.toLowerCase());
+
+  const onCityChange = (v) => {
+    setCityFilter(v);
+    // If the currently chosen project isn't in the new city, reset to "Any".
+    if (form.project !== "Any") {
+      const pool = v === "All" ? projects : projects.filter((p) => (p.city || "").trim().toLowerCase() === v.toLowerCase());
+      if (!pool.some((p) => p.name === form.project)) set("project", "Any");
+    }
+  };
+
   const sendWhatsApp = () => {
     if (!form.name || !form.phone) { toast.error("Please add your name and phone first."); return; }
     const digits = (waNumber || "").replace(/[^0-9]/g, "");
@@ -32,6 +48,7 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
       form.phone ? `Phone: ${form.phone}` : "",
       form.email ? `Email: ${form.email}` : "",
       `Requirement: ${form.requirement}`,
+      cityFilter && cityFilter !== "All" ? `City: ${cityFilter}` : "",
       `Project of Interest: ${form.project}`,
       form.budget ? `Budget: ${form.budget}` : "",
       form.message ? `Message: ${form.message}` : "",
@@ -56,7 +73,7 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
     }
     setLoading(true);
     try {
-      await createLead(form);
+      await createLead({ ...form, city: cityFilter === "All" ? "" : cityFilter });
       setDone(true);
       if (onSuccess) onSuccess();
       toast.success("Thank you! Our team will reach out to you shortly.");
@@ -109,12 +126,24 @@ export const EnquiryForm = ({ projects = [], defaultProject = "Any", compact = f
         </Select>
       </div>
       <div>
+        <label className="text-xs text-platinum mb-1.5 block">City</label>
+        <Select value={cityFilter} onValueChange={onCityChange}>
+          <SelectTrigger data-testid="enquiry-city-select" className={inputCls}><SelectValue /></SelectTrigger>
+          <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
+            <SelectItem value="All">All Cities</SelectItem>
+            {cities.map((c) => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
         <label className="text-xs text-platinum mb-1.5 block">Project of Interest</label>
         <Select value={form.project} onValueChange={(v) => set("project", v)}>
           <SelectTrigger data-testid="enquiry-project-select" className={inputCls}><SelectValue /></SelectTrigger>
           <SelectContent className="bg-[color:var(--lux-charcoal)] border-[color:var(--border-hairline)] text-ivory">
-            <SelectItem value="Any">Any Project</SelectItem>
-            {projects.map((p) => {
+            <SelectItem value="Any">{cityFilter === "All" ? "Any Project" : `Any Project in ${cityFilter}`}</SelectItem>
+            {filteredProjects.map((p) => {
               const loc = p.location || "";
               const city = p.city || "";
               const showCity = city && !loc.toLowerCase().includes(city.toLowerCase());
