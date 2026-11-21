@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getContent } from "@/lib/api";
 
 export const WhatsAppButton = () => {
-  const [num, setNum] = useState("+91 98155 00000");
+  const [num, setNum] = useState("+91 90417 95879");
   useEffect(() => {
     getContent().then((c) => { if (c?.contact_whatsapp) setNum(c.contact_whatsapp); }).catch(() => {});
   }, []);
