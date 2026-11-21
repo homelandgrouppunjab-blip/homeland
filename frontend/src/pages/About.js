@@ -39,7 +39,7 @@ export default function About() {
             <SectionHeading align="center" kicker="Recognition" title="Awards & Honours" subtitle="Independent recognition of our commitment to design, delivery and responsible growth." />
             <div className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-4">
               {c.awards.map((a, i) => (
-                <FadeUp key={i} delay={i * 0.05}>
+                <FadeUp key={a.title || i} delay={i * 0.05}>
                   <div data-testid={`about-award-${i}`} className="group h-full flex items-center gap-4 rounded-2xl bg-glass hairline p-5 hover:border-[color:var(--border-gold)] transition-colors">
                     <div className="h-11 w-11 shrink-0 grid place-items-center rounded-full bg-[rgba(212,175,55,0.1)] border border-[rgba(212,175,55,0.3)]">
                       <Award className="h-5 w-5 text-gold" />
@@ -61,7 +61,7 @@ export default function About() {
           <SectionHeading kicker="Our Journey" title="Milestones Through the Years" />
           <div className="mt-12 grid md:grid-cols-2 gap-x-16">
             {(c?.milestones || []).map((m, i) => (
-              <FadeUp key={i} delay={i * 0.05}>
+              <FadeUp key={m.year || m.title || i} delay={i * 0.05}>
                 <div className="relative pl-8 pb-10 border-l border-[color:var(--border-hairline)]">
                   <span className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full bg-gold ring-4 ring-[rgba(212,175,55,0.2)]" />
                   <div className="text-gold font-display text-2xl">{m.year}</div>

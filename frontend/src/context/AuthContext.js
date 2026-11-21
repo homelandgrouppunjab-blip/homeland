@@ -25,7 +25,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    try { await adminLogout(); } catch (e) { /* clear locally regardless */ }
+    try {
+      await adminLogout();
+    } catch (error) {
+      // Non-fatal: the server session clears on its own; log and clear locally.
+      console.warn("AuthContext: logout request failed, clearing session locally", error);
+    }
     setEmail(null);
   };
 

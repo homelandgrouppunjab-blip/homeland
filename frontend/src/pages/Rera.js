@@ -42,7 +42,7 @@ export default function Rera() {
               </tr></thead>
               <tbody>
                 {rera.map((r, i) => (
-                  <tr key={i} className={`border-b border-[color:var(--border-hairline)] ${i % 2 ? "bg-white/[0.02]" : ""}`}>
+                  <tr key={r.slug || r.project || i} className={`border-b border-[color:var(--border-hairline)] ${i % 2 ? "bg-white/[0.02]" : ""}`}>
                     <td className="p-4"><Link to={`/projects/${r.slug}`} className="text-ivory hover:text-gold font-medium">{r.project}</Link></td>
                     <td className="p-4 text-sm text-[color:var(--lux-ivory)]/70">{r.location}</td>
                     <td className="p-4"><span className="text-xs text-[color:var(--lux-ivory)]/70">{r.status}</span></td>
