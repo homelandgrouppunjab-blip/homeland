@@ -17,7 +17,7 @@ export const CallButton = () => {
       href={href}
       aria-label="Call Homeland Group"
       data-testid="call-float-button"
-      className="fixed bottom-24 right-6 z-[60] group"
+      className="fixed bottom-[6.5rem] right-6 z-[60] group"
     >
       <span className="absolute inset-0 rounded-full bg-[color:var(--lux-gold)] opacity-25 animate-ping" style={{ animationDuration: "2.5s" }} />
       <span className="relative flex items-center gap-2 rounded-full bg-[color:var(--lux-obsidian)] border border-[color:var(--border-gold)] pl-3.5 pr-4 py-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.55)] transition-colors group-hover:bg-[color:var(--lux-charcoal)]">
