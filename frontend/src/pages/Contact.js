@@ -31,8 +31,8 @@ export default function Contact() {
               { icon: Mail, label: "Email", value: c?.contact_email, href: `mailto:${c?.contact_email}` },
               { icon: MapPin, label: "Corporate Office", value: c?.contact_address },
               { icon: Clock, label: "Hours", value: "Mon – Sat, 10:00 AM – 7:00 PM" },
-            ].map((it, i) => (
-              <div key={i} className="rounded-2xl bg-glass hairline p-5 flex items-start gap-4">
+            ].map((it) => (
+              <div key={it.label} className="rounded-2xl bg-glass hairline p-5 flex items-start gap-4">
                 <div className="h-10 w-10 grid place-items-center rounded-full bg-[rgba(212,175,55,0.12)] text-gold shrink-0"><it.icon className="h-5 w-5" /></div>
                 <div>
                   <div className="text-xs text-[color:var(--lux-ivory)]/55">{it.label}</div>

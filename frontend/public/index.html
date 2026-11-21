@@ -4,6 +4,10 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0b0b0b" />
+        <!-- Hide the crawler SEO fallback instantly for real (JS) browsers so it
+             never flashes as a "loading page". Non-JS crawlers still get it. -->
+        <style>html.js #seo-fallback{display:none!important}</style>
+        <script>document.documentElement.className+=" js";</script>
         <meta name="description" content="Homeland Group Mohali — elite real estate developer crafting iconic residential and commercial addresses across Mohali, Chandigarh & Punjab. Explore luxury apartments, villas, showrooms and office spaces with RERA-registered projects." />
         <meta name="keywords" content="Homeland Group, Homeland Group Mohali, real estate developer Mohali, luxury apartments Mohali, commercial property Mohali, Homeland Regalia, CP67, Homeland Heights, RERA projects Punjab" />
         <meta name="robots" content="index, follow" />
