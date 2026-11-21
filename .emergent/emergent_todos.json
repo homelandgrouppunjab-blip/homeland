@@ -1,26 +1,18 @@
 [
   {
-    "content": "Humanize all 10 project descriptions + specifications in seed-data.json (premium tone, facts preserved)",
+    "content": "Blog Humanize: rewrite all Insights posts (title/excerpt/content) in premium voice; apply to seed + DB",
     "status": "completed"
   },
   {
-    "content": "Humanize company history/story in seed-data.json (history_intro + history_full)",
+    "content": "Social Share Preview: server-side inject per-project & per-post OG/Twitter meta into index.html for crawlers",
     "status": "completed"
   },
   {
-    "content": "Add reusable SEO component + wire into all key pages with dynamic titles/descriptions/canonical + JSON-LD",
+    "content": "Project Specs Depth: enrich projects with official floor plans, amenities & unit sizes from Homeland sites",
     "status": "completed"
   },
   {
-    "content": "Expand sitemap.xml with all project URLs",
-    "status": "completed"
-  },
-  {
-    "content": "Reseed local DB, compile-check frontend, verify via API + screenshots",
-    "status": "completed"
-  },
-  {
-    "content": "Confirm production build passes (deployment readiness)",
+    "content": "Reseed/apply to DB, compile + build check, verify via curl (crawler UA) + screenshots",
     "status": "completed"
   }
 ]

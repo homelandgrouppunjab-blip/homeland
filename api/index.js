@@ -811,10 +811,102 @@ app.use("/api", r);
 // index.html for client-side (SPA) routes. The API stays under /api.
 // If no build is present yet, expose the API at the root as a safety net.
 const FRONTEND_BUILD = process.env.FRONTEND_BUILD_DIR || path.join(__dirname, "..", "frontend", "build");
+
+// Public origin used for canonical/OG URLs in server-rendered social previews.
+// Falls back to the production domain so shared links are consistent.
+const PUBLIC_ORIGIN = (process.env.PUBLIC_SITE_ORIGIN || "https://www.homelandgroupindia.com").replace(/\/$/, "");
+const SITE_NAME = "Homeland Group Mohali";
+
+const escAttr = (s) =>
+  String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+const absUrl = (u) => {
+  if (!u) return `${PUBLIC_ORIGIN}/homeland-logo.webp`;
+  if (/^https?:\/\//i.test(u)) return u;
+  return `${PUBLIC_ORIGIN}${u.startsWith("/") ? "" : "/"}${u}`;
+};
+
+// Inject per-route <title>, description, canonical and OG/Twitter tags into the
+// static index.html. Social crawlers (WhatsApp, Facebook, Twitter, LinkedIn) do
+// NOT execute JavaScript, so these must be present in the server response.
+function injectMeta(html, meta) {
+  const title = escAttr(meta.title);
+  const desc = escAttr((meta.description || "").replace(/\s+/g, " ").trim().slice(0, 300));
+  const url = escAttr(meta.url);
+  const img = escAttr(absUrl(meta.image));
+  let out = html;
+
+  out = out.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
+
+  const setMeta = (attr, key, val) => {
+    const re = new RegExp(`(<meta\\s+${attr}="${key}"\\s+content=")[\\s\\S]*?(")`, "i");
+    if (re.test(out)) out = out.replace(re, `$1${val}$2`);
+    else out = out.replace(/<\/head>/i, `    <meta ${attr}="${key}" content="${val}" />\n</head>`);
+  };
+  setMeta("name", "description", desc);
+  setMeta("property", "og:title", title);
+  setMeta("property", "og:description", desc);
+  setMeta("property", "og:url", url);
+  setMeta("property", "og:image", img);
+  setMeta("name", "twitter:title", title);
+  setMeta("name", "twitter:description", desc);
+  setMeta("name", "twitter:image", img);
+
+  if (/<link\s+rel="canonical"/i.test(out)) {
+    out = out.replace(/(<link\s+rel="canonical"\s+href=")[\s\S]*?(")/i, `$1${url}$2`);
+  } else {
+    out = out.replace(/<\/head>/i, `    <link rel="canonical" href="${url}" />\n</head>`);
+  }
+  return out;
+}
+
 if (fs.existsSync(path.join(FRONTEND_BUILD, "index.html"))) {
-  app.use(express.static(FRONTEND_BUILD));
-  app.get("*", (req, res, next) => {
+  app.use(express.static(FRONTEND_BUILD, { index: false }));
+
+  let BASE_HTML = null;
+  const baseHtml = () => {
+    if (BASE_HTML == null) BASE_HTML = fs.readFileSync(path.join(FRONTEND_BUILD, "index.html"), "utf8");
+    return BASE_HTML;
+  };
+
+  app.get("*", async (req, res, next) => {
     if (req.path.startsWith("/api")) return next();
+    try {
+      const canonical = `${PUBLIC_ORIGIN}${req.path === "/" ? "/" : req.path}`;
+      const projMatch = req.path.match(/^\/projects\/([^/]+)\/?$/);
+      const postMatch = req.path.match(/^\/insights\/([^/]+)\/?$/);
+
+      if (projMatch) {
+        const db = await getDb();
+        const p = await db.collection("projects").findOne({ slug: projMatch[1] });
+        if (p) {
+          return res.send(injectMeta(baseHtml(), {
+            title: `${p.name} — ${p.location || p.city || "Mohali"} | ${SITE_NAME}`,
+            description: p.description || p.tagline,
+            url: canonical,
+            image: p.hero_image,
+          }));
+        }
+      } else if (postMatch) {
+        const db = await getDb();
+        const post = await db.collection("posts").findOne({ slug: postMatch[1] });
+        if (post) {
+          return res.send(injectMeta(baseHtml(), {
+            title: `${post.title} | ${SITE_NAME}`,
+            description: post.excerpt || post.content,
+            url: canonical,
+            image: post.cover_image,
+          }));
+        }
+      }
+    } catch (e) {
+      // Fall through to the plain SPA shell if a lookup fails.
+      console.error("[og] meta injection failed:", e.message);
+    }
     res.sendFile(path.join(FRONTEND_BUILD, "index.html"));
   });
 } else {
