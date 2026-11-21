@@ -925,7 +925,9 @@
         "bg_light": "#fbf9f4",
         "hero_text": "#f7f3ee"
       },
-      "site_logo_light": ""
+      "site_logo_light": "",
+      "contact_phone": "+91 90417 95879",
+      "contact_whatsapp": "+91 90417 95879"
     }
   ],
   "faqs": [

@@ -36,6 +36,7 @@ import AdminContent from "@/pages/admin/AdminContent";
 import AdminTeam from "@/pages/admin/AdminTeam";
 import AdminBlog from "@/pages/admin/AdminBlog";
 import AdminUpdates from "@/pages/admin/AdminUpdates";
+import AdminSync from "@/pages/admin/AdminSync";
 import ThemeApplier from "@/components/ThemeApplier";
 import { UserProvider } from "@/context/UserAuthContext";
 
@@ -79,6 +80,7 @@ function App() {
                 <Route path="/admin/team" element={<AdminTeam />} />
                 <Route path="/admin/blog" element={<AdminBlog />} />
                 <Route path="/admin/updates" element={<AdminUpdates />} />
+                <Route path="/admin/sync" element={<AdminSync />} />
               </Route>
             </Route>
 

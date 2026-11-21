@@ -14,6 +14,7 @@ export default function Updates() {
   const [posts, setPosts] = useState([]);
   const [updates, setUpdates] = useState([]);
   const [embed, setEmbed] = useState("");
+  const [embedHosts, setEmbedHosts] = useState(null);
   const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +23,7 @@ export default function Updates() {
     Promise.all([getUpdates().catch(() => []), getPosts().catch(() => [])])
       .then(([u, p]) => { setUpdates(u || []); setPosts(p || []); })
       .finally(() => setLoading(false));
-    getContent().then((c) => setEmbed(c?.instagram_embed || "")).catch(() => {});
+    getContent().then((c) => { setEmbed(c?.instagram_embed || ""); setEmbedHosts(c?.social_embed_allowlist || null); }).catch(() => {});
   }, []);
 
   const items = useMemo(() => {
@@ -121,7 +122,7 @@ export default function Updates() {
         {embed && (
           <div className="mt-20 pt-12 border-t border-[color:var(--border-hairline)]" data-testid="updates-instagram-section">
             <SectionHeading kicker="Instagram" title="Follow Our Journey" subtitle="Live from @homelandgroup — our latest reels, launches and site moments." />
-            <div className="mt-8"><SocialEmbed code={embed} /></div>
+            <div className="mt-8"><SocialEmbed code={embed} allowedHosts={embedHosts} /></div>
           </div>
         )}
       </div>

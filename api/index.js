@@ -220,6 +220,25 @@ const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((e) => {
 // -------- Public --------
 r.get("/", (req, res) => res.json({ message: "Homeland Group Mohali API", status: "ok" }));
 
+// Health check for Hostinger / uptime monitors: reports DB connectivity.
+// Returns 200 when MySQL is reachable, 503 otherwise. Mongo is optional.
+r.get("/health", async (req, res) => {
+  const out = { status: "ok", time: new Date().toISOString(), uptime_s: Math.round(process.uptime()) };
+  try {
+    await mysqlDb.getPool().query("SELECT 1");
+    out.mysql = { ok: true };
+  } catch (e) {
+    out.mysql = { ok: false, error: e.code || e.message };
+    out.status = "degraded";
+  }
+  try {
+    out.mongo = await sync.pingMongo();
+  } catch (e) {
+    out.mongo = { configured: true, ok: false, error: e.message };
+  }
+  res.status(out.mysql.ok ? 200 : 503).json(out);
+});
+
 r.get("/projects", wrap(async (req, res) => {
   const db = await getDb();
   const q = { visible: { $ne: false } };
@@ -482,6 +501,19 @@ r.post("/admin/sync/run", requireAdmin, wrap(async (req, res) => {
   const result = await sync.syncOnce();
   if (result && result.ok === false) return res.status(502).json({ detail: "Sync failed: " + result.error });
   res.json(result);
+}));
+
+// Sync panel data: current config, last-run state, Mongo connectivity and
+// live MySQL record counts per collection.
+r.get("/admin/sync/status", requireAdmin, wrap(async (req, res) => {
+  const db = await getDb();
+  const counts = {};
+  for (const name of mysqlDb.COLLECTIONS) {
+    try { counts[name] = await db.collection(name).countDocuments({}); }
+    catch (e) { counts[name] = null; }
+  }
+  const mongo = await sync.pingMongo();
+  res.json({ ...sync.status(), mongo, counts });
 }));
 
 r.get("/admin/stats", requireAdmin, wrap(async (req, res) => {

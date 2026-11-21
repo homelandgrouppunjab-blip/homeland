@@ -41,7 +41,7 @@ export default function Chatbot() {
           onClick={() => setOpen(true)}
           data-testid="chatbot-launcher"
           aria-label="Open chat assistant"
-          className="fixed bottom-24 right-6 z-[150] h-14 w-14 grid place-items-center rounded-full bg-[color:var(--lux-gold)] text-[#1b1710] shadow-[0_12px_34px_rgba(0,0,0,0.4)] hover:scale-105 transition-transform"
+          className="fixed bottom-[12rem] right-6 z-[150] h-14 w-14 grid place-items-center rounded-full bg-[color:var(--lux-gold)] text-[#1b1710] shadow-[0_12px_34px_rgba(0,0,0,0.4)] hover:scale-105 transition-transform"
         >
           <Bot className="h-7 w-7" />
         </button>
@@ -50,7 +50,7 @@ export default function Chatbot() {
       {open && (
         <div
           data-testid="chatbot-panel"
-          className="fixed bottom-24 right-6 z-[150] w-[min(92vw,380px)] h-[min(70vh,560px)] flex flex-col rounded-2xl overflow-hidden border border-[color:var(--border-gold)] bg-[color:var(--lux-charcoal)] shadow-[0_24px_70px_rgba(0,0,0,0.5)]"
+          className="fixed bottom-6 right-6 z-[150] w-[min(92vw,380px)] h-[min(70vh,560px)] flex flex-col rounded-2xl overflow-hidden border border-[color:var(--border-gold)] bg-[color:var(--lux-charcoal)] shadow-[0_24px_70px_rgba(0,0,0,0.5)]"
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-[color:var(--border-hairline)] bg-[color:var(--surface-glass-strong)] backdrop-blur-xl">
             <div className="flex items-center gap-2">

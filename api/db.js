@@ -13,20 +13,30 @@ const COLLECTIONS = [
 ];
 
 let pool = null;
+// Accept both MYSQL_* (this app's convention) and DB_* (common on Hostinger).
+// This lets the app connect whether the host env uses MYSQL_HOST or DB_HOST, etc.
+const dbEnv = (suffix, fallback) =>
+  process.env[`MYSQL_${suffix}`] || process.env[`DB_${suffix}`] || fallback;
+
 function getPool() {
   if (!pool) {
     pool = mysql.createPool({
-      host: process.env.MYSQL_HOST || "127.0.0.1",
-      port: parseInt(process.env.MYSQL_PORT || "3306", 10),
-      user: process.env.MYSQL_USER || "root",
-      password: process.env.MYSQL_PASSWORD || "",
-      database: process.env.MYSQL_DATABASE || "homeland",
+      host: dbEnv("HOST", "127.0.0.1"),
+      port: parseInt(dbEnv("PORT", "3306"), 10),
+      user: dbEnv("USER", "root"),
+      password: process.env.MYSQL_PASSWORD || process.env.DB_PASSWORD || "",
+      database: dbName(),
       waitForConnections: true,
       connectionLimit: parseInt(process.env.MYSQL_POOL || "10", 10),
       charset: "utf8mb4",
     });
   }
   return pool;
+}
+
+// Resolved database name (handles MYSQL_DATABASE / DB_NAME / DB_DATABASE).
+function dbName() {
+  return process.env.MYSQL_DATABASE || process.env.DB_DATABASE || process.env.DB_NAME || "homeland";
 }
 
 let initialized = false;
@@ -41,7 +51,7 @@ async function init() {
     );
   }
   initialized = true;
-  console.log("[mysql] connected & tables ready:", process.env.MYSQL_DATABASE || "homeland");
+  console.log("[mysql] connected & tables ready:", dbName());
 }
 
 // ---- matching ----
@@ -252,11 +262,11 @@ function collection(name) {
 
 // Mongo-compatible entry point used by index.js: `const db = await getDb();`
 async function getDb() {
-  if (!process.env.MYSQL_HOST && !process.env.MYSQL_DATABASE) {
-    console.warn("[mysql] MYSQL_HOST/MYSQL_DATABASE not set — using defaults 127.0.0.1/homeland");
+  if (!process.env.MYSQL_HOST && !process.env.MYSQL_DATABASE && !process.env.DB_HOST && !process.env.DB_NAME) {
+    console.warn("[mysql] No MYSQL_*/DB_* env vars set — using defaults 127.0.0.1/homeland");
   }
   await init();
   return { collection };
 }
 
-module.exports = { getDb, getPool, collection, init, COLLECTIONS, matchDoc, applyUpdate };
+module.exports = { getDb, getPool, collection, init, COLLECTIONS, matchDoc, applyUpdate, dbName };
