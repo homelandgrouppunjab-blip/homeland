@@ -2,6 +2,7 @@
   "name": "homeland-group",
   "version": "1.0.0",
   "private": true,
+  "main": "app.js",
   "description": "Homeland Group — React frontend + Node/Express API (MySQL). The API serves the built frontend, so this deploys as a single Node web service.",
   "engines": {
     "node": ">=20.0.0"

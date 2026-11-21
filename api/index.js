@@ -1099,13 +1099,11 @@ if (fs.existsSync(path.join(FRONTEND_BUILD, "index.html"))) {
 
 module.exports = app;
 
-// Allow running as a standalone server locally (node api/index.js)
-if (require.main === module) {
-  // Hostinger managed Node.js hosting proxies to port 3000 by default; Emergent
-  // preview and VPS/PM2 inject PORT explicitly. So honor PORT, else default 3000.
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => console.log(`Homeland Node API listening on :${port}`));
-
+// Background services (Mongo->MySQL mirror + daily reminder digest). These must
+// run whether the app is started directly (node api/index.js / supervisor) OR
+// required by a process manager such as Hostinger's Passenger. Node caches the
+// module, so this runs exactly once per process.
+function startBackgroundServices() {
   // Mongo -> MySQL mirror (only runs when MONGO_URL is configured; safe no-op otherwise).
   try { sync.start(); } catch (e) { console.error("[sync] not started:", e.message); }
 
@@ -1126,4 +1124,14 @@ if (require.main === module) {
   } catch (e) {
     console.error("[reminders] scheduler not started:", e.message);
   }
+}
+
+startBackgroundServices();
+
+// When started directly (not mounted by Passenger), bind the port ourselves.
+// Hostinger managed Node.js hosting proxies to port 3000 by default; Emergent
+// preview and VPS/PM2 inject PORT explicitly. So honor PORT, else default 3000.
+if (require.main === module) {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => console.log(`Homeland Node API listening on :${port}`));
 }
