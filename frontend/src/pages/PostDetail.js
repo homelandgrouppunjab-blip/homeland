@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, CalendarDays, User } from "lucide-react";
 import { getPost, getPosts } from "@/lib/api";
 import FadeUp from "@/components/FadeUp";
+import Seo from "@/components/Seo";
 
 export default function PostDetail() {
   const { slug } = useParams();
@@ -19,6 +20,24 @@ export default function PostDetail() {
 
   return (
     <div>
+      <Seo
+        title={post.title}
+        path={`/insights/${post.slug}`}
+        description={(post.excerpt || post.content || "").replace(/\s+/g, " ").trim().slice(0, 300)}
+        image={post.cover_image}
+        type="article"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: post.title,
+          description: (post.excerpt || "").slice(0, 300),
+          image: post.cover_image || undefined,
+          datePublished: post.date || undefined,
+          author: { "@type": "Organization", name: post.author || "Homeland Group" },
+          publisher: { "@type": "Organization", name: "Homeland Group Mohali" },
+          mainEntityOfPage: `https://www.homelandgroupindia.com/insights/${post.slug}`,
+        }}
+      />
       <div className="relative h-[52vh] min-h-[360px]">
         <img src={post.cover_image} alt={post.title} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/30" />

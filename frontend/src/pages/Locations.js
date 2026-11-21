@@ -5,6 +5,7 @@ import { getProjects } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import ProjectMap from "@/components/ProjectMap";
 import StatusBadge from "@/components/StatusBadge";
+import Seo from "@/components/Seo";
 
 export default function Locations() {
   const [projects, setProjects] = useState([]);
@@ -13,6 +14,11 @@ export default function Locations() {
 
   return (
     <div className="pt-14 pb-24">
+      <Seo
+        title="Locations"
+        path="/locations"
+        description="Explore Homeland Group developments on the map across Mohali, New Chandigarh, Amritsar, Kasauli and Goa — prime addresses with world-class connectivity."
+      />
       <div className="container-lux">
         <SectionHeading kicker="Locations" title="Our Presence Across the Tricity" subtitle="Explore Homeland developments across Mohali, New Chandigarh, Amritsar and beyond." />
         <div className="mt-10 grid lg:grid-cols-3 gap-6">

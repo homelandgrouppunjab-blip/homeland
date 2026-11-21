@@ -4,6 +4,7 @@ import { ArrowRight, CalendarDays } from "lucide-react";
 import { getPosts } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import FadeUp from "@/components/FadeUp";
+import Seo from "@/components/Seo";
 
 const CATS = ["All", "News", "Media", "Blog"];
 
@@ -18,6 +19,11 @@ export default function Insights() {
 
   return (
     <div className="pt-14 pb-24">
+      <Seo
+        title="Insights — News, Media & Blog"
+        path="/insights"
+        description="Project updates, industry insights and press coverage from Homeland Group — your guide to real estate in Mohali, Chandigarh and the Tricity."
+      />
       <div className="container-lux">
         <SectionHeading kicker="Insights" title="News, Media & Blog" subtitle="Project updates, industry insights and press coverage from Homeland Group." />
 

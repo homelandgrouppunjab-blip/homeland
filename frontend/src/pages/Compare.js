@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getProjects } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import StatusBadge from "@/components/StatusBadge";
+import Seo from "@/components/Seo";
 import { FileText } from "lucide-react";
 
 const ROWS = [
@@ -33,6 +34,11 @@ export default function Compare() {
 
   return (
     <div className="pt-10 pb-24">
+      <Seo
+        title="Compare Projects"
+        path="/compare"
+        description="Compare every Homeland Group development side by side — completed, ongoing and upcoming — by location, configuration, price and possession."
+      />
       <div className="container-lux">
         <SectionHeading kicker="Side-by-Side" title="Compare Projects" subtitle="Compare every Homeland development — completed, ongoing and upcoming — at a glance." />
         <div className="mt-6 flex items-center gap-2 text-sm text-[color:var(--lux-ivory)]/60">

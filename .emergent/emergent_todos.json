@@ -1,18 +1,26 @@
 [
   {
-    "content": "Harden SocialEmbed.js: sanitize markup with DOMPurify + only re-run external allowlisted scripts",
+    "content": "Humanize all 10 project descriptions + specifications in seed-data.json (premium tone, facts preserved)",
     "status": "completed"
   },
   {
-    "content": "Fix silent error handlers: UserAuthContext (session exchange + logout) and ThemeToggle catches",
+    "content": "Humanize company history/story in seed-data.json (history_intro + history_full)",
     "status": "completed"
   },
   {
-    "content": "Verify build (esbuild + dompurify) and no regressions",
+    "content": "Add reusable SEO component + wire into all key pages with dynamic titles/descriptions/canonical + JSON-LD",
     "status": "completed"
   },
   {
-    "content": "Recover node_modules after partial npm install corruption (clean reinstall)",
+    "content": "Expand sitemap.xml with all project URLs",
+    "status": "completed"
+  },
+  {
+    "content": "Reseed local DB, compile-check frontend, verify via API + screenshots",
+    "status": "completed"
+  },
+  {
+    "content": "Confirm production build passes (deployment readiness)",
     "status": "completed"
   }
 ]

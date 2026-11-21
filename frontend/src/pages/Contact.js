@@ -4,6 +4,7 @@ import { getProjects, getContent } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import EnquiryForm from "@/components/EnquiryForm";
 import ProjectMap from "@/components/ProjectMap";
+import Seo from "@/components/Seo";
 
 export default function Contact() {
   const [projects, setProjects] = useState([]);
@@ -15,6 +16,11 @@ export default function Contact() {
 
   return (
     <div className="pt-14 pb-24">
+      <Seo
+        title="Contact Us"
+        path="/contact"
+        description="Get in touch with Homeland Group to book a site visit or enquire about luxury homes and commercial spaces in Mohali, Chandigarh and across Punjab. Call +91 90417 95879."
+      />
       <div className="container-lux">
         <SectionHeading align="center" kicker="Get in Touch" title="Enquire With Homeland" subtitle="Whether you're buying your dream home or investing in commercial space, our team is here to help." />
 

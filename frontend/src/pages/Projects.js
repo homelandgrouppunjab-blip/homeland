@@ -4,6 +4,7 @@ import ProjectCard from "@/components/ProjectCard";
 import SectionHeading from "@/components/SectionHeading";
 import FadeUp from "@/components/FadeUp";
 import { getProjects } from "@/lib/api";
+import Seo from "@/components/Seo";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const STATUSES = ["All", "ONGOING", "DELIVERED", "UPCOMING"];
@@ -40,6 +41,11 @@ export default function Projects() {
 
   return (
     <div className="pt-10">
+      <Seo
+        title="Our Projects"
+        path="/projects"
+        description="Explore Homeland Group's premium residential, commercial and mixed-use developments across Mohali, Chandigarh and Punjab — including Homeland Regalia, CP67, Homeland Heights, Global Park and Infinia."
+      />
       <div className="container-lux">
         <SectionHeading kicker="Portfolio" title="Our Projects" subtitle="Discover premium residential, commercial and mixed-use developments across Punjab and the Tricity." />
 

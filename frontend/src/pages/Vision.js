@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getContent, getTeam } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import FadeUp from "@/components/FadeUp";
+import Seo from "@/components/Seo";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export default function Vision() {
@@ -14,6 +15,11 @@ export default function Vision() {
 
   return (
     <div>
+      <Seo
+        title="Vision & Leadership"
+        path="/vision"
+        description="The vision and leadership behind Homeland Group — meet the team shaping iconic residential and commercial landmarks across Mohali, Chandigarh and the Tricity."
+      />
       <section className="section-pad container-lux">
         <div className="max-w-3xl">
           <SectionHeading kicker="Our Vision" title="Building the Future of Living" />

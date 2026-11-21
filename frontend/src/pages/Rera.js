@@ -4,6 +4,7 @@ import { ShieldCheck, ExternalLink } from "lucide-react";
 import { getRera, getFaqs } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import FadeUp from "@/components/FadeUp";
+import Seo from "@/components/Seo";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
 export default function Rera() {
@@ -16,6 +17,11 @@ export default function Rera() {
 
   return (
     <div className="pt-14 pb-24">
+      <Seo
+        title="RERA & FAQ"
+        path="/rera"
+        description="Every Homeland Group project is RERA-registered with the Punjab Real Estate Regulatory Authority. Find all RERA registration numbers and answers to common buyer questions."
+      />
       <div className="container-lux">
         <SectionHeading kicker="Transparency" title="RERA & FAQ" subtitle="Every Homeland project is RERA-registered. Find all registration numbers and answers to common questions below." />
 

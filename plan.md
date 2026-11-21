@@ -1,115 +1,149 @@
-# plan.md — Homeland Group Mohali (Elite-Class Real Estate Website)
-
-## STATUS: Phase 1 COMPLETE ✅ (Tested: 31/31 backend + 100% frontend/admin + E2E enquiry flow)
-- Built full public site (13 routes) + admin dashboard (JWT) in premium black+gold luxury theme.
-- 8 projects seeded with real content (Regalia, Heights, CP67, Global Park, New Chandigarh + 3 upcoming).
-- Leaflet maps (no key), lead capture -> DB -> admin inbox, RERA index, brochure center, compare view all working.
-- Admin credentials: admin@homelandgroup.org / Homeland@2013 (editable content anytime).
+# Content Humanization + SEO Readiness Plan (Homeland Group Mohali)
 
 ## 1) Objectives
-- Deliver a premium, high-performance, SEO-friendly marketing website for **Homeland Group Mohali** with luxury **black + gold texture** + platinum accents.
-- Provide a **comfortable full CMS/admin dashboard** to manage projects, RERA, brochures, media, maps, team, company content, and leads anytime.
-- Implement a robust portfolio: listings, filters, featured projects, detail pages (gallery/video/brochure/map), compare view, upcoming projects, RERA index, brochure center, enquiry capture.
-- Store enquiry leads in MongoDB and surface them in admin (email notification deferred).
+- Rewrite **project descriptions/summaries** and **homepage/about story copy** in a **premium, polished** brand voice.
+- **Preserve facts exactly** (RERA numbers, sizes, sectors, dates, prices, status/possession claims).
+- Apply changes to **`/app/api/seed-data.json`** and ensure the **runtime data stores reflect it** (MySQL as read-store; optional Mongo source-of-truth scenarios).
+- Make the site more **SEO / Google-search ready** with:
+  - Per-route titles/descriptions/canonical
+  - Correct OG/Twitter metadata
+  - Structured data (JSON-LD)
+  - Sitemap coverage for project pages
+
+**Current status:** All objectives above are **completed and verified locally**.
+
+---
 
 ## 2) Implementation Steps
 
-### Phase 1 — Build V1 directly (no POC needed)
-**User stories (V1 core):**
-1. As a visitor, I can view a luxury home page hero slider and jump to key CTAs (Enquiry / Projects / Brochures).
-2. As a visitor, I can browse all projects with filters (status/type/location) and clearly see **RERA numbers**.
-3. As a visitor, I can open a project detail page with gallery, brochure download, amenities, and a map pin.
-4. As a visitor, I can submit an enquiry with validation and get a clear success confirmation.
-5. As an admin, I can log in and add/edit projects (including RERA, brochure, gallery, map coords) and view leads.
+### Phase 1 — Core POC: “SEO rendering + humanized content shows up”
+**Goal:** Prove that (a) rewritten content is visible end-to-end and (b) dynamic meta tags can be set per route.
 
-**Backend (FastAPI + MongoDB)**
-- Create models/schemas: `Project`, `Lead`, `SiteContent`, `TeamMember`, `ReraCertificate`, `AdminUser`.
-- Seed placeholder data for required projects:
-  - Homeland Heights; Homeland Regalia (Featured); Homeland Unity CP67; Homeland Global Park (Featured); Homeland New Chandigarh.
-  - Upcoming: Homeland Amritsar; Homeland Commercial cum Residential at YPS Chowk Mohali; Homeland Group Housing Phase 8 near Fortis Hospital Mohali.
-- REST API under `/api`:
-  - Public: projects list/detail, featured, search/filter; site content; team; RERA index; brochure list.
-  - Leads: create lead (public), list leads (admin).
-  - Admin auth: JWT login/refresh; protected CRUD for all entities.
-- Validation + basic anti-spam controls on enquiries (rate limit by IP + honeypot field).
+**User stories (POC)**
+1. As a visitor, I can open a project page and read a premium, polished summary that still matches the original facts.
+2. As a visitor, the browser tab title and meta description match the project I’m viewing.
+3. As a crawler, the homepage has indexable fallback content even if JS is disabled.
+4. As a marketer, I can verify canonical URL and OpenGraph values for a project page.
+5. As a QA tester, I can reseed/refresh content and see copy changes immediately in the UI.
 
-**Frontend (React)**
-- Public site pages:
-  - Home (hero slider with all projects + featured blocks + company sections)
-  - About/History, Benchmark, Vision & Team
-  - Projects listing (filters + search + chips) + Featured Properties
-  - Project Detail (media slider + lightbox, brochure download, RERA prominence, stats, amenities, video embed, Leaflet map + landmarks)
-  - Compare view (table/columns, sorting)
-  - Upcoming Projects
-  - Brochure Center (search/filter)
-  - RERA/FAQ page (RERA list + cert download links)
-  - Enquiry/Contact (project dropdown incl “Any”, requirement type, budget optional, preferred contact time)
-  - Locations & Maps (Leaflet map with pins + hover quick-card)
-- Design system:
-  - Black + gold textured sections, platinum accents, glassmorphism cards, premium serif headings + clean sans body.
-  - Reusable components: cards, badges (Featured/Hot), tabs/accordions, sliders, modals, chips, breadcrumb, CTA blocks.
-- SEO/perf:
-  - Semantic layout, meta tags, OpenGraph, JSON-LD for Organization/RealEstateAgent + breadcrumbs.
-  - Lazy-load images, responsive srcset, route-based code splitting.
-  - Generate sitemap + robots.
+**Steps (as built)**
+1. **Rewrite flagship projects first** (used as tone benchmark):
+   - Updated `tagline`, `description`, `specifications` wording while keeping all numbers/claims intact.
+2. Rewrite **`site_content.main.history_intro`** + `history_full[]` to a premium, polished tone (facts unchanged).
+3. Add SEO POC (final approach differs from original plan):
+   - Implemented a reusable **`<Seo />`** component at `frontend/src/components/Seo.js`.
+   - Uses an **effect-based, in-place head update** strategy to prevent duplicate/conflicting tags in a CRA/SPA environment.
+   - Applies SEO on **Home**, **About**, and **ProjectDetail** with project-specific title/description/canonical.
+   - Adds JSON-LD injection in `<head>` with cleanup on unmount.
+4. Run locally:
+   - Verified via API that MySQL returns updated content.
+   - Verified in browser that humanized copy renders and that `<title>`, `<meta name="description">`, and `<link rel="canonical">` update correctly.
 
-**Admin dashboard (React)**
-- Admin login (JWT) + protected routes.
-- “Comfortable editing” UX:
-  - Projects CRUD with sections (Basics, RERA, Pricing/Units, Amenities, Media, Brochure, Map/landmarks, Featured flags).
-  - Media management (URL-based for v1; structured gallery editor).
-  - SiteContent editor (History, Benchmarks, Vision pillars).
-  - Team editor (add/reorder, short bio + expanded bio).
-  - RERA certificates editor (list + download link fields).
-  - Leads inbox (search, filter by project/date; lead detail drawer).
-
-**Checkpoint: V1 E2E testing**
-- Run one full pass: browse/filter → detail → brochure click → map load → enquiry submit → lead appears in admin.
+**Stop/Fix Gate (result):** ✅ Passed. Project page shows humanized content and correct per-page metadata without duplicates.
 
 ---
 
-### Phase 2 — Harden + polish (production readiness)
-**User stories (polish):**
-1. As a visitor, I experience fast loads with smooth transitions and no layout shifts.
-2. As a visitor, I can keyboard-navigate every interactive element with clear focus states.
-3. As an admin, I can safely edit content without breaking the site (field constraints + previews).
-4. As an admin, I can reorder projects and featured sections to control the homepage narrative.
-5. As a marketing user, I can copy/share SEO-friendly project URLs with correct preview cards.
+### Phase 2 — V1 App Development: full content humanization + solid SEO baseline
+**User stories (V1)**
+1. As a visitor, every project page reads naturally and consistently in a premium brand voice.
+2. As a visitor, homepage and about page communicate the brand story clearly without sounding auto-generated.
+3. As a search engine, each major route has an appropriate title/meta description/canonical.
+4. As a user, project pages show structured details (RERA, location, unit types) without any factual drift.
+5. As an admin/owner, reseeding/refreshing restores the polished default copy consistently.
 
-- Accessibility pass (WCAG AA): aria labels, focus rings, contrast, skip links.
-- Stronger input validation (server+client), sanitization, consistent error UX.
-- Add preview mode for project pages from admin (draft vs published).
-- Add analytics event hooks (page views, brochure clicks, enquiry submits) as stubs.
-- Security: tighten CORS, JWT expiry/refresh, admin password hashing, basic audit fields.
+**Steps (as built)**
+1. **Humanize all projects** in `api/seed-data.json`:
+   - Completed across all **10** projects.
+   - Updated prose fields (e.g., `description`, `specifications`) while preserving all facts.
+2. **Humanize company story** in `api/seed-data.json`:
+   - Updated `history_intro` and `history_full` to polished brand copy.
+3. **SEO baseline completion (expanded)**:
+   - Wired `<Seo />` into these routes/pages:
+     - `/` (Home)
+     - `/projects` (Projects)
+     - `/projects/:slug` (ProjectDetail) + **Residence JSON-LD**
+     - `/about` (About)
+     - `/contact` (Contact)
+     - `/upcoming` (Upcoming)
+     - `/insights` (Insights)
+     - `/insights/:slug` (PostDetail) + **Article JSON-LD**
+     - `/vision` (Vision)
+     - `/locations` (Locations)
+     - `/rera` (Rera)
+     - `/brochures` (Brochures)
+     - `/compare` (Compare)
+   - Confirmed **no duplicate canonical/description** tags after navigation.
+4. **Canonical conflict prevention**:
+   - Removed the **static canonical** link from `frontend/public/index.html` to avoid conflicts.
+   - Canonicals are now set per-route by `<Seo />`.
+5. **Sitemap expansion**:
+   - Updated `frontend/public/sitemap.xml` to include all **10** `/projects/<slug>` URLs.
+   - Verified `robots.txt` references the sitemap.
+6. **Data store alignment / reseed behavior**:
+   - Ensured `seed-data.json` is the durable source.
+   - Applied changes into the **live MySQL read-store** and also into the **legacy Mongo copies** using narrowly scoped updates (`$set` on text fields only; no drops).
+7. **Regression checks**:
+   - Confirmed the frontend production build passes (`craco build`).
+   - Verified via browser checks and screenshots:
+     - Humanized copy is visible.
+     - Titles/descriptions/canonicals are correct.
+     - SPA navigation updates metadata properly.
 
-**Checkpoint: E2E regression test**
-- Test CRUD flows + public pages, ensure no broken routes/assets.
+**Phase 2 result:** ✅ Completed.
 
 ---
 
-### Phase 3 — Optional expansions (post-v1)
-**User stories (optional):**
-1. As a visitor, I can download brochures after optionally submitting a lead.
-2. As an admin, I receive email notifications for new leads.
-3. As a visitor, I can read news/blog updates.
-4. As a visitor, I can view 360 tours when available.
-5. As an admin, I can create landing pages for campaigns (UTM-ready).
+### Phase 3 — Hardening + validation (SEO QA + content QA)
+**User stories (Hardening)**
+1. As a visitor, sharing any page on WhatsApp/Facebook shows correct preview title/description.
+2. As a crawler, canonical URLs are consistent (no www vs non-www duplicates).
+3. As a QA tester, no page has missing/empty title/description.
+4. As a visitor, project pages load fast and do not break due to SEO tag handling.
+5. As an owner, I can spot-check that no RERA/price/location facts changed during rewriting.
 
-- Optional email notifications (SMTP credentials required).
-- Blog/News module (CMS-managed) + SEO templates.
-- 360 tours field support + richer media blocks.
-- Role-based admin (Editor vs Admin) if needed.
+**Steps (as validated locally)**
+1. SEO QA checklist:
+   - Confirmed a **single** `description` + **single** `canonical` on pages after refactor.
+   - Confirmed per-route canonical updates correctly on SPA navigation.
+   - Confirmed JSON-LD scripts inject into `<head>` and do not accumulate across navigations.
+2. Content QA checklist:
+   - Spot-checked key projects (e.g., CP67) that RERA and structured fields remain unchanged.
+3. Build QA:
+   - Confirmed CRA/CRACO production build succeeds.
+
+**Phase 3 result:** ✅ Completed locally.
+
+---
 
 ## 3) Next Actions
-1. Produce design direction (tokens/components) for black+gold texture + platinum look and apply across pages.
-2. Implement backend schemas + seed data + APIs + JWT admin auth.
-3. Implement public frontend routes + core components + Leaflet maps.
-4. Implement admin dashboard CRUD + leads inbox.
-5. Run E2E test pass and fix until stable.
+1. **Commit + push changes** to GitHub:
+   - `api/seed-data.json`
+   - `frontend/src/components/Seo.js`
+   - Updated page files with `<Seo />` wiring
+   - `frontend/public/index.html` (static canonical removed)
+   - `frontend/public/sitemap.xml`
+2. **Hostinger deployment validation (must-do before claiming “live SEO works”)**:
+   - Redeploy and confirm the production site serves the correct app backend.
+   - Validate these on the live domain:
+     - `/api/` returns this app’s signature response
+     - `/api/health` shows `mysql.ok: true`
+     - `/api/projects` returns the seeded projects
+   - Validate SEO on live:
+     - Check page source/head tags after render (title/description/canonical)
+     - Check `/sitemap.xml` accessibility
+3. Optional improvements (future):
+   - Consider SSR / pre-rendering for social crawlers that do not execute JS (the current solution is optimized for Googlebot).
+   - Add automated QA script to ensure every project has non-empty `tagline`/`description` and every route sets canonical.
+
+---
 
 ## 4) Success Criteria
-- Public site: all specified pages render, responsive, premium look/feel, fast, accessible.
-- Portfolio: filters, featured badges, project detail media + brochure links + Leaflet maps work.
-- Enquiry: validated submissions stored in MongoDB and visible in admin.
-- Admin: comfortable CRUD for all content types; changes reflect immediately on public site.
-- SEO basics: clean URLs, metadata, JSON-LD, sitemap/robots present; no broken links.
+- **Copy quality:** Projects + story read premium/polished and consistent.
+- **Fact integrity:** No changes to numeric/legal fields (RERA, sizes, sectors, dates, prices).
+- **Functional:** Seed-driven content is reflected in MySQL runtime data and visible in the UI.
+- **SEO-ready (SPA):**
+  - Unique titles/descriptions/canonicals for major routes + project pages
+  - No duplicate/conflicting `canonical` or `description`
+  - JSON-LD present on project pages and posts
+  - Sitemap includes project URLs
+- **Build-ready:** Frontend production build completes successfully.

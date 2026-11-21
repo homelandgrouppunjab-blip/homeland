@@ -3,6 +3,7 @@ import { Award } from "lucide-react";
 import { getContent } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import FadeUp from "@/components/FadeUp";
+import Seo from "@/components/Seo";
 
 export default function About() {
   const [c, setC] = useState(null);
@@ -10,6 +11,11 @@ export default function About() {
 
   return (
     <div>
+      <Seo
+        title="About Us — Our Story"
+        path="/about"
+        description="Since 2013, Homeland Group has grown into one of North India's most trusted real estate developers, reshaping the skylines of Chandigarh, Mohali and the Tricity with a legacy built on integrity, innovation and responsibility."
+      />
       <div className="relative h-[46vh] min-h-[320px]">
         <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80" alt="Homeland Group" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/30" />

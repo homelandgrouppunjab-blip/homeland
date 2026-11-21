@@ -5,6 +5,7 @@ import { getBrochures } from "@/lib/api";
 import SectionHeading from "@/components/SectionHeading";
 import StatusBadge from "@/components/StatusBadge";
 import FadeUp from "@/components/FadeUp";
+import Seo from "@/components/Seo";
 
 export default function Brochures() {
   const [items, setItems] = useState([]);
@@ -14,6 +15,11 @@ export default function Brochures() {
 
   return (
     <div className="pt-14 pb-24">
+      <Seo
+        title="Brochure Center"
+        path="/brochures"
+        description="Download detailed brochures for every Homeland Group development — luxury homes and commercial spaces across Mohali, Chandigarh and Punjab."
+      />
       <div className="container-lux">
         <SectionHeading kicker="Download Center" title="Brochure Center" subtitle="Download detailed brochures for every Homeland development." />
         <div className="mt-8 relative max-w-md">

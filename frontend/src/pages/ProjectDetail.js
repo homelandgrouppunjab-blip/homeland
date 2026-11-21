@@ -8,6 +8,7 @@ import ProjectMap from "@/components/ProjectMap";
 import LogoPlaque from "@/components/LogoPlaque";
 import EnquiryForm from "@/components/EnquiryForm";
 import FadeUp from "@/components/FadeUp";
+import Seo from "@/components/Seo";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
@@ -114,6 +115,32 @@ export default function ProjectDetail() {
   const copyRera = (r) => { navigator.clipboard.writeText(r); toast.success("RERA number copied"); };
 
   const isDelivered = p.status === "DELIVERED";
+  const seoTitle = `${p.name} — ${p.location || p.city || "Mohali"}`;
+  const seoDescription = (p.description || p.tagline || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 300);
+  const projectJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Residence",
+    name: p.name,
+    description: seoDescription,
+    url: `https://www.homelandgroupindia.com/projects/${p.slug}`,
+    image: p.hero_image || undefined,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: p.full_address || p.location || undefined,
+      addressLocality: p.city || "Mohali",
+      addressRegion: "Punjab",
+      addressCountry: "IN",
+    },
+    ...(p.map_lat && p.map_lng
+      ? { geo: { "@type": "GeoCoordinates", latitude: p.map_lat, longitude: p.map_lng } }
+      : {}),
+    ...(p.price_range && /[0-9]/.test(p.price_range)
+      ? { offers: { "@type": "Offer", price: p.price_range, priceCurrency: "INR", availability: "https://schema.org/InStock" } }
+      : {}),
+  };
   const specItems = [
     { icon: Ruler, label: "Land Area", value: p.land_area },
     { icon: Home, label: "Unit Area", value: p.unit_area },
@@ -146,6 +173,14 @@ export default function ProjectDetail() {
 
   return (
     <div>
+      <Seo
+        title={seoTitle}
+        path={`/projects/${p.slug}`}
+        description={seoDescription}
+        image={p.hero_image}
+        type="article"
+        jsonLd={projectJsonLd}
+      />
       {/* Hero */}
       <div className="relative h-[70vh] min-h-[480px] overflow-hidden bg-black">
         {hasVideo ? (

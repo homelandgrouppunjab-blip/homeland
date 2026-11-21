@@ -8,6 +8,7 @@ import FadeUp from "@/components/FadeUp";
 import ProjectMap from "@/components/ProjectMap";
 import EnquiryForm from "@/components/EnquiryForm";
 import Insights3DSlider from "@/components/Insights3DSlider";
+import Seo from "@/components/Seo";
 import { getProjects, getContent, getTeam } from "@/lib/api";
 
 const ICONS = { award: Award, users: Users, "building-2": Building2, clock: Clock, ruler: Ruler, "shield-check": ShieldCheck };
@@ -35,6 +36,10 @@ export default function Home() {
 
   return (
     <div>
+      <Seo
+        path="/"
+        description="Homeland Group is one of North India's most trusted real estate developers, crafting iconic RERA-registered residential and commercial landmarks across Mohali, Chandigarh and Punjab — from luxury apartments and sky villas to premium showrooms and office spaces."
+      />
       <HeroSlider projects={sliderProjects} />
 
       {/* Intro / History */}
