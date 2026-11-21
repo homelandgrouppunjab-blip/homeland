@@ -1,14 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import DOMPurify from "dompurify";
 
 // Renders an admin-pasted social embed widget (e.g. Behold / SnapWidget /
 // EmbedSocial / Elfsight). This is admin-only input, but we still defend in
 // depth against XSS:
-//   1. The pasted markup is sanitised with DOMPurify, which strips inline
-//      <script> bodies, on* event handlers and javascript: URLs.
+//   1. The markup is sanitised with DOMPurify and rendered via React's
+//      dangerouslySetInnerHTML (no raw innerHTML assignment). DOMPurify strips
+//      inline <script> bodies, on* event handlers and javascript: URLs.
 //   2. Widgets need their loader <script src="..."> to run, so we re-create ONLY
-//      external scripts whose host is on a known-provider allowlist. Inline
-//      script bodies are never executed.
+//      external scripts whose host is on a known-provider allowlist, appended to
+//      a dedicated node. Inline script bodies are never executed.
 const ALLOWED_SCRIPT_HOSTS = [
   "behold.so", "widget.behold.so",
   "snapwidget.com", "cdn.snapwidget.com",
@@ -40,39 +41,45 @@ function isAllowedScriptSrc(src, hosts) {
 }
 
 export default function SocialEmbed({ code, className = "", allowedHosts }) {
-  const ref = useRef(null);
+  const scriptHost = useRef(null);
   // Admin-managed allowlist (from site content) overrides the defaults when set.
   const hosts = Array.isArray(allowedHosts) && allowedHosts.length
     ? allowedHosts.map((h) => String(h).trim().toLowerCase()).filter(Boolean)
     : ALLOWED_SCRIPT_HOSTS;
 
+  // Sanitised markup, rendered by React (no direct innerHTML assignment).
+  const sanitized = useMemo(
+    () => (code ? DOMPurify.sanitize(code, { ADD_TAGS: ["iframe"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "target"] }) : ""),
+    [code]
+  );
+
+  // Append ONLY external, allowlisted loader scripts to a dedicated node.
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (!code) { el.innerHTML = ""; return; }
+    const host = scriptHost.current;
+    if (!host) return;
+    while (host.firstChild) host.removeChild(host.firstChild); // clear previous (no innerHTML)
+    if (!code) return;
 
-    // 1) Sanitised markup (DOMPurify removes scripts + dangerous attributes).
-    // Safe: the string is sanitised with DOMPurify immediately before assignment.
-    el.innerHTML = DOMPurify.sanitize(code, { ADD_TAGS: ["iframe"], ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "target"] });
-
-    // 2) Re-create ONLY external, allowlisted loader scripts from the raw code.
-    // DOMParser parses the markup WITHOUT executing or loading anything, so we can
-    // safely inspect the original <script> tags (no innerHTML of untrusted input).
+    // DOMParser inspects the raw markup WITHOUT executing or loading anything.
     const parsed = new DOMParser().parseFromString(code, "text/html");
-    const scripts = Array.from(parsed.querySelectorAll("script"));
-    scripts.forEach((old) => {
+    Array.from(parsed.querySelectorAll("script")).forEach((old) => {
       const src = old.getAttribute("src");
-      if (!isAllowedScriptSrc(src, hosts)) return; // skip inline + non-allowlisted scripts
+      if (!isAllowedScriptSrc(src, hosts)) return; // skip inline + non-allowlisted
       const s = document.createElement("script");
       s.src = src;
       if (old.async) s.async = true;
       if (old.defer) s.defer = true;
       const charset = old.getAttribute("charset");
       if (charset) s.setAttribute("charset", charset);
-      el.appendChild(s);
+      host.appendChild(s);
     });
   }, [code, hosts.join("|")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!code) return null;
-  return <div ref={ref} className={className} data-testid="social-embed" />;
+  return (
+    <div className={className} data-testid="social-embed">
+      <div dangerouslySetInnerHTML={{ __html: sanitized }} />
+      <div ref={scriptHost} aria-hidden="true" />
+    </div>
+  );
 }
