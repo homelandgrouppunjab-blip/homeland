@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, Loader2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { adminGetPosts, adminCreatePost, adminUpdatePost, adminDeletePost } from "@/lib/api";
@@ -17,8 +17,8 @@ export default function AdminBlog() {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
 
-  const load = () => adminGetPosts().then(setList).catch(() => toast.error("Failed to load"));
-  useEffect(() => { load(); }, []);
+  const load = useCallback(() => adminGetPosts().then(setList).catch(() => toast.error("Failed to load")), []);
+  useEffect(() => { load(); }, [load]);
 
   const openCreate = () => { setEditing(null); setForm(EMPTY); setOpen(true); };
   const openEdit = (p) => { setEditing(p); setForm({ ...EMPTY, ...p }); setOpen(true); };

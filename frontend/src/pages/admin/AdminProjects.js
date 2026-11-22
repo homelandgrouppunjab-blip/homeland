@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, Loader2, ChevronUp, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { adminGetProjects, adminCreateProject, adminUpdateProject, adminDeleteProject } from "@/lib/api";
@@ -31,8 +31,8 @@ export default function AdminProjects() {
   const [saving, setSaving] = useState(false);
   const [delId, setDelId] = useState(null);
 
-  const load = () => adminGetProjects().then(setList).catch(() => toast.error("Failed to load"));
-  useEffect(() => { load(); }, []);
+  const load = useCallback(() => adminGetProjects().then(setList).catch(() => toast.error("Failed to load")), []);
+  useEffect(() => { load(); }, [load]);
 
   const openCreate = () => { setEditing(null); setForm(EMPTY); setOpen(true); };
   const openEdit = (p) => {

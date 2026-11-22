@@ -47,7 +47,7 @@ export default function PostDetail() {
         {post.excerpt && <p className="font-display text-xl text-ivory leading-snug mb-6">{post.excerpt}</p>}
         <div className="prose-invert space-y-5">
           {(post.content || "").split("\n").filter((l) => l.trim()).map((para, i) => (
-            <p key={i} className="text-[color:var(--lux-ivory)]/75 leading-relaxed">{para}</p>
+            <p key={`${i}-${para.slice(0, 32)}`} className="text-[color:var(--lux-ivory)]/75 leading-relaxed">{para}</p>
           ))}
         </div>
       </div>

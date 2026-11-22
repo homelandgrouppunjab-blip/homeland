@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trash2, Mail, Phone, CalendarClock, Clock, Users, BellRing, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { adminGetVisits, adminUpdateVisit, adminDeleteVisit, adminRunVisitReminders } from "@/lib/api";
@@ -17,8 +17,8 @@ export default function AdminVisits() {
   const [filter, setFilter] = useState("all");
   const [sending, setSending] = useState(false);
 
-  const load = () => adminGetVisits().then(setVisits).catch(() => toast.error("Failed to load visits"));
-  useEffect(() => { load(); }, []);
+  const load = useCallback(() => adminGetVisits().then(setVisits).catch(() => toast.error("Failed to load visits")), []);
+  useEffect(() => { load(); }, [load]);
 
   const changeStatus = async (id, status) => {
     try { await adminUpdateVisit(id, status); toast.success("Updated"); load(); } catch { toast.error("Update failed"); }

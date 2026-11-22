@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { getTeam, adminCreateTeam, adminUpdateTeam, adminDeleteTeam } from "@/lib/api";
@@ -16,8 +16,8 @@ export default function AdminTeam() {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
 
-  const load = () => getTeam().then(setList).catch(() => {});
-  useEffect(() => { load(); }, []);
+  const load = useCallback(() => getTeam().then(setList).catch(() => {}), []);
+  useEffect(() => { load(); }, [load]);
 
   const openCreate = () => { setEditing(null); setForm(EMPTY); setOpen(true); };
   const openEdit = (t) => { setEditing(t); setForm({ ...EMPTY, ...t }); setOpen(true); };

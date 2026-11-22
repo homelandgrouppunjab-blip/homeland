@@ -2,11 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { Bot, X, Send, Loader2, Phone, Mail, MessageCircle } from "lucide-react";
 import { sendChat, getContent } from "@/lib/api";
 
-const GREETING = {
+// Monotonic id so each chat message has a stable React key (append-only log).
+let _msgSeq = 0;
+const mkMsg = (msg) => ({ id: ++_msgSeq, ...msg });
+
+const GREETING = mkMsg({
   role: "assistant",
   content:
     "Hello! I'm the Homeland Group concierge. Ask me anything about our projects, locations, pricing or booking a visit — or tap a question below.",
-};
+});
 
 // Predefined question → answer pairs. Built with the live contact details so the
 // "talk to our team" reply always shows the current number/email.
@@ -92,23 +96,23 @@ export default function Chatbot() {
     if (loading) return;
     setMessages((m) => [
       ...m,
-      { role: "user", content: faq.q },
-      { role: "assistant", content: faq.a, actions: faq.actions },
+      mkMsg({ role: "user", content: faq.q }),
+      mkMsg({ role: "assistant", content: faq.a, actions: faq.actions }),
     ]);
   };
 
   const send = async () => {
     const text = input.trim();
     if (!text || loading) return;
-    const next = [...messages, { role: "user", content: text }];
+    const next = [...messages, mkMsg({ role: "user", content: text })];
     setMessages(next);
     setInput("");
     setLoading(true);
     try {
       const { reply } = await sendChat(next.filter((m) => m.role !== "system").map(({ role, content }) => ({ role, content })));
-      setMessages((m) => [...m, { role: "assistant", content: toPlainText(reply) || "Sorry, I didn't catch that." }]);
+      setMessages((m) => [...m, mkMsg({ role: "assistant", content: toPlainText(reply) || "Sorry, I didn't catch that." })]);
     } catch {
-      setMessages((m) => [...m, { role: "assistant", content: "I'm having trouble right now. Please try again, or tap 'I want to talk to your team' below." }]);
+      setMessages((m) => [...m, mkMsg({ role: "assistant", content: "I'm having trouble right now. Please try again, or tap 'I want to talk to your team' below." })]);
     } finally {
       setLoading(false);
     }
@@ -147,7 +151,7 @@ export default function Chatbot() {
 
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div key={m.id ?? i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[85%] ${m.role === "user" ? "" : "w-full"}`}>
                   <div
                     data-testid={`chatbot-msg-${m.role}`}

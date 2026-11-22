@@ -27,7 +27,7 @@ export default function Vision() {
         </div>
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {(c?.vision_pillars || []).map((p, i) => (
-            <FadeUp key={i} delay={i * 0.05}>
+            <FadeUp key={p.title || i} delay={i * 0.05}>
               <div className="rounded-2xl bg-glass hairline p-6 h-full">
                 <div className="h-9 w-9 grid place-items-center rounded-full bg-[rgba(212,175,55,0.12)] text-gold font-semibold">{i + 1}</div>
                 <div className="mt-4 text-ivory font-semibold">{p.title}</div>

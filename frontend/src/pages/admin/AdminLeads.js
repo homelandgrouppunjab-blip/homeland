@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trash2, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { adminGetLeads, adminUpdateLead, adminDeleteLead } from "@/lib/api";
@@ -10,8 +10,8 @@ export default function AdminLeads() {
   const [leads, setLeads] = useState([]);
   const [filter, setFilter] = useState("all");
 
-  const load = () => adminGetLeads().then(setLeads).catch(() => toast.error("Failed to load leads"));
-  useEffect(() => { load(); }, []);
+  const load = useCallback(() => adminGetLeads().then(setLeads).catch(() => toast.error("Failed to load leads")), []);
+  useEffect(() => { load(); }, [load]);
 
   const changeStatus = async (id, status) => {
     try { await adminUpdateLead(id, status); toast.success("Updated"); load(); } catch { toast.error("Update failed"); }
