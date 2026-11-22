@@ -40,18 +40,55 @@ function dbName() {
 }
 
 let initialized = false;
-async function init() {
+let lastInitError = null;
+let connectedAt = null;
+async function init(retries = 4) {
   if (initialized) return;
-  const p = getPool();
-  for (const c of COLLECTIONS) {
-    await p.query(
-      "CREATE TABLE IF NOT EXISTS `" + c + "` (" +
-      "id VARCHAR(191) NOT NULL PRIMARY KEY, data LONGTEXT NOT NULL" +
-      ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
-    );
+  let attempt = 0;
+  for (;;) {
+    try {
+      const p = getPool();
+      for (const c of COLLECTIONS) {
+        await p.query(
+          "CREATE TABLE IF NOT EXISTS `" + c + "` (" +
+          "id VARCHAR(191) NOT NULL PRIMARY KEY, data LONGTEXT NOT NULL" +
+          ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        );
+      }
+      initialized = true;
+      lastInitError = null;
+      connectedAt = new Date().toISOString();
+      console.log("[mysql] connected & tables ready:", dbName());
+      return;
+    } catch (e) {
+      lastInitError = (e && (e.code || e.message)) || String(e);
+      attempt++;
+      if (attempt > retries) {
+        console.error("[mysql] init FAILED after " + attempt + " attempts:", lastInitError);
+        throw e;
+      }
+      const waitMs = 500 * attempt;
+      console.error("[mysql] init attempt " + attempt + " failed (" + lastInitError + "); retrying in " + waitMs + "ms");
+      await new Promise((r) => setTimeout(r, waitMs));
+      // Drop the pool so the next attempt opens a fresh connection.
+      try { if (pool) await pool.end(); } catch (_) { /* ignore */ }
+      pool = null;
+    }
   }
-  initialized = true;
-  console.log("[mysql] connected & tables ready:", dbName());
+}
+
+// Non-throwing connection status for the health/version readout (no secrets).
+function status() {
+  return {
+    initialized,
+    connected_at: connectedAt,
+    last_error: lastInitError,
+    database: dbName(),
+    host: dbEnv("HOST", "127.0.0.1"),
+    port: parseInt(dbEnv("PORT", "3306"), 10),
+    user_set: !!(process.env.MYSQL_USER || process.env.DB_USER),
+    password_set: !!(process.env.MYSQL_PASSWORD || process.env.DB_PASSWORD),
+  };
 }
 
 // ---- matching ----
@@ -269,4 +306,4 @@ async function getDb() {
   return { collection };
 }
 
-module.exports = { getDb, getPool, collection, init, COLLECTIONS, matchDoc, applyUpdate, dbName };
+module.exports = { getDb, getPool, collection, init, status, COLLECTIONS, matchDoc, applyUpdate, dbName };

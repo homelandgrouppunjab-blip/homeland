@@ -15,6 +15,21 @@ const { sendEmail } = require("./email");
 const mysqlDb = require("./db");
 const sync = require("./sync");
 
+// ---- Build / version marker (lets the owner confirm the live site is the real
+// Homeland backend and that it is running the latest code, not a placeholder). ----
+const BUILD = (() => {
+  let version = "1.0.0";
+  try { version = require("../package.json").version || version; } catch (e) { /* optional */ }
+  return {
+    service: "homeland-api",
+    version,
+    build: process.env.BUILD_TAG || "homeland-live-2026-11-21",
+    commit: process.env.BUILD_SHA || process.env.SOURCE_COMMIT || process.env.GIT_COMMIT || null,
+    node: process.version,
+    started_at: new Date().toISOString(),
+  };
+})();
+
 const JWT_SECRET = process.env.JWT_SECRET || "change-me";
 const JWT_EXPIRE_MINUTES = parseInt(process.env.JWT_EXPIRE_MINUTES || "1440", 10);
 // Admin login via env (preferred). ADMIN_EMAIL kept as a fallback username.
@@ -231,17 +246,47 @@ const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((e) => {
 });
 
 // -------- Public --------
-r.get("/", (req, res) => res.json({ message: "Homeland Group Mohali API", status: "ok" }));
+r.get("/", (req, res) => res.json({
+  message: "Homeland Group Mohali API",
+  status: "ok",
+  version: BUILD.version,
+  build: BUILD.build,
+  commit: BUILD.commit,
+  started_at: BUILD.started_at,
+}));
 
-// Health check for Hostinger / uptime monitors: reports DB connectivity.
+// Build/version marker — quick way to confirm the live backend & its code revision.
+r.get("/version", (req, res) => res.json(BUILD));
+
+// Health & status readout for Hostinger / uptime monitors and the owner:
+// reports DB connectivity, content counts and the running version.
 // Returns 200 when MySQL is reachable, 503 otherwise. Mongo is optional.
 r.get("/health", async (req, res) => {
-  const out = { status: "ok", time: new Date().toISOString(), uptime_s: Math.round(process.uptime()) };
+  const out = {
+    status: "ok",
+    service: BUILD.service,
+    version: BUILD.version,
+    build: BUILD.build,
+    commit: BUILD.commit,
+    started_at: BUILD.started_at,
+    time: new Date().toISOString(),
+    uptime_s: Math.round(process.uptime()),
+  };
   try {
     await mysqlDb.getPool().query("SELECT 1");
-    out.mysql = { ok: true };
+    out.mysql = { ok: true, ...mysqlDb.status() };
+    // Content presence — confirms the database is not just connected but populated.
+    try {
+      const db = await getDb();
+      const names = ["projects", "posts", "faqs", "team", "updates", "uploads", "site_content", "leads"];
+      const content = {};
+      for (const n of names) content[n] = await db.collection(n).countDocuments({});
+      out.content = content;
+    } catch (e) {
+      out.content = { error: (e && e.message) || String(e) };
+    }
   } catch (e) {
-    out.mysql = { ok: false, error: e.code || e.message };
+    out.mysql = { ok: false, error: e.code || e.message, ...mysqlDb.status() };
     out.status = "degraded";
   }
   try {
@@ -1105,6 +1150,18 @@ module.exports = app;
 // required by a process manager such as Hostinger's Passenger. Node caches the
 // module, so this runs exactly once per process.
 function startBackgroundServices() {
+  // Clear startup banner — makes it obvious in the runtime logs that the REAL
+  // Homeland backend booted (vs a silent placeholder), and what it is wired to.
+  console.log(
+    `[boot] ${BUILD.service} v${BUILD.version} (${BUILD.build}) | node ${process.version} | env=${process.env.NODE_ENV || "development"}`
+  );
+  console.log(
+    `[boot] db=${mysqlDb.dbName()} host=${process.env.MYSQL_HOST || process.env.DB_HOST || "127.0.0.1"} ` +
+    `password_set=${!!(process.env.MYSQL_PASSWORD || process.env.DB_PASSWORD)} | ` +
+    `frontend_build=${fs.existsSync(FRONTEND_BUILD) ? "present" : "MISSING"} | ` +
+    `public_origin=${PUBLIC_ORIGIN}`
+  );
+
   // Mongo -> MySQL mirror (only runs when MONGO_URL is configured; safe no-op otherwise).
   try { sync.start(); } catch (e) { console.error("[sync] not started:", e.message); }
 

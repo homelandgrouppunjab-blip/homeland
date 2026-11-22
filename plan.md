@@ -1,16 +1,26 @@
-# Content Humanization + SEO Readiness Plan (Homeland Group Mohali)
+# Content Humanization + SEO Readiness Plan (Homeland Group Mohali) — Updated
 
 ## 1) Objectives
 - Rewrite **project descriptions/summaries** and **homepage/about story copy** in a **premium, polished** brand voice.
 - **Preserve facts exactly** (RERA numbers, sizes, sectors, dates, prices, status/possession claims).
-- Apply changes to **`/app/api/seed-data.json`** and ensure the **runtime data stores reflect it** (MySQL as read-store; optional Mongo source-of-truth scenarios).
+- Apply changes to **`/app/api/seed-data.json`** and ensure the **runtime data stores reflect it** (MySQL as primary store).
 - Make the site more **SEO / Google-search ready** with:
   - Per-route titles/descriptions/canonical
   - Correct OG/Twitter metadata
   - Structured data (JSON-LD)
   - Sitemap coverage for project pages
+- **New (Deployment reliability / Live correctness):** Ensure the **real Homeland Node/Express backend** answers the live domain so that:
+  - `/api/*` routes are served by this app (not a placeholder)
+  - MySQL connectivity is visible and resilient
+  - Self-hosted images under `/projects/*` render on live pages
+  - Owners can confirm live version/build quickly
 
-**Current status:** All objectives above are **completed and verified locally**.
+**Current status:**
+- ✅ Content humanization + SEO work: **completed and verified locally**.
+- ✅ Backend hardening + status readout: **completed and verified locally**.
+- ✅ Database schema + seed content import prepared; app auto-seeds empty tables on startup: **verified locally**.
+- ✅ Self-hosted project images bundled and served by the Node service: **verified locally**.
+- ❌ **Live domain still serves a generic placeholder API**, so MySQL/images cannot appear live until Hostinger routing/startup config is corrected.
 
 ---
 
@@ -27,67 +37,30 @@
 5. As a QA tester, I can reseed/refresh content and see copy changes immediately in the UI.
 
 **Steps (as built)**
-1. **Rewrite flagship projects first** (used as tone benchmark):
-   - Updated `tagline`, `description`, `specifications` wording while keeping all numbers/claims intact.
-2. Rewrite **`site_content.main.history_intro`** + `history_full[]` to a premium, polished tone (facts unchanged).
-3. Add SEO POC (final approach differs from original plan):
-   - Implemented a reusable **`<Seo />`** component at `frontend/src/components/Seo.js`.
-   - Uses an **effect-based, in-place head update** strategy to prevent duplicate/conflicting tags in a CRA/SPA environment.
-   - Applies SEO on **Home**, **About**, and **ProjectDetail** with project-specific title/description/canonical.
-   - Adds JSON-LD injection in `<head>` with cleanup on unmount.
-4. Run locally:
-   - Verified via API that MySQL returns updated content.
-   - Verified in browser that humanized copy renders and that `<title>`, `<meta name="description">`, and `<link rel="canonical">` update correctly.
+1. Rewrite flagship projects first (tone benchmark).
+2. Rewrite `site_content.main.history_intro` + `history_full[]` (facts unchanged).
+3. Implement reusable `<Seo />` (`frontend/src/components/Seo.js`) using effect-based, in-place updates to prevent duplicates.
+4. Verify locally via API + browser (titles/descriptions/canonicals correct; no duplicates).
 
-**Stop/Fix Gate (result):** ✅ Passed. Project page shows humanized content and correct per-page metadata without duplicates.
+**Stop/Fix Gate (result):** ✅ Passed.
 
 ---
 
 ### Phase 2 — V1 App Development: full content humanization + solid SEO baseline
 **User stories (V1)**
 1. As a visitor, every project page reads naturally and consistently in a premium brand voice.
-2. As a visitor, homepage and about page communicate the brand story clearly without sounding auto-generated.
+2. As a visitor, homepage and about page communicate the brand story clearly.
 3. As a search engine, each major route has an appropriate title/meta description/canonical.
-4. As a user, project pages show structured details (RERA, location, unit types) without any factual drift.
+4. As a user, project pages show structured details (RERA, location, unit types) without factual drift.
 5. As an admin/owner, reseeding/refreshing restores the polished default copy consistently.
 
 **Steps (as built)**
-1. **Humanize all projects** in `api/seed-data.json`:
-   - Completed across all **10** projects.
-   - Updated prose fields (e.g., `description`, `specifications`) while preserving all facts.
-2. **Humanize company story** in `api/seed-data.json`:
-   - Updated `history_intro` and `history_full` to polished brand copy.
-3. **SEO baseline completion (expanded)**:
-   - Wired `<Seo />` into these routes/pages:
-     - `/` (Home)
-     - `/projects` (Projects)
-     - `/projects/:slug` (ProjectDetail) + **Residence JSON-LD**
-     - `/about` (About)
-     - `/contact` (Contact)
-     - `/upcoming` (Upcoming)
-     - `/insights` (Insights)
-     - `/insights/:slug` (PostDetail) + **Article JSON-LD**
-     - `/vision` (Vision)
-     - `/locations` (Locations)
-     - `/rera` (Rera)
-     - `/brochures` (Brochures)
-     - `/compare` (Compare)
-   - Confirmed **no duplicate canonical/description** tags after navigation.
-4. **Canonical conflict prevention**:
-   - Removed the **static canonical** link from `frontend/public/index.html` to avoid conflicts.
-   - Canonicals are now set per-route by `<Seo />`.
-5. **Sitemap expansion**:
-   - Updated `frontend/public/sitemap.xml` to include all **10** `/projects/<slug>` URLs.
-   - Verified `robots.txt` references the sitemap.
-6. **Data store alignment / reseed behavior**:
-   - Ensured `seed-data.json` is the durable source.
-   - Applied changes into the **live MySQL read-store** and also into the **legacy Mongo copies** using narrowly scoped updates (`$set` on text fields only; no drops).
-7. **Regression checks**:
-   - Confirmed the frontend production build passes (`craco build`).
-   - Verified via browser checks and screenshots:
-     - Humanized copy is visible.
-     - Titles/descriptions/canonicals are correct.
-     - SPA navigation updates metadata properly.
+1. Humanize all projects in `api/seed-data.json` (10 projects).
+2. Humanize company story in `api/seed-data.json`.
+3. Wire `<Seo />` across all major routes, projects, and posts.
+4. Remove static canonical from `frontend/public/index.html`.
+5. Expand `frontend/public/sitemap.xml` to include all project URLs.
+6. Confirm frontend production build succeeds.
 
 **Phase 2 result:** ✅ Completed.
 
@@ -102,48 +75,120 @@
 5. As an owner, I can spot-check that no RERA/price/location facts changed during rewriting.
 
 **Steps (as validated locally)**
-1. SEO QA checklist:
-   - Confirmed a **single** `description` + **single** `canonical` on pages after refactor.
-   - Confirmed per-route canonical updates correctly on SPA navigation.
-   - Confirmed JSON-LD scripts inject into `<head>` and do not accumulate across navigations.
-2. Content QA checklist:
-   - Spot-checked key projects (e.g., CP67) that RERA and structured fields remain unchanged.
-3. Build QA:
-   - Confirmed CRA/CRACO production build succeeds.
+1. Confirm single canonical + single description per page after SPA navigation.
+2. Confirm JSON-LD scripts do not accumulate.
+3. Spot-check fact integrity (e.g., CP67).
+4. Confirm production build passes.
 
 **Phase 3 result:** ✅ Completed locally.
 
 ---
 
+### Phase 4 — Live Backend + Database + Images (Hostinger correctness + resilience)
+**Goal:** Fix the production blocker where `homelandgroupindia.com/api/*` is answered by a generic placeholder instead of this app.
+
+**User stories (Live readiness)**
+1. As an owner, I can open `https://homelandgroupindia.com/api/` and see the Homeland API identity with build/version.
+2. As an owner, I can open `https://homelandgroupindia.com/api/health` and see `mysql.ok: true` plus content counts.
+3. As a visitor, I can open `/projects` and see 10 projects with images displayed.
+4. As an owner, if MySQL is temporarily unreachable, the app still starts and clearly reports **degraded** status rather than silently failing.
+
+**Steps (built in code — verified locally)**
+1. **Resilient DB startup** (MySQL init retry/backoff) in `api/db.js`.
+2. **Visible status readout**:
+   - `/api/` now returns identity + `version/build/started_at`.
+   - `/api/version` returns a build marker (service/version/build/node/started_at).
+   - `/api/health` reports:
+     - MySQL connectivity, resolved DB target, and non-secret wiring info (`host/port/database/user_set/password_set`)
+     - Content counts (`projects/posts/faqs/team/updates/uploads/site_content/leads`) so owners can confirm data presence.
+3. **Clear boot banner** in runtime logs showing the app started and what it is wired to.
+4. Verified end-to-end locally:
+   - Auto-seeds empty MySQL from `api/seed-data.json`.
+   - Single Node service serves: SPA + `/api/*` + `/projects/*` images + server-side social/SEO meta.
+   - Backend tests: 8/8 pass.
+
+**Steps (owner action in Hostinger hPanel — required to go live)**
+1. **Hostinger Node.js Application Settings**
+   - Application root: **repo root** (`./`)
+   - Entry/startup file: **`app.js`**
+   - Build command: **`npm run build`**
+   - Node version: **20 or 22**
+   - Do **not** set `PORT`
+2. **Environment variables (Hostinger)**
+   - Set a complete MySQL env set (recommended `MYSQL_*`):
+     - `MYSQL_HOST` (typically `localhost` on Hostinger)
+     - `MYSQL_PORT=3306`
+     - `MYSQL_USER`
+     - `MYSQL_PASSWORD`
+     - `MYSQL_DATABASE=u771530361_homeland`
+   - Auth:
+     - `JWT_SECRET`
+     - `ADMIN_USERNAME`
+     - `ADMIN_PASSWORD`
+   - Ensure frontend build env does **not** set `REACT_APP_BACKEND_URL` (keep same-origin `/api`).
+   - Do not set `MONGO_URL` unless you intentionally want Mongo→MySQL mirroring.
+3. **Deploy & cache**
+   - Pull/redeploy the latest commit.
+   - Restart the Node app.
+   - Purge Hostinger CDN/cache after changes.
+4. **Live verification (in order)**
+   - `https://homelandgroupindia.com/api/`
+     - Must show `Homeland Group Mohali API` + build/version fields.
+   - `https://homelandgroupindia.com/api/version`
+     - Must show `service: homeland-api` etc.
+   - `https://homelandgroupindia.com/api/health`
+     - Must show `mysql.ok: true` and content counts.
+   - `https://homelandgroupindia.com/api/projects`
+     - Must return 10 projects.
+   - `https://homelandgroupindia.com/projects/cp67.jpg`
+     - Must return HTTP 200 image.
+
+**Stop/Fix Gate (Phase 4):**
+- ✅ Pass when the live domain’s `/api/` returns this app’s identity and `/api/health` shows `mysql.ok:true` with correct counts.
+- If still seeing placeholder JSON (`{"code":200,"data":{}}` or generic 404s), the requests are not hitting this app:
+  - Collect and share **Hostinger runtime/application logs** (not build logs).
+  - Re-check root/startup file.
+  - If necessary: delete and recreate the Node.js application in hPanel pointing at repo root + `app.js`.
+  - Confirm no conflicting/legacy deployment (e.g., Vercel or placeholder Node app) is mapped to the domain.
+
+---
+
 ## 3) Next Actions
-1. **Commit + push changes** to GitHub:
-   - `api/seed-data.json`
-   - `frontend/src/components/Seo.js`
-   - Updated page files with `<Seo />` wiring
-   - `frontend/public/index.html` (static canonical removed)
-   - `frontend/public/sitemap.xml`
-2. **Hostinger deployment validation (must-do before claiming “live SEO works”)**:
-   - Redeploy and confirm the production site serves the correct app backend.
-   - Validate these on the live domain:
-     - `/api/` returns this app’s signature response
-     - `/api/health` shows `mysql.ok: true`
-     - `/api/projects` returns the seeded projects
-   - Validate SEO on live:
-     - Check page source/head tags after render (title/description/canonical)
-     - Check `/sitemap.xml` accessibility
-3. Optional improvements (future):
-   - Consider SSR / pre-rendering for social crawlers that do not execute JS (the current solution is optimized for Googlebot).
-   - Add automated QA script to ensure every project has non-empty `tagline`/`description` and every route sets canonical.
+1. **Commit + push** (code + content + reliability work):
+   - Backend hardening:
+     - `api/db.js` (retry/backoff + `status()`)
+     - `api/index.js` (`/api/version`, enriched `/api/health`, boot banner)
+   - Frontend + content:
+     - `api/seed-data.json` (self-hosted image paths + polished content)
+     - `frontend/public/projects/*` (10 images)
+     - `frontend/public/sitemap.xml` (includes `/whats-new`)
+     - `frontend/src/pages/WhatsNew.js` + `frontend/src/data/buildHistory.js` (if included in this release)
+     - `BUILD_HISTORY.md`
+2. **Hostinger deployment validation** (must-do before claiming “live works”):
+   - Ensure Hostinger runs **repo root + `app.js`**.
+   - Add env vars.
+   - Restart + purge CDN.
+   - Validate live endpoints:
+     - `/api/`, `/api/version`, `/api/health`, `/api/projects`, `/projects/cp67.jpg`
+3. **If placeholder persists**:
+   - Share Hostinger **runtime/application logs**.
+   - Confirm domain mapping (non-www + www behavior).
+   - Disconnect/disable any conflicting legacy deployment (e.g., Vercel).
 
 ---
 
 ## 4) Success Criteria
 - **Copy quality:** Projects + story read premium/polished and consistent.
-- **Fact integrity:** No changes to numeric/legal fields (RERA, sizes, sectors, dates, prices).
-- **Functional:** Seed-driven content is reflected in MySQL runtime data and visible in the UI.
-- **SEO-ready (SPA):**
-  - Unique titles/descriptions/canonicals for major routes + project pages
-  - No duplicate/conflicting `canonical` or `description`
+- **Fact integrity:** No changes to numeric/legal fields.
+- **Functional data:** MySQL connects and content exists:
+  - `/api/health` shows `mysql.ok:true` and content counts (projects=10, posts=4, faqs=5, team=7, site_content=1).
+- **Images visible:** `/projects/*` assets load on live site and project cards/pages show images.
+- **SEO-ready:**
+  - Unique titles/descriptions/canonicals
+  - No duplicate/conflicting meta
   - JSON-LD present on project pages and posts
-  - Sitemap includes project URLs
+  - Sitemap includes project URLs + `/whats-new`
 - **Build-ready:** Frontend production build completes successfully.
+- **Live correctness:**
+  - `homelandgroupindia.com/api/` returns this app’s identity and build marker (not placeholder responses).
+  - Runtime logs include `[boot] homeland-api ...` banner confirming the correct process is running.
