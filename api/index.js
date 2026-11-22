@@ -549,7 +549,10 @@ r.post("/admin/login", wrap(async (req, res) => {
   const b = req.body || {};
   const username = String(b.username || b.email || "").trim();
   const password = String(b.password || "");
-  const okUser = username.toLowerCase() === String(ADMIN_USERNAME).toLowerCase();
+  const okUser = [ADMIN_USERNAME, ADMIN_EMAIL]
+    .filter(Boolean)
+    .map((s) => String(s).toLowerCase())
+    .includes(username.toLowerCase());
   const okPass = password === String(ADMIN_PASSWORD);
   if (!okUser || !okPass) return res.status(401).json({ detail: "Invalid username or password" });
   const token = signToken(ADMIN_USERNAME);
@@ -1143,8 +1146,6 @@ if (fs.existsSync(path.join(FRONTEND_BUILD, "index.html"))) {
   app.use("/", r);
 }
 
-module.exports = app;
-
 // Background services (Mongo->MySQL mirror + daily reminder digest). These must
 // run whether the app is started directly (node api/index.js / supervisor) OR
 // required by a process manager such as Hostinger's Passenger. Node caches the
@@ -1186,10 +1187,36 @@ function startBackgroundServices() {
 
 startBackgroundServices();
 
-// When started directly (not mounted by Passenger), bind the port ourselves.
-// Hostinger managed Node.js hosting proxies to port 3000 by default; Emergent
-// preview and VPS/PM2 inject PORT explicitly. So honor PORT, else default 3000.
-if (require.main === module) {
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => console.log(`Homeland Node API listening on :${port}`));
+// ---------------------------------------------------------------------------
+// Bullet-proof startup: the server must OPEN FOR TRAFFIC no matter how the host
+// launches it. The previous `require.main === module` guard meant that when
+// Hostinger starts the app via `app.js` (which require()s this file), this
+// module was never the "main" module, so app.listen() never ran — the app
+// loaded but never listened, and the domain fell back to Hostinger's generic
+// placeholder. We now always listen:
+//   * Under Phusion Passenger (Hostinger's managed Node)  -> listen('passenger')
+//   * Everywhere else (node app.js, node index.js, npm start, PM2, preview)
+//     -> bind 0.0.0.0 on PORT (Hostinger/VPS inject PORT; else default 3000).
+// A guard prevents a double-listen if the module is ever required twice.
+// ---------------------------------------------------------------------------
+let _listening = false;
+function startListening() {
+  if (_listening) return;
+  _listening = true;
+  try {
+    if (typeof PhusionPassenger !== "undefined") {
+      app.listen("passenger", () => console.log("[boot] Homeland Node API listening via Phusion Passenger"));
+    } else {
+      const port = process.env.PORT || 3000;
+      app.listen(port, "0.0.0.0", () => console.log(`[boot] Homeland Node API listening on 0.0.0.0:${port}`));
+    }
+  } catch (e) {
+    console.error("[boot] failed to start HTTP listener:", e && e.message);
+    _listening = false;
+  }
 }
+startListening();
+
+// Export the app too, so loaders that mount an exported app (some Passenger
+// configs, tests) still work.
+module.exports = app;
